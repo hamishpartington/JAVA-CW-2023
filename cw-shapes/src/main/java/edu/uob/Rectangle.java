@@ -18,6 +18,6 @@ public class Rectangle extends TwoDimensionalShape {
   }
 
   public String toString() {
-    return "Rectangle of dimensions " + width + " x " + height;
+    return super.toString() + " rectangle of dimensions " + width + " x " + height;
   }
 }

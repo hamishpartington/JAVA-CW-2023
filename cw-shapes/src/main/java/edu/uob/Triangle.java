@@ -1,8 +1,7 @@
 package edu.uob;
 
-public class Triangle {
+public class Triangle extends TwoDimensionalShape {
 
-  // TODO implement me!
   int side1, side2, side3;
   public Triangle(int side1, int side2, int side3) {
     this.side1 = side1;
@@ -10,10 +9,13 @@ public class Triangle {
     this.side3 = side3;
   }
 
-  int getLongestSide() {
+  public int getLongestSide() {
     return Math.max(side1, Math.max(side2, side3));
   }
 
+  public String toString(){
+    return super.toString() + " triangle with sides length " + side1 + ", " + side2 + ", " + side3;
+  }
 
 
   // TODO implement me!

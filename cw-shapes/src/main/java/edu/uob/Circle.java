@@ -16,6 +16,6 @@ public class Circle extends TwoDimensionalShape {
   }
 
   public String toString() {
-    return "Circle with radius " + radius;
+    return super.toString() + " circle with radius " + radius;
   }
 }
