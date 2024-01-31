@@ -2,19 +2,41 @@ package edu.uob;
 
 public class Triangle extends TwoDimensionalShape {
 
-  int side1, side2, side3;
-  public Triangle(int side1, int side2, int side3) {
+  double side1, side2, side3;
+  TriangleVariant tV;
+  public Triangle(double side1, double side2, double side3) {
     this.side1 = side1;
     this.side2 = side2;
     this.side3 = side3;
+    if(side1 <= 0 || side2 <= 0 || side3 <= 0){
+      this.tV = TriangleVariant.ILLEGAL;
+    }else if((side3 - side1 - side2) > 0 || (side2 - side1 - side3) > 0 || (side1 - side2 - side3) > 0){
+      this.tV = TriangleVariant.IMPOSSIBLE;
+    }else if((side1 + side2) == side3 || (side1 + side3) == side2 || (side2 + side3) == side1) {
+      this.tV = TriangleVariant.FLAT;
+    }else if(side1 == side2 && side2 == side3){
+      this.tV = TriangleVariant.EQUILATERAL;
+    }else if(side1 == side2 || side1 == side3 || side2 == side3){
+      this.tV = TriangleVariant.ISOSCELES;
+    }else if((Math.pow(side1,2) + Math.pow(side2, 2)) == Math.pow(side3,2) ||
+            (Math.pow(side1, 2) + Math.pow(side3, 2)) == Math.pow(side2, 2) ||
+            (Math.pow(side2, 2) + Math.pow(side3, 2)) == Math.pow(side1, 2)){
+      this.tV = TriangleVariant.RIGHT;
+    }else{
+      this.tV = TriangleVariant.SCALENE;
+    }
   }
 
-  public int getLongestSide() {
+  public double getLongestSide() {
     return Math.max(side1, Math.max(side2, side3));
   }
 
   public String toString(){
-    return super.toString() + " triangle with sides length " + side1 + ", " + side2 + ", " + side3;
+    return super.toString() + " " + tV +" triangle with sides length " + side1 + ", " + side2 + ", " + side3;
+  }
+
+  TriangleVariant getVariant(){
+    return tV;
   }
 
 
