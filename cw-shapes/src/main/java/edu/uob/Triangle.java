@@ -1,10 +1,10 @@
 package edu.uob;
 
-public class Triangle extends TwoDimensionalShape {
+public class Triangle extends TwoDimensionalShape implements MultiVariantShape{
 
-  double side1, side2, side3;
+  long side1, side2, side3;
   TriangleVariant tV;
-  public Triangle(double side1, double side2, double side3) {
+  public Triangle(long side1, long side2, long side3) {
     this.side1 = side1;
     this.side2 = side2;
     this.side3 = side3;
@@ -18,16 +18,16 @@ public class Triangle extends TwoDimensionalShape {
       this.tV = TriangleVariant.EQUILATERAL;
     }else if(side1 == side2 || side1 == side3 || side2 == side3){
       this.tV = TriangleVariant.ISOSCELES;
-    }else if((Math.pow(side1,2) + Math.pow(side2, 2)) == Math.pow(side3,2) ||
-            (Math.pow(side1, 2) + Math.pow(side3, 2)) == Math.pow(side2, 2) ||
-            (Math.pow(side2, 2) + Math.pow(side3, 2)) == Math.pow(side1, 2)){
+    }else if(side1 * side1 + side2 * side2 == side3 * side3 ||
+            side1 * side1 + side3 * side3 == side2 * side2 ||
+            side2 * side2 + side3 * side3 == side1 * side1){
       this.tV = TriangleVariant.RIGHT;
     }else{
       this.tV = TriangleVariant.SCALENE;
     }
   }
 
-  public double getLongestSide() {
+  public long getLongestSide() {
     return Math.max(side1, Math.max(side2, side3));
   }
 
@@ -35,7 +35,7 @@ public class Triangle extends TwoDimensionalShape {
     return super.toString() + " " + tV +" triangle with sides length " + side1 + ", " + side2 + ", " + side3;
   }
 
-  TriangleVariant getVariant(){
+  public TriangleVariant getVariant(){
     return tV;
   }
 

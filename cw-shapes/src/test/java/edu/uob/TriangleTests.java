@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TriangleTests {
 
-  private static void assertShapeVariant(TriangleVariant expectedType, Triangle shape) {
+  private static void assertShapeVariant(TriangleVariant expectedType, MultiVariantShape shape) {
     assertEquals(expectedType, shape.getVariant(), "failed to classify " + shape + " as " + expectedType);
   }
 
