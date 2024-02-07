@@ -2,12 +2,24 @@ package edu.uob;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TriangleTests {
 
   private static void assertShapeVariant(TriangleVariant expectedType, MultiVariantShape shape) {
     assertEquals(expectedType, shape.getVariant(), "failed to classify " + shape + " as " + expectedType);
+  }
+
+  private static void assertShapePerimeter(TwoDimensionalShape shape, long expectPerimeter) {
+    assertEquals(expectPerimeter, shape.calculatePerimeterLength(), "Expected perimeter = " + expectPerimeter + "\nCalculated perimeter = " + shape.calculatePerimeterLength());
+  }
+
+  private static void assertShapeArea(TwoDimensionalShape shape, double expectArea) {
+    assertEquals(expectArea, shape.calculateArea(), 0.001, "Expected area = " + expectArea + "\nCalculated area = " + shape.calculateArea());
+  }
+
+  private static void assertInstanceOfMultiVariantShape(TwoDimensionalShape shape) {
+    assertInstanceOf(MultiVariantShape.class, shape);
   }
 
   // Equilateral: all equal
@@ -94,5 +106,26 @@ class TriangleTests {
     assertShapeVariant(TriangleVariant.SCALENE, new Triangle(1100000000, 1705032704, 1805032704));
     assertShapeVariant(TriangleVariant.SCALENE, new Triangle(2000000001, 2000000002, 2000000003));
     assertShapeVariant(TriangleVariant.SCALENE, new Triangle(150000002, 666666671, 683333338));
+  }
+
+  @Test
+  void testPerimeter() {
+    assertShapePerimeter(new Triangle(4, 4, 4), 12);
+    assertShapePerimeter(new Triangle(7, 4, 4), 15);
+    assertShapePerimeter(new Triangle(400, 450, 476), 1326);
+    assertShapePerimeter(new Triangle(88, 99, 101), 288);
+  }
+
+  @Test
+  void testArea() {
+    assertShapeArea(new Triangle(4, 4, 4), 6.9282);
+    assertShapeArea(new Triangle(7, 4, 4), 6.7777);
+    assertShapeArea(new Triangle(400, 450, 476), 83338.4163);
+    assertShapeArea(new Triangle(88, 99, 101), 3950.1696);
+  }
+
+  @Test
+  void testInstanceOf() {
+    assertInstanceOfMultiVariantShape(new Triangle(3, 3, 3));
   }
 }

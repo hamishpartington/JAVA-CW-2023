@@ -40,13 +40,16 @@ public class Triangle extends TwoDimensionalShape implements MultiVariantShape{
   }
 
 
-  // TODO implement me!
   public double calculateArea() {
-    return 0;
+
+    double s = 0.5 * calculatePerimeterLength();
+
+
+    return Math.sqrt((s * (s - side1) * (s - side2) * (s - side3)));
   }
 
-  // TODO implement me!
-  public int calculatePerimeterLength() {
-    return 0;
+  public long calculatePerimeterLength() {
+
+    return (side1 + side2 + side3);
   }
 }

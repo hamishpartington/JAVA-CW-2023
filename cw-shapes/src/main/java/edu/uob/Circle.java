@@ -1,7 +1,7 @@
 package edu.uob;
 
 public class Circle extends TwoDimensionalShape {
-  int radius;
+  long radius;
 
   public Circle(int r) {
     radius = r;
@@ -11,8 +11,8 @@ public class Circle extends TwoDimensionalShape {
     return (int) Math.round(Math.PI * radius * radius);
   }
 
-  public int calculatePerimeterLength() {
-    return (int) Math.round(Math.PI * radius * 2.0);
+  public long calculatePerimeterLength() {
+    return Math.round(Math.PI * radius * 2.0);
   }
 
   public String toString() {

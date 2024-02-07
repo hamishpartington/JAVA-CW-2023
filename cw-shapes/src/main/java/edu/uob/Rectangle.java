@@ -1,8 +1,8 @@
 package edu.uob;
 
 public class Rectangle extends TwoDimensionalShape {
-  int width;
-  int height;
+  long width;
+  long height;
 
   public Rectangle(int w, int h) {
     width = w;
@@ -13,7 +13,7 @@ public class Rectangle extends TwoDimensionalShape {
     return width * height;
   }
 
-  public int calculatePerimeterLength() {
+  public long calculatePerimeterLength() {
     return 2 * (width + height);
   }
 
