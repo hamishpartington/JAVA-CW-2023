@@ -15,7 +15,6 @@ public class OXOModel {
 
     public OXOModel(int numberOfRows, int numberOfColumns, int winThresh) {
         winThreshold = winThresh;
-        //cells = new OXOPlayer[numberOfRows][numberOfColumns];
         cells = new ArrayList<>() {{
             add(new OXOPlayer[numberOfRows][numberOfColumns]);
         }};

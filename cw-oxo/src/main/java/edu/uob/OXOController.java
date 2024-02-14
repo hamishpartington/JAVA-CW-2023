@@ -9,6 +9,9 @@ public class OXOController {
 
     public void handleIncomingCommand(String command) throws OXOMoveException {
         int row, column, playerNum;
+        if(gameModel.getWinner() != null){
+            return;
+        }
         if(command.charAt(0) <= 'Z'){
             row = command.charAt(0) - 'A';
         }else{
@@ -20,6 +23,10 @@ public class OXOController {
 
         gameModel.setCellOwner(row, column, gameModel.getPlayerByNumber(playerNum));
 
+        if(this.detectWin(playerNum)){
+            gameModel.setWinner(gameModel.getPlayerByNumber(playerNum));
+        }
+
         if(gameModel.getNumberOfPlayers() == playerNum + 1){
             gameModel.setCurrentPlayerNumber(0);
         }else{
@@ -27,29 +34,114 @@ public class OXOController {
         }
     }
     public void addRow() {
-        gameModel.addRow();
+        if(gameModel.getWinner() == null){
+            gameModel.addRow();
+        }
     }
     public void removeRow() {
-        gameModel.removeRow();
+        if(gameModel.getWinner() == null){
+            gameModel.removeRow();
+        }
     }
     public void addColumn() {
-        gameModel.addColumn();
+        if(gameModel.getWinner() == null){
+            gameModel.addColumn();
+        }
     }
     public void removeColumn() {
-        gameModel.removeColumn();
+        if(gameModel.getWinner() == null){
+            gameModel.removeColumn();
+        }
     }
     public void increaseWinThreshold() {}
     public void decreaseWinThreshold() {}
     public void reset() {
-        OXOPlayer clearer = new OXOPlayer('\0');
         int nRows = gameModel.getNumberOfRows();
         int nCols = gameModel.getNumberOfColumns();
 
         for(int i = 0; i < nRows; i++){
             for( int j = 0; j < nCols; j++){
-                gameModel.setCellOwner(i, j, clearer);
+                gameModel.setCellOwner(i, j, null);
             }
         }
+        gameModel.setWinner(null);
         gameModel.setCurrentPlayerNumber(0);
+    }
+
+    public boolean detectWin(int playerNum){
+        int nRows = gameModel.getNumberOfRows();
+        int nCols = gameModel.getNumberOfColumns();
+
+        OXOPlayer currPlayer = gameModel.getPlayerByNumber(playerNum);
+
+        if(winRow(currPlayer, nRows, nCols) || winCol(currPlayer, nRows, nCols) || winDiag(currPlayer, nRows, nCols)){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean winRow(OXOPlayer currPlayer, int nRows, int nCols){
+        return winLoop(currPlayer, nRows, nCols, true);
+    }
+    public boolean winCol(OXOPlayer currPlayer, int nRows, int nCols){
+        return winLoop(currPlayer, nCols, nRows, false);
+    }
+
+    public boolean winDiag(OXOPlayer currPlayer, int nRows, int nCols){
+        for(int i = 0; i < nRows; i++){
+            for(int j = 0; j < nCols; j++){
+                if(gameModel.getCellOwner(i, j) == currPlayer){
+                    if(checkDiag(currPlayer, i, j, nRows, nCols)){
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+
+    private boolean checkDiag(OXOPlayer currPlayer, int row, int col, int nRows, int nCols){
+        int seqLen = 1;
+        for(int i = row + 1, j = col + 1; i < nRows && j < nCols; i++, j++){
+            if(gameModel.getCellOwner(i, j) == currPlayer){
+                seqLen++;
+            }else{
+                return false;
+            }
+            if(seqLen >= gameModel.getWinThreshold()){
+                return true;
+            }
+        }
+        seqLen = 1;
+        for(int i = row + 1, j = col - 1; i < nRows && j >= 0; i++, j--){
+            if(gameModel.getCellOwner(i, j) == currPlayer){
+                seqLen++;
+            }else{
+                return false;
+            }
+            if(seqLen >= gameModel.getWinThreshold()){
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean winLoop(OXOPlayer currPlayer, int iMax, int jMax, boolean row){
+        int seqLen;
+        for(int i = 0; i < iMax; i++){
+            seqLen = 0;
+            for(int j = 0; j < jMax; j++){
+                if(gameModel.getCellOwner(j, i) == currPlayer && !row){
+                    seqLen++;
+                }
+                if(gameModel.getCellOwner(i, j) == currPlayer && row){
+                    seqLen++;
+                }
+                if(seqLen >= gameModel.getWinThreshold()){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
