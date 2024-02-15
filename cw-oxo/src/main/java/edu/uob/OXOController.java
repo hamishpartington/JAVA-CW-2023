@@ -131,10 +131,11 @@ public class OXOController {
         for(int i = 0; i < iMax; i++){
             seqLen = 0;
             for(int j = 0; j < jMax; j++){
-                if(gameModel.getCellOwner(j, i) == currPlayer && !row){
-                    seqLen++;
-                }
-                if(gameModel.getCellOwner(i, j) == currPlayer && row){
+                if(!row){
+                    if(gameModel.getCellOwner(j, i) == currPlayer){
+                        seqLen++;
+                    }
+                }else if(gameModel.getCellOwner(i, j) == currPlayer){
                     seqLen++;
                 }
                 if(seqLen >= gameModel.getWinThreshold()){

@@ -122,7 +122,7 @@ public class OXOModel {
             copyLoop(nRows, nCols, -1, 0);
         }
     }
-    public void copyLoop(int nRows, int nCols, int colAdj, int rowAdj){
+    private void copyLoop(int nRows, int nCols, int colAdj, int rowAdj){
         cells.add(new OXOPlayer[nRows + rowAdj][nCols + colAdj]);
         for (int i = 0; i < nRows && i < nRows + rowAdj; i++) {
             for (int j = 0; j < nCols && j < (nCols + colAdj); j++) {
