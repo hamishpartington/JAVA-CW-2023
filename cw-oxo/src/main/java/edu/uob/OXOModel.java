@@ -5,10 +5,9 @@ import java.util.Arrays;
 
 public class OXOModel {
 
-    private ArrayList<OXOPlayer[][]> cells;
+    private ArrayList<ArrayList<OXOPlayer>> cells;
     private OXOPlayer[] players;
     private int currentPlayerNumber;
-    private int arrayListIndex;
     private OXOPlayer winner;
     private boolean gameDrawn;
     private int winThreshold;
@@ -16,9 +15,14 @@ public class OXOModel {
     public OXOModel(int numberOfRows, int numberOfColumns, int winThresh) {
         winThreshold = winThresh;
         cells = new ArrayList<>() {{
-            add(new OXOPlayer[numberOfRows][numberOfColumns]);
+            for(int i = 0; i < numberOfRows; i++) {
+                add(new ArrayList<>() {{
+                    for (int j = 0; j < numberOfColumns; j++){
+                        add(null);
+                    }
+                }});
+            }
         }};
-        arrayListIndex = 0;
         players = new OXOPlayer[2];
     }
 
@@ -56,21 +60,19 @@ public class OXOModel {
     }
 
     public int getNumberOfRows() {
-        return cells.get(this.arrayListIndex).length;
+        return cells.size();
     }
 
     public int getNumberOfColumns() {
-        return cells.get(this.arrayListIndex)[0].length;
+        return cells.get(0).size();
     }
 
     public OXOPlayer getCellOwner(int rowNumber, int colNumber) {
-        return cells.get(this.arrayListIndex)[rowNumber][colNumber];
+        return cells.get(rowNumber).get(colNumber);
     }
 
     public void setCellOwner(int rowNumber, int colNumber, OXOPlayer player) {
-        OXOPlayer board[][] = cells.get(this.arrayListIndex);
-        board[rowNumber][colNumber] = player;
-        cells.set(this.arrayListIndex, board);
+        cells.get(rowNumber).set(colNumber, player);
     }
 
     public void setWinThreshold(int winThresh) {
@@ -94,16 +96,24 @@ public class OXOModel {
         int nCols = getNumberOfColumns();
 
         if(nRows < 9){
-            copyLoop(nRows, nCols, 0, 1);
+            cells.add(new ArrayList<>() {{
+                for (int j = 0; j < nCols; j++){
+                    add(new OXOPlayer('\0'));
+                }
+            }});
         }
+        this.setGameDrawn(false);
     }
     public void addColumn() {
         int nRows = getNumberOfRows();
         int nCols = getNumberOfColumns();
 
         if (nCols < 9) {
-            copyLoop(nRows, nCols, 1, 0);
+            for(int i = 0; i < nRows; i++){
+                cells.get(i).add(new OXOPlayer('\0'));
+            }
         }
+        this.setGameDrawn(false);
     }
 
     public void removeRow(){
@@ -111,7 +121,7 @@ public class OXOModel {
         int nCols = getNumberOfColumns();
 
         if(nRows > 3){
-            copyLoop(nRows, nCols, 0, -1);
+            cells.remove(nRows-1);
         }
     }
     public void removeColumn() {
@@ -119,19 +129,10 @@ public class OXOModel {
         int nCols = getNumberOfColumns();
 
         if (nCols > 3) {
-            copyLoop(nRows, nCols, -1, 0);
-        }
-    }
-    private void copyLoop(int nRows, int nCols, int colAdj, int rowAdj){
-        cells.add(new OXOPlayer[nRows + rowAdj][nCols + colAdj]);
-        for (int i = 0; i < nRows && i < nRows + rowAdj; i++) {
-            for (int j = 0; j < nCols && j < (nCols + colAdj); j++) {
-                OXOPlayer currCell = getCellOwner(i, j);
-                this.arrayListIndex++;
-                setCellOwner(i, j, currCell);
-                this.arrayListIndex--;
+            for(int i = 0; i < nRows; i++){
+                cells.get(i).remove(nCols-1);
             }
         }
-        this.arrayListIndex++;
     }
+
 }
