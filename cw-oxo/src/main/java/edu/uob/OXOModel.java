@@ -118,7 +118,6 @@ public class OXOModel {
 
     public void removeRow(){
         int nRows = getNumberOfRows();
-        int nCols = getNumberOfColumns();
 
         if(nRows > 3){
             cells.remove(nRows-1);

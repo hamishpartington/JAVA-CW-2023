@@ -70,6 +70,7 @@ public class OXOController {
             }
         }
         gameModel.setWinner(null);
+        gameModel.setGameDrawn(false);
         gameModel.setCurrentPlayerNumber(0);
     }
 

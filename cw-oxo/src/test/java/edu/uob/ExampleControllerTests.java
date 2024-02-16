@@ -1,12 +1,11 @@
 package edu.uob;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import edu.uob.OXOMoveException.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ExampleControllerTests {
   private OXOModel model;
@@ -60,6 +59,72 @@ class ExampleControllerTests {
     assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
   }
 
+  @Test
+  void testVerticalWin() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber());
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("a2"); // Second player
+    sendCommandToController("b1"); // First player
+    sendCommandToController("a3"); // Second player
+    sendCommandToController("c1"); // First player
+
+    // a1, a2, a3 should be a win for the first player (since players alternate between moves)
+    // Let's check to see whether the first moving player is indeed the winner
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+
+  @Test
+  void testDiagWin1() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber());
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("b1"); // Second player
+    sendCommandToController("b2"); // First player
+    sendCommandToController("c1"); // Second player
+    sendCommandToController("c3"); // First player
+
+    // a1, a2, a3 should be a win for the first player (since players alternate between moves)
+    // Let's check to see whether the first moving player is indeed the winner
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+  @Test
+  void testDiagWin2() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber());
+    // Make a bunch of moves for the two players
+    sendCommandToController("a3"); // First player
+    sendCommandToController("b1"); // Second player
+    sendCommandToController("b2"); // First player
+    sendCommandToController("c3"); // Second player
+    sendCommandToController("c1"); // First player
+
+    // a1, a2, a3 should be a win for the first player (since players alternate between moves)
+    // Let's check to see whether the first moving player is indeed the winner
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+  @Test
+  void testDraw() throws OXOMoveException {
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("a2"); // Second player
+    sendCommandToController("a3"); // First player
+    sendCommandToController("b1"); // Second player
+    sendCommandToController("b3"); // First player
+    sendCommandToController("b2"); // Second player
+    sendCommandToController("c1"); // First player
+    sendCommandToController("c3"); // Second player
+    sendCommandToController("c2"); // First player
+    // a1, a2, a3 should be a win for the first player (since players alternate between moves)
+    // Let's check to see whether the first moving player is indeed the winner
+    String failedTestComment = "Draw was expected to be but wasn't";
+    assertTrue(model.isGameDrawn(), failedTestComment);
+  }
   // Example of how to test for the throwing of exceptions
   @Test
   void testInvalidIdentifierException() throws OXOMoveException {
