@@ -134,4 +134,30 @@ class ExampleControllerTests {
     // The next lins is a bit ugly, but it is the easiest way to test exceptions (soz)
     assertThrows(InvalidIdentifierLengthException.class, ()-> sendCommandToController("abc123"), failedTestComment);
   }
+  @Test
+  void testInvalidIdentifierCharacterException1() throws OXOMoveException {
+    String failedTestComment = "Controller failed to throw an InvalidIdentifierCharacterException for command `?1`";
+    assertThrows(InvalidIdentifierCharacterException.class, ()-> sendCommandToController("?1"), failedTestComment);
+  }
+  @Test
+  void testInvalidIdentifierCharacterException2() throws OXOMoveException {
+    String failedTestComment = "Controller failed to throw an InvalidIdentifierCharacterException for command `aa`";
+    assertThrows(InvalidIdentifierCharacterException.class, ()-> sendCommandToController("aa"), failedTestComment);
+  }
+  @Test
+  void testOutsideCellRangeException1() throws OXOMoveException {
+    String failedTestComment = "Controller failed to throw an OutsideCellRangeException for command `D3`";
+    assertThrows(OutsideCellRangeException.class, ()-> sendCommandToController("D3"), failedTestComment);
+  }
+  @Test
+  void testOutsideCellRangeException2() throws OXOMoveException {
+    String failedTestComment = "Controller failed to throw an OutsideCellRangeException for command `D3`";
+    assertThrows(OutsideCellRangeException.class, ()-> sendCommandToController("A4"), failedTestComment);
+  }
+  @Test
+  void testCellAlreadyTakenException() throws OXOMoveException {
+    String failedTestComment = "Controller failed to throw an OutsideCellRangeException for command `D3`";
+    sendCommandToController("A1");
+    assertThrows(CellAlreadyTakenException.class, ()-> sendCommandToController("A1"), failedTestComment);
+  }
 }
