@@ -124,6 +124,7 @@ class ExampleControllerTests {
     // Let's check to see whether the first moving player is indeed the winner
     String failedTestComment = "Draw was expected to be but wasn't";
     assertTrue(model.isGameDrawn(), failedTestComment);
+
   }
   // Example of how to test for the throwing of exceptions
   @Test

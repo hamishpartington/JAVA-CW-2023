@@ -14,7 +14,7 @@ public class OXOMoveException extends Exception {
     public static class OutsideCellRangeException extends OXOMoveException {
         @Serial private static final long serialVersionUID = 1;
 
-        public OutsideCellRangeException(RowOrColumn dimension, int pos) {
+        public OutsideCellRangeException(RowOrColumn dimension, char pos) {
             super("Position " + pos + " is out of range for " + dimension.name());
         }
     }
@@ -38,7 +38,7 @@ public class OXOMoveException extends Exception {
     public static class CellAlreadyTakenException extends OXOMoveException {
         @Serial private static final long serialVersionUID = 1;
 
-        public CellAlreadyTakenException(int row, int column) {
+        public CellAlreadyTakenException(char row, char column) {
             super("Cell [" + row + "," + column + "] has already been claimed");
         }
     }

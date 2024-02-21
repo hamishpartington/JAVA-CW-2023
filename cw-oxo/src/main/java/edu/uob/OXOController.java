@@ -1,4 +1,5 @@
 package edu.uob;
+//import edu.uob.OXOMoveException.*;
 
 public class OXOController {
     OXOModel gameModel;
@@ -11,6 +12,19 @@ public class OXOController {
         int row, column, playerNum;
         if(gameModel.getWinner() != null || gameModel.isGameDrawn()){
             return;
+        }
+        if(command.length() != 2){
+            throw new OXOMoveException.InvalidIdentifierLengthException(command.length());
+        } else if(!command.matches("^[a-zA-Z].")){
+            throw new OXOMoveException.InvalidIdentifierCharacterException(OXOMoveException.RowOrColumn.ROW, command.charAt(0));
+        } else if(!command.matches("^.[0-9]$")){
+            throw new OXOMoveException.InvalidIdentifierCharacterException(OXOMoveException.RowOrColumn.COLUMN, command.charAt(1));
+        } else if((command.toLowerCase().charAt(0) - 'a') >= gameModel.getNumberOfRows()){
+            throw new OXOMoveException.OutsideCellRangeException(OXOMoveException.RowOrColumn.ROW, command.charAt(0));
+        } else if((command.toLowerCase().charAt(1) - '1') >= gameModel.getNumberOfColumns()) {
+            throw new OXOMoveException.OutsideCellRangeException(OXOMoveException.RowOrColumn.COLUMN, command.charAt(1));
+        } else if(gameModel.getCellOwner((command.toLowerCase().charAt(0) - 'a'), (command.charAt(1) - '1')) != null){
+            throw new OXOMoveException.CellAlreadyTakenException(command.charAt(0), command.charAt(1));
         }
 
         if(command.charAt(0) <= 'Z'){
