@@ -160,4 +160,218 @@ class ExampleControllerTests {
     sendCommandToController("A1");
     assertThrows(CellAlreadyTakenException.class, ()-> sendCommandToController("A1"), failedTestComment);
   }
+  @Test
+  void testIncreaseWinThreshold1() {
+    String failedTestComment = "Controller failed to increase Win Threshold";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    assertEquals(4, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testIncreaseWinThreshold2() {
+    String failedTestComment = "Controller increased win threshold beyond possible level";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    controller.increaseWinThreshold();
+    assertEquals(4, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testIncreaseWinThreshold3() {
+    String failedTestComment = "Controller increased win threshold after draw";
+    model.addRow();
+    model.addColumn();
+    model.setGameDrawn(true);
+    controller.increaseWinThreshold();
+    assertEquals(3, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testIncreaseWinThreshold4() {
+    String failedTestComment = "Controller increased win threshold after win";
+    model.addRow();
+    model.addColumn();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.increaseWinThreshold();
+    assertEquals(3, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testIncreaseWinThreshold5() {
+    String failedTestComment = "Controller changed win threshold after reset";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    controller.reset();
+    assertEquals(5, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testDecreaseWinThreshold1() {
+    String failedTestComment = "Controller decreased win threshold beyond minimum";
+    controller.decreaseWinThreshold();
+    assertEquals(3, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testDecreaseWinThreshold2() {
+    String failedTestComment = "Controller did not decrease win threshold";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    controller.decreaseWinThreshold();
+    assertEquals(4, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testDecreaseWinThreshold3() {
+    String failedTestComment = "Controller decreased win threshold after draw";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    model.setGameDrawn(true);
+    controller.decreaseWinThreshold();;
+    assertEquals(4, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testDecreaseWinThreshold4() {
+    String failedTestComment = "Controller decreased win threshold after win";
+    model.addRow();
+    model.addColumn();
+    controller.increaseWinThreshold();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.decreaseWinThreshold();;
+    assertEquals(4, model.getWinThreshold(), failedTestComment);
+  }
+  @Test
+  void testAddRow1(){
+    String failedTestComment = "Controller did not add row";
+    controller.addRow();
+    assertEquals(4, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testAddRow2(){
+    String failedTestComment = "Controller added row beyond max";
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    assertEquals(9, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testAddRow3(){
+    String failedTestComment = "Controller added row after win";
+    controller.addRow();
+    controller.addRow();
+    controller.addRow();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.addRow();
+    controller.addRow();
+    assertEquals(6, model.getNumberOfRows(), failedTestComment);
+  }
+
+  @Test
+  void testRemoveRow1(){
+    String failedTestComment = "Controller removed row beyond min";
+    controller.removeRow();
+    assertEquals(3, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testRemoveRow2(){
+    String failedTestComment = "Controller did not remove row";
+    controller.addRow();
+    controller.addRow();
+    controller.removeRow();
+    assertEquals(4, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testRemoveRow3(){
+    String failedTestComment = "Controller removed row after win";
+    controller.addRow();
+    controller.addRow();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.removeRow();
+    assertEquals(5, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testRemoveRow4(){
+    String failedTestComment = "Controller removed row when not empty";
+    controller.addRow();
+    controller.addRow();
+    sendCommandToController("E1");
+    controller.removeRow();
+    assertEquals(5, model.getNumberOfRows(), failedTestComment);
+  }
+  @Test
+  void testAddColumn1(){
+    String failedTestComment = "Controller did not add column";
+    controller.addColumn();
+    assertEquals(4, model.getNumberOfColumns(), failedTestComment);
+  }
+  @Test
+  void testAddColumn2(){
+    String failedTestComment = "Controller added column beyond max";
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    assertEquals(9, model.getNumberOfColumns(), failedTestComment);
+  }
+  @Test
+  void testAddColumn3(){
+    String failedTestComment = "Controller added column after win";
+    controller.addColumn();
+    controller.addColumn();
+    controller.addColumn();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.addColumn();
+    controller.addColumn();
+    assertEquals(6, model.getNumberOfColumns(), failedTestComment);
+  }
+
+  @Test
+  void testRemoveColumn1(){
+    String failedTestComment = "Controller removed column beyond min";
+    controller.removeColumn();
+    assertEquals(3, model.getNumberOfColumns(), failedTestComment);
+  }
+  @Test
+  void testRemoveColumn2(){
+    String failedTestComment = "Controller did not remove row";
+    controller.addColumn();
+    controller.addColumn();
+    controller.removeColumn();
+    assertEquals(4, model.getNumberOfColumns(), failedTestComment);
+  }
+  @Test
+  void testRemoveColumn3(){
+    String failedTestComment = "Controller removed column after win";
+    controller.addColumn();
+    controller.addColumn();
+    model.setWinner(model.getPlayerByNumber(1));
+    controller.removeColumn();
+    assertEquals(5, model.getNumberOfColumns(), failedTestComment);
+  }
+  @Test
+  void testRemoveColumn4(){
+    String failedTestComment = "Controller removed column when not empty";
+    controller.addColumn();
+    controller.addColumn();
+    sendCommandToController("A5");
+    controller.removeColumn();
+    assertEquals(5, model.getNumberOfColumns(), failedTestComment);
+  }
 }

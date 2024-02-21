@@ -37,6 +37,9 @@ public class OXOController {
         playerNum = gameModel.getCurrentPlayerNumber();
 
         gameModel.setCellOwner(row, column, gameModel.getPlayerByNumber(playerNum));
+        if(!gameModel.getGameStarted()){
+            gameModel.setGameStarted(true);
+        }
 
         if(this.detectWin(playerNum)){
             gameModel.setWinner(gameModel.getPlayerByNumber(playerNum));
@@ -72,8 +75,21 @@ public class OXOController {
             gameModel.removeColumn();
         }
     }
-    public void increaseWinThreshold() {}
-    public void decreaseWinThreshold() {}
+    public void increaseWinThreshold() {
+        int winThresh = gameModel.getWinThreshold();
+        int maxWinThresh = Math.min(gameModel.getNumberOfRows(), gameModel.getNumberOfColumns());
+
+        if(winThresh < maxWinThresh && !gameModel.isGameDrawn() && gameModel.getWinner() == null){
+            gameModel.setWinThreshold(winThresh + 1);
+        }
+
+    }
+    public void decreaseWinThreshold() {
+        int winThresh = gameModel.getWinThreshold();
+        if(winThresh > 3 && !gameModel.getGameStarted() && !gameModel.isGameDrawn() && gameModel.getWinner() == null){
+            gameModel.setWinThreshold(winThresh - 1);
+        }
+    }
     public void reset() {
         int nRows = gameModel.getNumberOfRows();
         int nCols = gameModel.getNumberOfColumns();
@@ -86,6 +102,7 @@ public class OXOController {
         gameModel.setWinner(null);
         gameModel.setGameDrawn(false);
         gameModel.setCurrentPlayerNumber(0);
+        gameModel.setGameStarted(false);
     }
 
     public boolean detectWin(int playerNum){

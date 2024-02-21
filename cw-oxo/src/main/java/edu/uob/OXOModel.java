@@ -12,8 +12,11 @@ public class OXOModel {
     private boolean gameDrawn;
     private int winThreshold;
 
+    private boolean gameStarted;
+
     public OXOModel(int numberOfRows, int numberOfColumns, int winThresh) {
         winThreshold = winThresh;
+        this.gameStarted = false;
         cells = new ArrayList<>() {{
             for(int i = 0; i < numberOfRows; i++) {
                 add(new ArrayList<>() {{
@@ -98,7 +101,7 @@ public class OXOModel {
         if(nRows < 9){
             cells.add(new ArrayList<>() {{
                 for (int j = 0; j < nCols; j++){
-                    add(new OXOPlayer('\0'));
+                    add(null);
                 }
             }});
         }
@@ -110,7 +113,7 @@ public class OXOModel {
 
         if (nCols < 9) {
             for(int i = 0; i < nRows; i++){
-                cells.get(i).add(new OXOPlayer('\0'));
+                cells.get(i).add(null);
             }
         }
         this.setGameDrawn(false);
@@ -118,20 +121,42 @@ public class OXOModel {
 
     public void removeRow(){
         int nRows = getNumberOfRows();
+        int nCols = getNumberOfColumns();
 
-        if(nRows > 3){
+        if(nRows > 3 && isRowEmpty(nRows - 1, nCols)){
             cells.remove(nRows-1);
         }
+    }
+    private boolean isRowEmpty(int maxRow, int nCols){
+        for(int i = 0; i < nCols; i++){
+            if(cells.get(maxRow).get(i) != null){
+                return false;
+            }
+        }
+        return true;
     }
     public void removeColumn() {
         int nRows = getNumberOfRows();
         int nCols = getNumberOfColumns();
 
-        if (nCols > 3) {
+        if (nCols > 3 && isColEmpty(nCols -1, nRows)) {
             for(int i = 0; i < nRows; i++){
                 cells.get(i).remove(nCols-1);
             }
         }
     }
-
+    private boolean isColEmpty(int maxCol, int nRows){
+        for(int i = 0; i < nRows; i++){
+            if(cells.get(i).get(maxCol) != null){
+                return false;
+            }
+        }
+        return true;
+    }
+    void setGameStarted(boolean gameStarted){
+        this.gameStarted = gameStarted;
+    }
+    boolean getGameStarted(){
+        return this.gameStarted;
+    }
 }
