@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="edu.uob.ExampleControllerTests" time="0.158" tests="35" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="17"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\test-classes;C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\classes;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\hamis\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite\1.8.2\junit-platform-suite-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-api\1.8.2\junit-platform-suite-api-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-engine\1.8.2\junit-platform-suite-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-commons\1.8.2\junit-platform-suite-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-launcher\1.8.2\junit-platform-launcher-1.8.2.jar;"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="user.timezone" value="Europe/London"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="GB"/>
+    <property name="sun.boot.library.path" value="C:\Users\hamis\.jdks\temurin-17.0.10\bin"/>
+    <property name="sun.java.command" value="C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104\surefirebooter10282701845860781288.jar C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104 2024-02-22T15-29-03_841-jvmRun1 surefire13936390817477512115tmp surefire_04518768159549200410tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\test-classes;C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\classes;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\hamis\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite\1.8.2\junit-platform-suite-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-api\1.8.2\junit-platform-suite-api-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-engine\1.8.2\junit-platform-suite-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-commons\1.8.2\junit-platform-suite-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-launcher\1.8.2\junit-platform-launcher-1.8.2.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\hamis"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-01-16"/>
+    <property name="java.home" value="C:\Users\hamis\.jdks\temurin-17.0.10"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104\surefirebooter10282701845860781288.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="17.0.10+7"/>
+    <property name="user.name" value="hamis"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="Cp1252"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-17.0.10+7"/>
+    <property name="localRepository" value="C:\Users\hamis\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="C:\Users\hamis\AppData\Local\Temp\"/>
+    <property name="java.version" value="17.0.10"/>
+    <property name="user.dir" value="C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Users\hamis\.jdks\temurin-17.0.10\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\Vagrant\bin;C:\Program Files\Git\cmd;C:\Users\hamis\AppData\Local\Microsoft\WindowsApps;C:\Users\hamis\AppData\Local\GitHubDesktop\bin;C:\Users\hamis\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\hamis\.jdks\temurin-17.0.10\bin;C:\Users\hamis\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-6.1.1-full_build\bin;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="17.0.10+7"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="61.0"/>
+  </properties>
+  <testcase name="testAddRow1" classname="edu.uob.ExampleControllerTests" time="0.036"/>
+  <testcase name="testAddRow2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testAddRow3" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testDecreaseWinThreshold1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testDecreaseWinThreshold2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testDecreaseWinThreshold3" classname="edu.uob.ExampleControllerTests" time="0"/>
+  <testcase name="testDecreaseWinThreshold4" classname="edu.uob.ExampleControllerTests" time="0"/>
+  <testcase name="testDraw" classname="edu.uob.ExampleControllerTests" time="0.023"/>
+  <testcase name="testBasicWin" classname="edu.uob.ExampleControllerTests" time="0.009"/>
+  <testcase name="testCellAlreadyTakenException" classname="edu.uob.ExampleControllerTests" time="0.006"/>
+  <testcase name="testInvalidIdentifierException" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testBasicMoveTaking" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testInvalidIdentifierCharacterException1" classname="edu.uob.ExampleControllerTests" time="0.005"/>
+  <testcase name="testInvalidIdentifierCharacterException2" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testRemoveColumn1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveColumn2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveColumn3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveColumn4" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testIncreaseWinThreshold1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testIncreaseWinThreshold2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testIncreaseWinThreshold3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testIncreaseWinThreshold4" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testIncreaseWinThreshold5" classname="edu.uob.ExampleControllerTests" time="0"/>
+  <testcase name="testRemoveRow1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveRow2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveRow3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveRow4" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testDiagWin1" classname="edu.uob.ExampleControllerTests" time="0.005"/>
+  <testcase name="testDiagWin2" classname="edu.uob.ExampleControllerTests" time="0.003"/>
+  <testcase name="testOutsideCellRangeException1" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testOutsideCellRangeException2" classname="edu.uob.ExampleControllerTests" time="0.003"/>
+  <testcase name="testVerticalWin" classname="edu.uob.ExampleControllerTests" time="0.006"/>
+  <testcase name="testAddColumn1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testAddColumn2" classname="edu.uob.ExampleControllerTests" time="0"/>
+  <testcase name="testAddColumn3" classname="edu.uob.ExampleControllerTests" time="0"/>
+</testsuite>
