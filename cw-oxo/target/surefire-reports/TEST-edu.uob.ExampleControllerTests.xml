@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="edu.uob.ExampleControllerTests" time="0.158" tests="35" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="edu.uob.ExampleControllerTests" time="0.242" tests="35" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="C:\Users\hamis\.jdks\temurin-17.0.10\bin"/>
-    <property name="sun.java.command" value="C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104\surefirebooter10282701845860781288.jar C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104 2024-02-22T15-29-03_841-jvmRun1 surefire13936390817477512115tmp surefire_04518768159549200410tmp"/>
+    <property name="sun.java.command" value="C:\Users\hamis\AppData\Local\Temp\surefire8445909859645894108\surefirebooter16527222161455173911.jar C:\Users\hamis\AppData\Local\Temp\surefire8445909859645894108 2024-02-22T15-57-34_363-jvmRun1 surefire17806060055712458506tmp surefire_017794380532038947760tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\test-classes;C:\Users\hamis\IdeaProjects\Java_Unit\JAVA2023_Sols\cw-oxo\target\classes;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter\5.8.2\junit-jupiter-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\hamis\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.8.2\junit-jupiter-params-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite\1.8.2\junit-platform-suite-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-api\1.8.2\junit-platform-suite-api-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-engine\1.8.2\junit-platform-suite-engine-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-suite-commons\1.8.2\junit-platform-suite-commons-1.8.2.jar;C:\Users\hamis\.m2\repository\org\junit\platform\junit-platform-launcher\1.8.2\junit-platform-launcher-1.8.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\hamis\AppData\Local\Temp\surefire16043497513522585104\surefirebooter10282701845860781288.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\hamis\AppData\Local\Temp\surefire8445909859645894108\surefirebooter16527222161455173911.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.10+7"/>
@@ -57,38 +57,38 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="testAddRow1" classname="edu.uob.ExampleControllerTests" time="0.036"/>
+  <testcase name="testAddRow1" classname="edu.uob.ExampleControllerTests" time="0.079"/>
   <testcase name="testAddRow2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testAddRow3" classname="edu.uob.ExampleControllerTests" time="0.002"/>
   <testcase name="testDecreaseWinThreshold1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
-  <testcase name="testDecreaseWinThreshold2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
-  <testcase name="testDecreaseWinThreshold3" classname="edu.uob.ExampleControllerTests" time="0"/>
-  <testcase name="testDecreaseWinThreshold4" classname="edu.uob.ExampleControllerTests" time="0"/>
-  <testcase name="testDraw" classname="edu.uob.ExampleControllerTests" time="0.023"/>
-  <testcase name="testBasicWin" classname="edu.uob.ExampleControllerTests" time="0.009"/>
-  <testcase name="testCellAlreadyTakenException" classname="edu.uob.ExampleControllerTests" time="0.006"/>
-  <testcase name="testInvalidIdentifierException" classname="edu.uob.ExampleControllerTests" time="0.002"/>
-  <testcase name="testBasicMoveTaking" classname="edu.uob.ExampleControllerTests" time="0.001"/>
-  <testcase name="testInvalidIdentifierCharacterException1" classname="edu.uob.ExampleControllerTests" time="0.005"/>
-  <testcase name="testInvalidIdentifierCharacterException2" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testDecreaseWinThreshold2" classname="edu.uob.ExampleControllerTests" time="0"/>
+  <testcase name="testDecreaseWinThreshold3" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testDecreaseWinThreshold4" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testDraw" classname="edu.uob.ExampleControllerTests" time="0.03"/>
+  <testcase name="testBasicWin" classname="edu.uob.ExampleControllerTests" time="0.008"/>
+  <testcase name="testCellAlreadyTakenException" classname="edu.uob.ExampleControllerTests" time="0.008"/>
+  <testcase name="testInvalidIdentifierException" classname="edu.uob.ExampleControllerTests" time="0.005"/>
+  <testcase name="testBasicMoveTaking" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testInvalidIdentifierCharacterException1" classname="edu.uob.ExampleControllerTests" time="0.012"/>
+  <testcase name="testInvalidIdentifierCharacterException2" classname="edu.uob.ExampleControllerTests" time="0.003"/>
   <testcase name="testRemoveColumn1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testRemoveColumn2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testRemoveColumn3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testRemoveColumn4" classname="edu.uob.ExampleControllerTests" time="0.002"/>
-  <testcase name="testIncreaseWinThreshold1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testIncreaseWinThreshold1" classname="edu.uob.ExampleControllerTests" time="0"/>
   <testcase name="testIncreaseWinThreshold2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testIncreaseWinThreshold3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testIncreaseWinThreshold4" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testIncreaseWinThreshold5" classname="edu.uob.ExampleControllerTests" time="0"/>
-  <testcase name="testRemoveRow1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
+  <testcase name="testRemoveRow1" classname="edu.uob.ExampleControllerTests" time="0"/>
   <testcase name="testRemoveRow2" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testRemoveRow3" classname="edu.uob.ExampleControllerTests" time="0.001"/>
-  <testcase name="testRemoveRow4" classname="edu.uob.ExampleControllerTests" time="0.002"/>
-  <testcase name="testDiagWin1" classname="edu.uob.ExampleControllerTests" time="0.005"/>
-  <testcase name="testDiagWin2" classname="edu.uob.ExampleControllerTests" time="0.003"/>
-  <testcase name="testOutsideCellRangeException1" classname="edu.uob.ExampleControllerTests" time="0.002"/>
-  <testcase name="testOutsideCellRangeException2" classname="edu.uob.ExampleControllerTests" time="0.003"/>
-  <testcase name="testVerticalWin" classname="edu.uob.ExampleControllerTests" time="0.006"/>
+  <testcase name="testRemoveRow4" classname="edu.uob.ExampleControllerTests" time="0.003"/>
+  <testcase name="testDiagWin1" classname="edu.uob.ExampleControllerTests" time="0.007"/>
+  <testcase name="testDiagWin2" classname="edu.uob.ExampleControllerTests" time="0.007"/>
+  <testcase name="testOutsideCellRangeException1" classname="edu.uob.ExampleControllerTests" time="0.003"/>
+  <testcase name="testOutsideCellRangeException2" classname="edu.uob.ExampleControllerTests" time="0.002"/>
+  <testcase name="testVerticalWin" classname="edu.uob.ExampleControllerTests" time="0.005"/>
   <testcase name="testAddColumn1" classname="edu.uob.ExampleControllerTests" time="0.001"/>
   <testcase name="testAddColumn2" classname="edu.uob.ExampleControllerTests" time="0"/>
   <testcase name="testAddColumn3" classname="edu.uob.ExampleControllerTests" time="0"/>

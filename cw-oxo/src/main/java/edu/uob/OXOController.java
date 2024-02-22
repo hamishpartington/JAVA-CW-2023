@@ -21,7 +21,7 @@ public class OXOController {
             throw new OXOMoveException.InvalidIdentifierCharacterException(OXOMoveException.RowOrColumn.COLUMN, command.charAt(1));
         } else if((command.toLowerCase().charAt(0) - 'a') >= gameModel.getNumberOfRows()){
             throw new OXOMoveException.OutsideCellRangeException(OXOMoveException.RowOrColumn.ROW, command.charAt(0));
-        } else if((command.toLowerCase().charAt(1) - '1') >= gameModel.getNumberOfColumns()) {
+        } else if((command.toLowerCase().charAt(1) - '1') >= gameModel.getNumberOfColumns() || command.toLowerCase().charAt(1) == '0') {
             throw new OXOMoveException.OutsideCellRangeException(OXOMoveException.RowOrColumn.COLUMN, command.charAt(1));
         } else if(gameModel.getCellOwner((command.toLowerCase().charAt(0) - 'a'), (command.charAt(1) - '1')) != null){
             throw new OXOMoveException.CellAlreadyTakenException(command.charAt(0), command.charAt(1));
