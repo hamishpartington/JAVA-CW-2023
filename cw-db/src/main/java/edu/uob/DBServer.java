@@ -15,22 +15,8 @@ public class DBServer {
     public static void main(String args[]) throws IOException {
         DBServer server = new DBServer();
         server.blockingListenOn(8888);
-        server.readData(args[0]);
     }
 
-    public static void readData(String fileName) throws IOException {
-        String filePath = this.storageFolderPath + File.separator + fileName;
-        File fileToOpen = new File(filePath);
-        if(fileToOpen.exists()){
-            FileReader reader = new FileReader(fileToOpen);
-            BufferedReader buffReader = new BufferedReader(reader);
-            String firstLine = buffReader.readLine();
-            System.out.println(firstLine);
-            buffReader.close();
-            reader.close();
-        }
-
-    }
 
     /**
     * KEEP this signature otherwise we won't be able to mark your submission correctly.
