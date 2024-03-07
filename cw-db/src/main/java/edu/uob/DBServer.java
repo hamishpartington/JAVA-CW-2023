@@ -1,11 +1,6 @@
 package edu.uob;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
@@ -20,6 +15,21 @@ public class DBServer {
     public static void main(String args[]) throws IOException {
         DBServer server = new DBServer();
         server.blockingListenOn(8888);
+        server.readData(args[0]);
+    }
+
+    public static void readData(String fileName) throws IOException {
+        String filePath = this.storageFolderPath + File.separator + fileName;
+        File fileToOpen = new File(filePath);
+        if(fileToOpen.exists()){
+            FileReader reader = new FileReader(fileToOpen);
+            BufferedReader buffReader = new BufferedReader(reader);
+            String firstLine = buffReader.readLine();
+            System.out.println(firstLine);
+            buffReader.close();
+            reader.close();
+        }
+
     }
 
     /**
@@ -41,6 +51,7 @@ public class DBServer {
     *
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
+
     public String handleCommand(String command) {
         // TODO implement your server logic here
         return "";
