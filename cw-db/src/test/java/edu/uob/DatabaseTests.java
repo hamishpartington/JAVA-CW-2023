@@ -15,6 +15,9 @@ public class DatabaseTests {
     @BeforeEach
     public void setup() {
         database = new Database("test");
+        if(Files.exists(Paths.get(database.getFolderPath()))){
+            assertDoesNotThrow(database::drop, "io exception thrown when dropping database");
+        }
     }
 
     @Test
@@ -23,6 +26,12 @@ public class DatabaseTests {
         boolean folderExists = Files.exists(Paths.get(database.getFolderPath()));
         assertTrue(folderExists, "Failed to create database");
     }
+    @Test
+    public void testDBAlreadyExists() {
+        assertDoesNotThrow(database::create, "io exception thrown when creating database");
+        assertThrows(DBException.DBAlreadyExists.class, database::create,
+                "Database was created when it already exists");
+    }
 
     @Test
     public void testDrop() {
@@ -30,5 +39,11 @@ public class DatabaseTests {
         assertDoesNotThrow(database::drop, "io exception thrown when dropping database");
         boolean folderExists = Files.exists(Paths.get(database.getFolderPath()));
         assertFalse(folderExists, "Failed to drop database");
+    }
+
+    @Test
+    public void testDBDoesNotExist() {
+        assertThrows(DBException.DBDoesNotExist.class, database::drop,
+                "Cannot drop database which does not exist");
     }
 }
