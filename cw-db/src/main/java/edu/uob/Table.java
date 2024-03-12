@@ -66,9 +66,26 @@ public class Table {
         writer.close();
     }
 
-//    public String select(ArrayList<String> fields) {
+//    public Table select(ArrayList<String> fields) {
+//        if(fields.get(0).equals("*")){
 //
+//        }
 //    }
+//
+    public String toString(){
+        String outputString = "";
+        for(String f : this.fields){
+            outputString = outputString.concat(f + "\t");
+        }
+        outputString = outputString.concat("\n");
+        for(int i = 0; i < this.data.get(0).size(); i++){
+            for(List<String> a : this.data){
+                outputString = outputString.concat(a.get(i) + "\t");
+            }
+            outputString = outputString.concat("\n");
+        }
+        return outputString;
+    }
 
     public File getTableFile() {
         return tableFile;

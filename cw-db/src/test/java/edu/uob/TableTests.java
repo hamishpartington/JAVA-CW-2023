@@ -79,6 +79,27 @@ public class TableTests {
     }
 
     @Test
+    public void testToString() {
+        ArrayList<String> attributes = new ArrayList<>();
+        attributes.add("age");
+        attributes.add("DoB");
+        attributes.add("gender");
+        assertDoesNotThrow(()->database.createTable("test", attributes),
+                "Io exception thrown when creating table");
+        ArrayList<String> values = new ArrayList<>();
+        values.add("25");
+        values.add("23/08/1997");
+        values.add("Male");
+        assertDoesNotThrow(()->database.insertIntoTable("test", values),
+                "Exception thrown attempting to insert values");
+        assertDoesNotThrow(()->database.insertIntoTable("test", values),
+                "Exception thrown attempting to insert values");
+        String expectedString = "id\tage\tDoB\tgender\t\n1\t25\t23/08/1997\tMale\t\n2\t25\t23/08/1997\tMale\t\n";
+        String actualString = database.getTables().get("test").toString();
+        assertEquals(expectedString, actualString, "To String not working as expected");
+    }
+
+    @Test
     public void testIncorrectNumberOfValues() {
         ArrayList<String> attributes = new ArrayList<>();
         attributes.add("age");
