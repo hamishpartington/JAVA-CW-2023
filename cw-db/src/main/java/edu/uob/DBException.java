@@ -39,4 +39,10 @@ public class DBException extends Exception {
             super("All fields must be unique");
         }
     }
+
+    public static class fieldDoesNotExist extends DBException {
+        public fieldDoesNotExist(String field) {
+            super("Cannot SELECT " + field + " as it does not exist");
+        }
+    }
 }

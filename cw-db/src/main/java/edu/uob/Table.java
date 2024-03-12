@@ -23,6 +23,8 @@ public class Table {
         this.name = name;
         this.parentDatabase = parentDatabase;
         this.currentId = 1;
+        this.data = new ArrayList<>();
+        this.fields = new ArrayList<>();
     }
     public void create(ArrayList<String> attributes) throws IOException {
         this.tableFile = new File(this.parentDatabase.getFolderPath(), this.name + ".tab");
@@ -30,8 +32,6 @@ public class Table {
         this.tableFile.setReadable(true);
         FileWriter writer = new FileWriter(tableFile);
         writer.write("id\t");
-        this.data = new ArrayList<>();
-        this.fields = new ArrayList<>();
         this.fields.add("id");
         this.data.add(new ArrayList<>());
         if(attributes != null){
@@ -66,12 +66,22 @@ public class Table {
         writer.close();
     }
 
-//    public Table select(ArrayList<String> fields) {
-//        if(fields.get(0).equals("*")){
-//
-//        }
-//    }
-//
+    public Table select(ArrayList<String> fields) throws DBException.fieldDoesNotExist, IOException {
+        if(fields.get(0).equals("*")){
+            return this;
+        }
+        Table procTable = new Table(null, null);
+        for(String f : fields) {
+            if(!this.fields.contains(f)){
+                throw new DBException.fieldDoesNotExist(f);
+            }
+            procTable.fields.add(f);
+            int dataIndex = this.fields.indexOf(f);
+            procTable.data.add(this.data.get(dataIndex));
+        }
+        return procTable;
+    }
+
     public String toString(){
         String outputString = "";
         for(String f : this.fields){

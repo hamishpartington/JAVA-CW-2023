@@ -40,9 +40,9 @@ public class Database {
         return folderPath;
     }
 
-    public void createTable(String name, ArrayList<String> attributes) throws IOException, DBException.TableAlreadyExists, DBException.duplicateFields {
+    public void createTable(String tableName, ArrayList<String> attributes) throws IOException, DBException.TableAlreadyExists, DBException.duplicateFields {
         if(this.tables.containsKey(name)){
-            throw new DBException.TableAlreadyExists(name, this.name);
+            throw new DBException.TableAlreadyExists(tableName, this.name);
         }
         if(attributes != null){
             if(this.checkForDuplicates(attributes)){
@@ -63,18 +63,25 @@ public class Database {
         return false;
     }
     public void dropTable(String tableName) throws DBException.TableDoesNotExist {
-        if(!this.tables.containsKey(name)){
-            throw new DBException.TableDoesNotExist(name, this.name);
+        if(!this.tables.containsKey(tableName)){
+            throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         this.tables.get(tableName).drop();
         this.tables.remove(tableName);
     }
 
     public void insertIntoTable(String tableName, ArrayList<String> values) throws DBException.TableDoesNotExist, IOException, DBException.incorrectNumberOfValues {
-        if(!this.tables.containsKey(name)){
-            throw new DBException.TableDoesNotExist(name, this.name);
+        if(!this.tables.containsKey(tableName)){
+            throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         this.tables.get(tableName).insert(values);
+    }
+
+    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException.TableDoesNotExist, DBException.fieldDoesNotExist, IOException {
+        if(!this.tables.containsKey(tableName)){
+            throw new DBException.TableDoesNotExist(tableName, this.name);
+        }
+        return this.tables.get(tableName).select(fields);
     }
     public Map<String, Table> getTables() {
         return tables;
