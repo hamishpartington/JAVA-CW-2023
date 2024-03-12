@@ -27,4 +27,16 @@ public class DBException extends Exception {
             super("The database: " + DBName + " does not exist");
         }
     }
+
+    public static class incorrectNumberOfValues extends DBException {
+        public incorrectNumberOfValues(String tableName, int size) {
+            super("Incorrect number of values! The table: " + tableName + " has " + size + " fields");
+        }
+    }
+
+    public static class duplicateFields extends DBException {
+        public duplicateFields() {
+            super("All fields must be unique");
+        }
+    }
 }
