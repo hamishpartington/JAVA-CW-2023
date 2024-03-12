@@ -38,4 +38,11 @@ public class Table {
             writer.close();
         }
     }
+    public void drop()  {
+        this.tableFile.delete();
+    }
+
+    public File getTableFile() {
+        return tableFile;
+    }
 }

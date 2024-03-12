@@ -38,10 +38,21 @@ public class Database {
 
     public void createTable(String name, Set<String> attributes) throws IOException, DBException.TableAlreadyExists {
         if(this.tables.containsKey(name)){
-            throw new DBException.TableAlreadyExists(name);
+            throw new DBException.TableAlreadyExists(name, this.name);
         }
         Table newTable = new Table(name, this);
         newTable.create(attributes);
         tables.put(name, newTable);
+    }
+    public void dropTable(String tableName) throws DBException.TableDoesNotExist {
+        if(!this.tables.containsKey(name)){
+            throw new DBException.TableDoesNotExist(name, this.name);
+        }
+        this.tables.get(tableName).drop();
+        this.tables.remove(tableName);
+    }
+
+    public Map<String, Table> getTables() {
+        return tables;
     }
 }

@@ -6,8 +6,13 @@ public class DBException extends Exception {
     }
 
     public static class TableAlreadyExists extends DBException {
-        public TableAlreadyExists(String tableName) {
-            super(tableName + " already exists in database");
+        public TableAlreadyExists(String tableName, String databaseName) {
+            super(tableName + " already exists in the " + databaseName + " database");
+        }
+    }
+    public static class TableDoesNotExist extends DBException {
+        public TableDoesNotExist (String tableName, String databaseName) {
+            super("The table: " + tableName + " does not exist in the " + databaseName + " database");
         }
     }
 
