@@ -30,8 +30,7 @@ public class Parser {
             case "CREATE" -> this.parseCreate();
             case "DROP" -> this.parseDrop();
             case "ALTER" -> this.parseAlter();
-            case "INSERT" -> {
-            }
+            case "INSERT" -> this.parseInsert();
             case "SELECT" -> {
             }
             case "UPDATE" -> {
@@ -148,5 +147,24 @@ public class Parser {
         }
         currentToken++;
         parseAttributeName();
+    }
+
+    public void parseInsert() throws ParserException {
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("INTO")){
+            throw new ParserException.NoInto();
+        }
+        currentToken++;
+        parseTableName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("VALUES")){
+            throw new ParserException.NoValues();
+        }
+        currentToken++;
+        if(!this.tokens.get(currentToken).equals("(")){
+            throw new ParserException.NoValueList();
+        }
+        currentToken++;
+
     }
 }

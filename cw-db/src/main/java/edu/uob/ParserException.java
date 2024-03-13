@@ -51,6 +51,24 @@ public class ParserException extends Exception{
             super("Can only alter a table");
         }
     }
+
+    public static class NoInto extends ParserException {
+        public NoInto () {
+            super("Need INTO after INSERT");
+        }
+    }
+
+    public static class NoValues extends ParserException {
+        public NoValues () {
+            super("Need VALUES after table name in INSERT statement");
+        }
+    }
+
+    public static class NoValueList extends ParserException {
+        public NoValueList () {
+            super("Need list of values in parentheses after VALUES in INSERT statement");
+        }
+    }
     public static class InvalidAlterationType extends ParserException {
         public InvalidAlterationType (String token) {
             super("Can only ADD or DROP in ALTER command. Not:" + token);
