@@ -46,6 +46,16 @@ public class ParserException extends Exception{
         }
     }
 
+    public static class InvalidAlter extends ParserException {
+        public InvalidAlter () {
+            super("Can only alter a table");
+        }
+    }
+    public static class InvalidAlterationType extends ParserException {
+        public InvalidAlterationType (String token) {
+            super("Can only ADD or DROP in ALTER command. Not:" + token);
+        }
+    }
     public static class AttributeListNotTerminated extends ParserException {
         public AttributeListNotTerminated (String terminator) {
             super("AttributeList must be terminated with " + terminator);

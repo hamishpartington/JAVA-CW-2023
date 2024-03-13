@@ -26,29 +26,21 @@ public class Parser {
         }
         String firstToken = this.tokens.get(0).toUpperCase();
         switch (firstToken) {
-            case "USE":
-                this.parseUse();
-                break;
-            case "CREATE":
-                this.parseCreate();
-                break;
-            case "DROP":
-                this.parseDrop();
-                break;
-            case "ALTER":
-                break;
-            case "INSERT":
-                break;
-            case "SELECT":
-                break;
-            case "UPDATE":
-                break;
-            case "DELETE":
-                break;
-            case "JOIN":
-                break;
-            default:
-                throw new ParserException.NotACommandType(firstToken);
+            case "USE" -> this.parseUse();
+            case "CREATE" -> this.parseCreate();
+            case "DROP" -> this.parseDrop();
+            case "ALTER" -> this.parseAlter();
+            case "INSERT" -> {
+            }
+            case "SELECT" -> {
+            }
+            case "UPDATE" -> {
+            }
+            case "DELETE" -> {
+            }
+            case "JOIN" -> {
+            }
+            default -> throw new ParserException.NotACommandType(firstToken);
         }
     }
     public void parseUse() throws ParserException {
@@ -100,7 +92,7 @@ public class Parser {
     public void parseAttributeList(String terminator) throws ParserException {
         currentToken++;
         this.checkForAttributeListTerminator(terminator);
-        while(!this.tokens.get(currentToken).toUpperCase().equals(terminator)){
+        while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(currentToken).equals(",")) {
                 currentToken++;
             }
@@ -111,7 +103,7 @@ public class Parser {
 
     private void checkForAttributeListTerminator(String terminator) throws ParserException {
         int tempToken = currentToken;
-        while(!this.tokens.get(tempToken).toUpperCase().equals(terminator)){
+        while(!this.tokens.get(tempToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(tempToken).equals(";")){
                 throw new ParserException.AttributeListNotTerminated(terminator);
             }
@@ -129,12 +121,32 @@ public class Parser {
 
         if(token.equals("TABLE")){
             currentToken++;
-            parseTableName();
+            this.parseTableName();
         } else if(token.equals("DATABASE")){
             currentToken++;
-            parseDatabaseName();
+            this.parseDatabaseName();
         } else {
             throw new ParserException.InvalidDrop(token);
         }
+    }
+
+    public void parseAlter() throws ParserException {
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("TABLE")){
+            throw new ParserException.InvalidAlter();
+        }
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        this.parseAlterationType();
+    }
+
+    public void parseAlterationType() throws ParserException {
+        String token = this.tokens.get(currentToken).toUpperCase();
+        if(!(token.equals("DROP") || token.equals("ADD"))){
+            throw new ParserException.InvalidAlterationType(token);
+        }
+        currentToken++;
+        parseAttributeName();
     }
 }
