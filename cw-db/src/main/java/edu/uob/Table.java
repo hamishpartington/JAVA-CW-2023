@@ -30,7 +30,7 @@ public class Table {
         this.tableFile = new File(this.parentDatabase.getFolderPath(), this.name + ".tab");
         this.tableFile.setWritable(true);
         this.tableFile.setReadable(true);
-        FileWriter writer = new FileWriter(tableFile);
+        FileWriter writer = new FileWriter(this.tableFile);
         writer.write("id\t");
         this.fields.add("id");
         this.data.add(new ArrayList<>());
@@ -66,7 +66,7 @@ public class Table {
         writer.close();
     }
 
-    public Table select(ArrayList<String> fields) throws DBException.fieldDoesNotExist, IOException {
+    public Table select(ArrayList<String> fields) throws DBException.fieldDoesNotExist {
         if(fields.get(0).equals("*")){
             return this;
         }
@@ -82,6 +82,28 @@ public class Table {
         return procTable;
     }
 
+    public void alter(String attribute, String alterationType) throws DBException.duplicateFields, DBException.fieldDoesNotExist, IOException, DBException.cannotRemoveID {
+        if(alterationType.equals("ADD")){
+            if(this.fields.contains(attribute)){
+                throw new DBException.duplicateFields();
+            }
+            this.fields.add(attribute);
+            this.data.add(new ArrayList<>());
+        }
+        if(alterationType.equals("DROP")){
+            if(attribute.equals("id")){
+                throw new DBException.cannotRemoveID();
+            }
+            if(!this.fields.contains(attribute)){
+                throw new DBException.fieldDoesNotExist(attribute);
+            }
+            int fieldIndex = this.fields.indexOf(attribute);
+            this.fields.remove(attribute);
+            this.data.remove(fieldIndex);
+        }
+        this.updateTableFile();
+    }
+
     public String toString(){
         String outputString = "";
         for(String f : this.fields){
@@ -90,11 +112,34 @@ public class Table {
         outputString = outputString.concat("\n");
         for(int i = 0; i < this.data.get(0).size(); i++){
             for(List<String> a : this.data){
+                if(a.size() == 0){
+                    break;
+                }
                 outputString = outputString.concat(a.get(i) + "\t");
             }
             outputString = outputString.concat("\n");
         }
         return outputString;
+    }
+
+    public void updateTableFile() throws IOException {
+        FileWriter writer = new FileWriter(this.tableFile);
+        for (String f : this.fields) {
+            writer.write(f + "\t");
+        }
+        writer.write("\n");
+        for(int i = 0; i < this.data.get(0).size(); i++){
+            for(List<String> a : this.data) {
+                if(a.size() == 0){
+                    writer.write("\t");
+                    break;
+                }
+                writer.write(a.get(i) + "\t");
+            }
+            writer.write("\n");
+        }
+            writer.flush();
+            writer.close();
     }
 
     public File getTableFile() {

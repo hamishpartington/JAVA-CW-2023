@@ -45,4 +45,10 @@ public class DBException extends Exception {
             super("Cannot SELECT " + field + " as it does not exist");
         }
     }
+
+    public static class cannotRemoveID extends DBException {
+        public cannotRemoveID() {
+            super("The id field cannot be removed");
+        }
+    }
 }

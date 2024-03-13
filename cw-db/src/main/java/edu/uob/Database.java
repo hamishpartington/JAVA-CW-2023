@@ -77,12 +77,20 @@ public class Database {
         this.tables.get(tableName).insert(values);
     }
 
-    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException.TableDoesNotExist, DBException.fieldDoesNotExist, IOException {
+    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException.TableDoesNotExist, DBException.fieldDoesNotExist {
         if(!this.tables.containsKey(tableName)){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         return this.tables.get(tableName).select(fields);
     }
+
+    public void alterTable(String tableName, String tableAttribute, String alterationType) throws DBException.TableDoesNotExist, DBException.duplicateFields, DBException.fieldDoesNotExist, IOException, DBException.cannotRemoveID {
+        if(!this.tables.containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.name);
+        }
+        this.tables.get(tableName).alter(tableAttribute, alterationType);
+    }
+
     public Map<String, Table> getTables() {
         return tables;
     }
