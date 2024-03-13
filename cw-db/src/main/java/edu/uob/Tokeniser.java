@@ -50,4 +50,8 @@ public class Tokeniser {
         // Finally split on the space char (since there will now ALWAYS be a space between tokens)
         return input.split(" ");
     }
+
+    public ArrayList<String> getTokens() {
+        return this.tokens;
+    }
 }
