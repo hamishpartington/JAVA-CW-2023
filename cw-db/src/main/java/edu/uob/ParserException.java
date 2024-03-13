@@ -40,6 +40,12 @@ public class ParserException extends Exception{
         }
     }
 
+    public static class InvalidDrop extends ParserException {
+        public InvalidDrop (String token) {
+            super("Can only drop a table or database, not " + token);
+        }
+    }
+
     public static class AttributeListNotTerminated extends ParserException {
         public AttributeListNotTerminated (String terminator) {
             super("AttributeList must be terminated with " + terminator);

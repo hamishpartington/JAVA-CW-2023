@@ -33,6 +33,7 @@ public class Parser {
                 this.parseCreate();
                 break;
             case "DROP":
+                this.parseDrop();
                 break;
             case "ALTER":
                 break;
@@ -120,5 +121,20 @@ public class Parser {
 
     public void parseAttributeName() throws ParserException {
         this.parsePlainText(false, true);
+    }
+
+    public void parseDrop() throws ParserException {
+        currentToken++;
+        String token = this.tokens.get(currentToken).toUpperCase();
+
+        if(token.equals("TABLE")){
+            currentToken++;
+            parseTableName();
+        } else if(token.equals("DATABASE")){
+            currentToken++;
+            parseDatabaseName();
+        } else {
+            throw new ParserException.InvalidDrop(token);
+        }
     }
 }

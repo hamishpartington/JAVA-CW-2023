@@ -85,10 +85,18 @@ public class ParserTests {
     }
 
     @Test
-    public void testInvalidAttributeList() {
-        String query = "CREATE TABLE census (name, age, weight;";
+    public void testDrop1() {
+        String query = "DROP TBLE census;";
         Parser parser = new Parser(query);
-        assertThrows(ParserException.AttributeListNotTerminated.class, parser::parseCommand,
-                "Exception not thrown for non-terminated attribute list");
+        assertThrows(ParserException.InvalidDrop.class, parser::parseCommand,
+                "Exception not thrown for invalid drop");
+    }
+
+    @Test
+    public void testDrop2() {
+        String query = "DROP TABLE ce<sus;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidTableName.class, parser::parseCommand,
+                "Exception not thrown for invalid table name in drop");
     }
 }
