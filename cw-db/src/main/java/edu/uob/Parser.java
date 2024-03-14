@@ -90,7 +90,7 @@ public class Parser {
 
     public void parseAttributeList(String terminator) throws ParserException {
         currentToken++;
-        this.checkForAttributeListTerminator(terminator);
+        this.checkForListTerminator(terminator, "Attribute");
         while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(currentToken).equals(",")) {
                 currentToken++;
@@ -100,11 +100,11 @@ public class Parser {
         }
     }
 
-    private void checkForAttributeListTerminator(String terminator) throws ParserException {
+    private void checkForListTerminator(String terminator, String type) throws ParserException {
         int tempToken = currentToken;
         while(!this.tokens.get(tempToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(tempToken).equals(";")){
-                throw new ParserException.AttributeListNotTerminated(terminator);
+                throw new ParserException.ListNotTerminated(terminator, type);
             }
             tempToken++;
         }
@@ -146,7 +146,7 @@ public class Parser {
             throw new ParserException.InvalidAlterationType(token);
         }
         currentToken++;
-        parseAttributeName();
+        this.parseAttributeName();
     }
 
     public void parseInsert() throws ParserException {
@@ -155,7 +155,7 @@ public class Parser {
             throw new ParserException.NoInto();
         }
         currentToken++;
-        parseTableName();
+        this.parseTableName();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("VALUES")){
             throw new ParserException.NoValues();
@@ -164,7 +164,74 @@ public class Parser {
         if(!this.tokens.get(currentToken).equals("(")){
             throw new ParserException.NoValueList();
         }
+        this.parseValueList(")");
         currentToken++;
 
     }
+
+    public void parseValueList(String terminator) throws ParserException {
+        currentToken++;
+        this.checkForListTerminator(terminator, "Value");
+        while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
+            if(this.tokens.get(currentToken).equals(",")) {
+                currentToken++;
+            }
+            this.parseValue();
+            currentToken++;
+        }
+    }
+
+    public void parseValue() throws ParserException {
+        boolean stringLiteral, booleanLiteral, floatLiteral, integerLiteral, nullChar;
+
+        String token = this.tokens.get(currentToken);
+
+        stringLiteral = this.isStringLiteral(token);
+        booleanLiteral = this.isBooleanLiteral(token);
+        floatLiteral = token.matches("^[-|+]?[0-9]+.[0-9]+$");
+        integerLiteral = token.matches("^[-|+]?[0-9]+$");
+        nullChar = token.equalsIgnoreCase("NULL");
+
+        if(!(stringLiteral || booleanLiteral || floatLiteral || integerLiteral || nullChar)) {
+            throw new ParserException.InvalidValue(token);
+        }
+    }
+
+    private boolean isStringLiteral(String token) {
+        int endIndex = token.length() - 1;
+        if(token.charAt(0) != '\'' || token.charAt(endIndex) != '\'') {
+            return false;
+        }
+        for(int i = 1; i < endIndex; i++) {
+            char currentChar = token.charAt(i);
+            if(!this.isCharLiteral(currentChar)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isCharLiteral(char currentChar) {
+        if(this.isSymbol(currentChar) || Character.isLetter(currentChar) || Character.isDigit(currentChar)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isSymbol(char currentChar) {
+        switch (currentChar) {
+            case '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.',
+                    '/', ':', ';', '>', '=', '<', '?', '@', '[', '\\', ']',
+                    '^', '_', ' ', '{', '}', '~' -> { return true; }
+            default -> { return false; }
+        }
+    }
+
+    private boolean isBooleanLiteral(String token) {
+        if(token.equalsIgnoreCase("TRUE") || token.equalsIgnoreCase("FALSE")){
+            return true;
+        }
+        return false;
+    }
+
 }

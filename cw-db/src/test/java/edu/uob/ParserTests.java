@@ -120,4 +120,76 @@ public class ParserTests {
         assertDoesNotThrow(parser::parseCommand,
                 "Exception thrown for valid alter");
     }
+
+    @Test
+    public void testInsert1() {
+        String query = "INSERT INT marks VALUES ('Simon', 65, TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoInto.class, parser::parseCommand,
+                "Exception not thrown for insert with no INTO");
+    }
+
+    @Test
+    public void testInsert2() {
+        String query = "INSERT INTO marks ('Simon', 65, TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoValues.class, parser::parseCommand,
+                "Exception not thrown for insert with no VALUES");
+    }
+
+    @Test
+    public void testInsert3() {
+        String query = "INSERT INTO marks VALUES 'Sim#on', 65, TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoValueList.class, parser::parseCommand,
+                "Exception not thrown for insert with no ValueList");
+    }
+
+    @Test
+    public void testInsert4() {
+        String query = "INSERT INTO marks VALUES ('Sim)on', 65, TRUE;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.ListNotTerminated.class, parser::parseCommand,
+                "Exception not thrown for insert with no ValueList terminator");
+    }
+
+    @Test
+    public void testInsert5() {
+        String query = "INSERT INTO marks VALUES ('Sim£on', +65, TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidValue.class, parser::parseCommand,
+                "Exception not thrown for insert with no invalid value");
+    }
+
+    @Test
+    public void testInsert6() {
+        String query = "INSERT INTO marks VALUES ('Sim)on', +6.5.2, TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidValue.class, parser::parseCommand,
+                "Exception not thrown for insert with invalid value");
+    }
+
+    @Test
+    public void testInsert7() {
+        String query = "INSERT INTO marks VALUES ('Sim)on', +6., TRUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidValue.class, parser::parseCommand,
+                "Exception not thrown for insert with invalid value");
+    }
+
+    @Test
+    public void testInsert8() {
+        String query = "INSERT INTO marks VALUES ('Sim)on', +6, TRUUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidValue.class, parser::parseCommand,
+                "Exception not thrown for insert with invalid value");
+    }
+
+    @Test
+    public void testInsert9() {
+        String query = "INSERT INTO marks VALUES ('Sim)on, +6, TRUUE);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.QueryNotTerminated.class, parser::parseCommand,
+                "Exception not thrown for insert with invalid value");
+    }
 }

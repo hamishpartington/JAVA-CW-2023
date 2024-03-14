@@ -74,9 +74,15 @@ public class ParserException extends Exception{
             super("Can only ADD or DROP in ALTER command. Not:" + token);
         }
     }
-    public static class AttributeListNotTerminated extends ParserException {
-        public AttributeListNotTerminated (String terminator) {
-            super("AttributeList must be terminated with " + terminator);
+    public static class ListNotTerminated extends ParserException {
+        public ListNotTerminated(String terminator, String type) {
+            super(type + " list must be terminated with " + terminator);
+        }
+    }
+
+    public static class InvalidValue extends ParserException {
+        public InvalidValue(String token) {
+            super(token + " is not a valid value.");
         }
     }
 }
