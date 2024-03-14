@@ -121,4 +121,16 @@ public class ParserException extends Exception {
             super("Name value pair should be in Attribute = Value format");
         }
     }
+
+    public static class NoFromDelete extends ParserException {
+        public NoFromDelete(String token) {
+            super("Expected DELETE FROM not DELETE " + token);
+        }
+    }
+
+    public static class NoWhere extends ParserException {
+        public NoWhere(String token) {
+            super("Expected WHERE not " + token);
+        }
+    }
 }

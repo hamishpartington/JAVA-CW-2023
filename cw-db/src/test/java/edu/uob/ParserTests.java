@@ -293,6 +293,38 @@ public class ParserTests {
         String query = "UPDATE census SET age = 10, name = 'Isaac', weight = 50 WHERE name == 'Chris';";
         Parser parser = new Parser(query);
         assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown for invalid name value pair");
+                "Exception thrown for valid update statement");
+    }
+
+    @Test
+    public void testDelete1() {
+        String query = "DELETE FROM Census WHERE (id != 1 AND name LIKE 'I') OR ((age >= 18) AND height <= 180);";
+        Parser parser = new Parser(query);
+        assertDoesNotThrow(parser::parseCommand,
+                "Exception thrown for valid DELETE statement");
+    }
+
+    @Test
+    public void testDelete2() {
+        String query = "DELETE FRM Census WHERE (id != 1 AND name LIKE 'I') OR ((age >= 18) AND height <= 180);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoFromDelete.class, parser::parseCommand,
+                "Exception not thrown for DELETE with no FROM");
+    }
+
+    @Test
+    public void testDelete3() {
+        String query = "DELETE FROM Census WHER (id != 1 AND name LIKE 'I') OR ((age >= 18) AND height <= 180);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoWhere.class, parser::parseCommand,
+                "Exception thrown for DELETE with no WHERE");
+    }
+
+    @Test
+    public void testDelete4() {
+        String query = "DELETE FROM Census WHERE ((id != 1) AND (name LIKE 'I')) OR ((age >= 18) AND height <= 180) invalid;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidStatementSyntax.class, parser::parseCommand,
+                "Exception not thrown for delete with invalid end");
     }
 }

@@ -33,8 +33,7 @@ public class Parser {
             case "INSERT" -> this.parseInsert();
             case "SELECT" -> this.parseSelect();
             case "UPDATE" -> this.parseUpdate();
-            case "DELETE" -> {
-            }
+            case "DELETE" -> this.parseDelete();
             case "JOIN" -> {
             }
             default -> throw new ParserException.NotACommandType(firstToken);
@@ -342,5 +341,21 @@ public class Parser {
             currentToken++;
             this.parseNameValuePair();
         }
+    }
+
+    public void parseDelete() throws ParserException {
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("FROM")) {
+            throw new ParserException.NoFromDelete(this.tokens.get(currentToken));
+        }
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("WHERE")) {
+            throw new ParserException.NoWhere(this.tokens.get(currentToken));
+        }
+        currentToken++;
+        this.parseCondition(false);
+        this.checkValidStatementEnd("DELETE");
     }
 }
