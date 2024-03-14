@@ -239,4 +239,60 @@ public class ParserTests {
         assertDoesNotThrow(parser::parseCommand,
                 "Exception thrown for valid select");
     }
+
+    @Test
+    public void testNoSet() {
+        String query = "UPDATE census SEY age = 10 WHERE name = Chris;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.NoSetInUpdate.class, parser::parseCommand,
+                "Exception not thrown for update with no SET");
+    }
+
+    @Test
+    public void testNoWhere() {
+        String query = "UPDATE census SET age = 10 WHERRE name == 'Chris';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.ListNotTerminated.class, parser::parseCommand,
+                "Exception not thrown for update with no WHERE");
+    }
+
+    @Test
+    public void testUpdate1() {
+        String query = "UPDATE census SET age == 10 WHERE name == 'Chris';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidNameValuePair.class, parser::parseCommand,
+                "Exception not thrown for invalid name value pair");
+    }
+
+    @Test
+    public void testUpdate2() {
+        String query = "UPDATE census SET age = 10 WHERE name == Chris;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidValue.class, parser::parseCommand,
+                "Exception not thrown for invalid name value pair");
+    }
+
+    @Test
+    public void testUpdate3() {
+        String query = "UPDATE census SET age = 10, WHERE name == 'Chris';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidNameValuePair.class, parser::parseCommand,
+                "Exception not thrown for invalid name value pair");
+    }
+
+    @Test
+    public void testUpdate4() {
+        String query = "UPDATE census SET age = 10, nam*e =  WHERE name == 'Chris';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidAttributeName.class, parser::parseCommand,
+                "Exception not thrown for invalid attribute name");
+    }
+
+    @Test
+    public void testUpdate5() {
+        String query = "UPDATE census SET age = 10, name = 'Isaac', weight = 50 WHERE name == 'Chris';";
+        Parser parser = new Parser(query);
+        assertDoesNotThrow(parser::parseCommand,
+                "Exception thrown for invalid name value pair");
+    }
 }

@@ -32,8 +32,7 @@ public class Parser {
             case "ALTER" -> this.parseAlter();
             case "INSERT" -> this.parseInsert();
             case "SELECT" -> this.parseSelect();
-            case "UPDATE" -> {
-            }
+            case "UPDATE" -> this.parseUpdate();
             case "DELETE" -> {
             }
             case "JOIN" -> {
@@ -308,6 +307,40 @@ public class Parser {
     private void checkValidStatementEnd(String statementType) throws ParserException {
         if(!this.tokens.get(currentToken).equals(";")) {
             throw new ParserException.InvalidStatementSyntax(this.tokens.get(currentToken), statementType);
+        }
+    }
+
+    public void parseUpdate() throws ParserException {
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("SET")){
+            throw new ParserException.NoSetInUpdate(this.tokens.get(currentToken));
+        }
+        currentToken++;
+        this.parseNameValueList();
+        currentToken++;
+        this.parseCondition(false);
+        this.checkValidStatementEnd("UPDATE");
+    }
+
+    public void parseNameValueList() throws ParserException {
+        checkForListTerminator("WHERE", "NameValue");
+        this.parseNameValuePair();
+    }
+
+    public void parseNameValuePair() throws ParserException {
+        this.parseAttributeName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equals("=")) {
+            throw new ParserException.InvalidNameValuePair();
+        }
+        currentToken++;
+        this.parseValue();
+        currentToken++;
+        if(this.tokens.get(currentToken).equals(",")) {
+            currentToken++;
+            this.parseNameValuePair();
         }
     }
 }

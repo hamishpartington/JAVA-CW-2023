@@ -109,4 +109,16 @@ public class ParserException extends Exception {
             super(token + " is not a valid syntax for " + statement + " statement");
         }
     }
+
+    public static class NoSetInUpdate extends ParserException {
+        public NoSetInUpdate(String token) {
+            super("Expected SET not " + token);
+        }
+    }
+
+    public static class InvalidNameValuePair extends ParserException {
+        public InvalidNameValuePair() {
+            super("Name value pair should be in Attribute = Value format");
+        }
+    }
 }
