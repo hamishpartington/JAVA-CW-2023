@@ -133,4 +133,10 @@ public class ParserException extends Exception {
             super("Expected WHERE not " + token);
         }
     }
+
+    public static class InvalidJoin extends ParserException {
+        public InvalidJoin(String token, String expected) {
+            super("Invalid JOIN! Expected " + expected + " not " + token);
+        }
+    }
 }

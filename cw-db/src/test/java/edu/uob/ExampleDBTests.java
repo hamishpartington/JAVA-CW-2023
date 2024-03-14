@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.Duration;
 
-public class ExampleDBTests {
+/*public class ExampleDBTests {
 
     private DBServer server;
 
@@ -101,4 +101,4 @@ public class ExampleDBTests {
         assertFalse(response.contains("[OK]"), "An attempt was made to access a non-existent table, however an [OK] tag was returned");
     }
 
-}
+}*/

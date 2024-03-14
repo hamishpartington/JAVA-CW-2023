@@ -34,8 +34,7 @@ public class Parser {
             case "SELECT" -> this.parseSelect();
             case "UPDATE" -> this.parseUpdate();
             case "DELETE" -> this.parseDelete();
-            case "JOIN" -> {
-            }
+            case "JOIN" -> this.parseJoin();
             default -> throw new ParserException.NotACommandType(firstToken);
         }
     }
@@ -292,6 +291,7 @@ public class Parser {
                 numClosing++;
             }
             tempTokenNum++;
+            if(numOpening < numClosing) return false;
         }
         return numOpening == numClosing;
     }
@@ -357,5 +357,30 @@ public class Parser {
         currentToken++;
         this.parseCondition(false);
         this.checkValidStatementEnd("DELETE");
+    }
+
+    public void parseJoin() throws ParserException {
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("AND")){
+            throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "AND");
+        }
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("ON")){
+            throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "ON");
+        }
+        currentToken++;
+        this.parseAttributeName();
+        currentToken++;
+        if(!this.tokens.get(currentToken).equalsIgnoreCase("AND")){
+            throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "AND");
+        }
+        currentToken++;
+        this.parseAttributeName();
+        currentToken++;
+        this.checkValidStatementEnd("JOIN");
     }
 }

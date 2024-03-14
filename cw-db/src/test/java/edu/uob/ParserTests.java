@@ -327,4 +327,36 @@ public class ParserTests {
         assertThrows(ParserException.InvalidStatementSyntax.class, parser::parseCommand,
                 "Exception not thrown for delete with invalid end");
     }
+
+    @Test
+    public void testJoin1() {
+        String query = "JOIN table1 AnD table2 oN id ANd id invalid;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidStatementSyntax.class, parser::parseCommand,
+                "Exception not thrown for join with invalid end");
+    }
+
+    @Test
+    public void testJoin2() {
+        String query = "JOIN table1 AD table2 ON id AND id;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidJoin.class, parser::parseCommand,
+                "Exception not thrown for invalid join");
+    }
+
+    @Test
+    public void testJoin3() {
+        String query = "JOIN table1 AND table2 Orn id AND id;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidJoin.class, parser::parseCommand,
+                "Exception not thrown for invalid join");
+    }
+
+    @Test
+    public void testJoin4() {
+        String query = "JOIN table1 AND table2 On id && id;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidJoin.class, parser::parseCommand,
+                "Exception not thrown for invalid join");
+    }
 }
