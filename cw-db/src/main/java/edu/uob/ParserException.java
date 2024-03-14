@@ -1,6 +1,6 @@
 package edu.uob;
 
-public class ParserException extends Exception{
+public class ParserException extends Exception {
     public ParserException(String message) {
         super(message);
     }
@@ -83,6 +83,30 @@ public class ParserException extends Exception{
     public static class InvalidValue extends ParserException {
         public InvalidValue(String token) {
             super(token + " is not a valid value.");
+        }
+    }
+
+    public static class InvalidSelect extends ParserException {
+        public InvalidSelect(String token) {
+            super("Invalid SELECT statement! Next word in SELECT statement should be ; or WHERE not " + token);
+        }
+    }
+
+    public static class UnmatchedParentheses extends ParserException {
+        public UnmatchedParentheses() {
+            super("WHERE clause contains conditions with unmatched parentheses");
+        }
+    }
+
+    public static class InvalidComparator extends ParserException {
+        public InvalidComparator(String token) {
+            super(token + " is not a valid comparator");
+        }
+    }
+
+    public static class InvalidStatementSyntax extends ParserException {
+        public InvalidStatementSyntax(String token, String statement) {
+            super(token + " is not a valid syntax for " + statement + " statement");
         }
     }
 }

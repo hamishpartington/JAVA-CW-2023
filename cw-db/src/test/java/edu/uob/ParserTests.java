@@ -192,4 +192,51 @@ public class ParserTests {
         assertThrows(ParserException.QueryNotTerminated.class, parser::parseCommand,
                 "Exception not thrown for insert with invalid value");
     }
+
+    @Test
+    public void testSimpleSelect1() {
+        String query = "SELECT * FROM census;";
+        Parser parser = new Parser(query);
+        assertDoesNotThrow(parser::parseCommand,
+                "Exception thrown for valid select");
+    }
+
+    @Test
+    public void testSimpleSelect2() {
+        String query = "SELECT name, id, age FROM census;";
+        Parser parser = new Parser(query);
+        assertDoesNotThrow(parser::parseCommand,
+                "Exception thrown for valid select");
+    }
+
+    @Test
+    public void testConditionalSelect1() {
+        String query = "SELECT name, id, age FROM census WHERE name = 'Simon';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidComparator.class, parser::parseCommand,
+                "Exception thrown for valid select");
+    }
+
+    @Test
+    public void testConditionalSelect2() {
+        String query = "SELECT name, id, age FROM census WHERE (name == 'Simon';";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.UnmatchedParentheses.class, parser::parseCommand,
+                "Exception thrown for valid select");
+    }
+    @Test
+    public void testConditionalSelect3() {
+        String query = "SELECT name, id, age FROM census WHERE (name == 'Simon') && (age == 30);";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidStatementSyntax.class, parser::parseCommand,
+                "Exception thrown for valid select");
+    }
+
+    @Test
+    public void testConditionalSelect4() {
+        String query = "SELECT name, id, age FROM census WHERE (name == 'Simon' AND age == 30) OR weight >= 50 AND name LIKE 'ham';";
+        Parser parser = new Parser(query);
+        assertDoesNotThrow(parser::parseCommand,
+                "Exception thrown for valid select");
+    }
 }

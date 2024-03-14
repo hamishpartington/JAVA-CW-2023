@@ -12,7 +12,7 @@ public class Parser {
         this.tokeniser = new Tokeniser(query);
         this.tokeniser.setup();
         this.tokens = this.tokeniser.getTokens();
-        this.currentToken = 0;
+        currentToken = 0;
     }
 
     public void parseQuery() throws ParserException {
@@ -31,8 +31,7 @@ public class Parser {
             case "DROP" -> this.parseDrop();
             case "ALTER" -> this.parseAlter();
             case "INSERT" -> this.parseInsert();
-            case "SELECT" -> {
-            }
+            case "SELECT" -> this.parseSelect();
             case "UPDATE" -> {
             }
             case "DELETE" -> {
@@ -57,11 +56,11 @@ public class Parser {
         if(!isAlphanumeric && isDatabase){
             throw new ParserException.InvalidDatabaseName(this.tokens.get(currentToken));
         }
-        if(!isAlphanumeric && !isDatabase && !isAttribute){
+        if(!isAlphanumeric && !isAttribute){
             throw new ParserException.InvalidTableName(this.tokens.get(currentToken));
         }
 
-        if(!isAlphanumeric && !isDatabase && isAttribute){
+        if(!isAlphanumeric){
             throw new ParserException.InvalidAttributeName(this.tokens.get(currentToken));
         }
     }
@@ -77,11 +76,14 @@ public class Parser {
             this.parseTableName();
             currentToken++;
             if(this.tokens.get(currentToken).equals("(")){
+                currentToken++;
                 this.parseAttributeList(")");
             }
         } else {
             throw new ParserException.InvalidCreate(token);
         }
+        currentToken++;
+        this.checkValidStatementEnd("CREATE");
     }
 
     public void parseTableName() throws ParserException {
@@ -89,7 +91,6 @@ public class Parser {
     }
 
     public void parseAttributeList(String terminator) throws ParserException {
-        currentToken++;
         this.checkForListTerminator(terminator, "Attribute");
         while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(currentToken).equals(",")) {
@@ -127,6 +128,8 @@ public class Parser {
         } else {
             throw new ParserException.InvalidDrop(token);
         }
+        currentToken++;
+        this.checkValidStatementEnd("DROP");
     }
 
     public void parseAlter() throws ParserException {
@@ -138,6 +141,8 @@ public class Parser {
         this.parseTableName();
         currentToken++;
         this.parseAlterationType();
+        currentToken++;
+        this.checkValidStatementEnd("ALTER");
     }
 
     public void parseAlterationType() throws ParserException {
@@ -166,7 +171,7 @@ public class Parser {
         }
         this.parseValueList(")");
         currentToken++;
-
+        this.checkValidStatementEnd("INSERT");
     }
 
     public void parseValueList(String terminator) throws ParserException {
@@ -212,10 +217,7 @@ public class Parser {
     }
 
     private boolean isCharLiteral(char currentChar) {
-        if(this.isSymbol(currentChar) || Character.isLetter(currentChar) || Character.isDigit(currentChar)){
-            return true;
-        }
-        return false;
+        return this.isSymbol(currentChar) || Character.isLetter(currentChar) || Character.isDigit(currentChar);
     }
 
     private boolean isSymbol(char currentChar) {
@@ -228,10 +230,84 @@ public class Parser {
     }
 
     private boolean isBooleanLiteral(String token) {
-        if(token.equalsIgnoreCase("TRUE") || token.equalsIgnoreCase("FALSE")){
-            return true;
-        }
-        return false;
+        return token.equalsIgnoreCase("TRUE") || token.equalsIgnoreCase("FALSE");
     }
 
+    public void parseSelect() throws ParserException {
+        currentToken++;
+        this.parseWildAttributeList();
+        currentToken++;
+        this.parseTableName();
+        currentToken++;
+        String token = this.tokens.get(currentToken).toUpperCase();
+        if(!(token.equals(";") || token.equals("WHERE"))) {
+            throw new ParserException.InvalidSelect(token);
+        }
+        if(token.equals("WHERE")) {
+            currentToken++;
+            this.parseCondition(false);
+        }
+        this.checkValidStatementEnd("SELECT");
+    }
+
+    public void parseWildAttributeList() throws ParserException {
+        if(this.tokens.get(currentToken).equals("*")) {
+            currentToken++;
+            return;
+        }
+        this.parseAttributeList("FROM");
+    }
+
+    public void parseCondition(boolean isRecursive) throws ParserException {
+        if(!isRecursive){
+            if(!this.checkConditionParentheses()) {
+                throw new ParserException.UnmatchedParentheses();
+            }
+        }
+        while(this.tokens.get(currentToken).equals("(")){
+            currentToken++;
+        }
+        this.parseAttributeName();
+        currentToken++;
+        this.parseComparator();
+        this.parseValue();
+        currentToken++;
+        while(this.tokens.get(currentToken).equals(")")){
+            currentToken++;
+        }
+        if(this.tokens.get(currentToken).equalsIgnoreCase("AND") ||
+                this.tokens.get(currentToken).equalsIgnoreCase("OR")) {
+            currentToken++;
+            this.parseCondition(true);
+        }
+    }
+
+    private boolean checkConditionParentheses() {
+        int tempTokenNum = currentToken;
+        int numClosing = 0;
+        int numOpening = 0;
+        while(!this.tokens.get(tempTokenNum).equals(";")) {
+            if(this.tokens.get(tempTokenNum).equals("(")){
+                numOpening++;
+            }
+            if(this.tokens.get(tempTokenNum).equals(")")){
+                numClosing++;
+            }
+            tempTokenNum++;
+        }
+        return numOpening == numClosing;
+    }
+
+    public void parseComparator() throws ParserException {
+        switch (this.tokens.get(currentToken).toUpperCase()) {
+            case "==", ">", "<", ">=", "<=", "!=", "LIKE" -> currentToken++;
+            default -> throw new ParserException.InvalidComparator(this.tokens.get(currentToken));
+        }
+    }
+
+    private void checkValidStatementEnd(String statementType) throws ParserException {
+        if(!this.tokens.get(currentToken).equals(";")) {
+            throw new ParserException.InvalidStatementSyntax(this.tokens.get(currentToken), statementType);
+        }
+    }
 }

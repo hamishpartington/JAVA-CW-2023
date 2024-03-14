@@ -48,7 +48,7 @@ public class Table {
         this.tableFile.delete();
     }
 
-    public void insert(ArrayList<String> values) throws IOException, DBException.incorrectNumberOfValues {
+    public void insert(ArrayList<String> values) throws IOException, DBException {
         if(values.size() != this.fields.size() - 1){
             throw new DBException.incorrectNumberOfValues(this.name, this.fields.size());
         }
@@ -66,7 +66,7 @@ public class Table {
         writer.close();
     }
 
-    public Table select(ArrayList<String> fields) throws DBException.fieldDoesNotExist {
+    public Table select(ArrayList<String> fields) throws DBException {
         if(fields.get(0).equals("*")){
             return this;
         }
@@ -82,7 +82,7 @@ public class Table {
         return procTable;
     }
 
-    public void alter(String attribute, String alterationType) throws DBException.duplicateFields, DBException.fieldDoesNotExist, IOException, DBException.cannotRemoveID {
+    public void alter(String attribute, String alterationType) throws DBException, IOException {
         if(alterationType.equals("ADD")){
             if(this.fields.contains(attribute)){
                 throw new DBException.duplicateFields();

@@ -15,14 +15,14 @@ public class Database {
         this.tables = new HashMap<>();
     }
 
-    public void create() throws IOException, DBException.DBAlreadyExists {
+    public void create() throws IOException, DBException {
         if(Files.isDirectory(Paths.get(this.folderPath))){
             throw new DBException.DBAlreadyExists(this.name);
         }
         Files.createDirectories(Paths.get(this.folderPath));
     }
 
-    public void drop() throws DBException.DBDoesNotExist {
+    public void drop() throws DBException {
         if(!Files.isDirectory(Paths.get(this.folderPath))){
             throw new DBException.DBDoesNotExist(this.name);
         }
@@ -40,7 +40,7 @@ public class Database {
         return folderPath;
     }
 
-    public void createTable(String tableName, ArrayList<String> attributes) throws IOException, DBException.TableAlreadyExists, DBException.duplicateFields {
+    public void createTable(String tableName, ArrayList<String> attributes) throws IOException, DBException {
         if(this.tables.containsKey(name)){
             throw new DBException.TableAlreadyExists(tableName, this.name);
         }
@@ -62,7 +62,7 @@ public class Database {
         }
         return false;
     }
-    public void dropTable(String tableName) throws DBException.TableDoesNotExist {
+    public void dropTable(String tableName) throws DBException {
         if(!this.tables.containsKey(tableName)){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
@@ -70,21 +70,21 @@ public class Database {
         this.tables.remove(tableName);
     }
 
-    public void insertIntoTable(String tableName, ArrayList<String> values) throws DBException.TableDoesNotExist, IOException, DBException.incorrectNumberOfValues {
+    public void insertIntoTable(String tableName, ArrayList<String> values) throws DBException, IOException {
         if(!this.tables.containsKey(tableName)){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         this.tables.get(tableName).insert(values);
     }
 
-    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException.TableDoesNotExist, DBException.fieldDoesNotExist {
+    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException {
         if(!this.tables.containsKey(tableName)){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         return this.tables.get(tableName).select(fields);
     }
 
-    public void alterTable(String tableName, String tableAttribute, String alterationType) throws DBException.TableDoesNotExist, DBException.duplicateFields, DBException.fieldDoesNotExist, IOException, DBException.cannotRemoveID {
+    public void alterTable(String tableName, String tableAttribute, String alterationType) throws DBException, IOException {
         if(!this.tables.containsKey(tableName)) {
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
