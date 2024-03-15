@@ -1,10 +1,13 @@
 package edu.uob;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Parser {
     private Tokeniser tokeniser;
     private ArrayList<String> tokens;
+
+    private Database database;
 
     private static Integer currentToken;
 
@@ -15,10 +18,10 @@ public class Parser {
         currentToken = 0;
     }
 
-    public void parseQuery() throws ParserException {
+    public void parseQuery() throws ParserException, DBException, IOException {
         this.parseCommand();
     }
-    public void parseCommand() throws ParserException {
+    public void parseCommand() throws ParserException, DBException, IOException {
         int lastTokenIndex = this.tokens.size() - 1;
         String lastToken = this.tokens.get(lastTokenIndex);
         if(!lastToken.equals(";")){
@@ -27,7 +30,9 @@ public class Parser {
         String firstToken = this.tokens.get(0).toUpperCase();
         switch (firstToken) {
             case "USE" -> this.parseUse();
-            case "CREATE" -> this.parseCreate();
+            case "CREATE" -> {
+                this.parseCreate();
+            }
             case "DROP" -> this.parseDrop();
             case "ALTER" -> this.parseAlter();
             case "INSERT" -> this.parseInsert();
@@ -62,12 +67,17 @@ public class Parser {
         }
     }
 
-    public void parseCreate() throws ParserException {
+    public void parseCreate() throws ParserException, DBException, IOException {
         currentToken++;
         String token = this.tokens.get(currentToken).toUpperCase();
         if(token.equals("DATABASE")){
             currentToken++;
             this.parseDatabaseName();
+            String databaseName = this.tokens.get(currentToken);
+            currentToken++;
+            this.checkValidStatementEnd("CREATE");
+            this.database = new Database(databaseName);
+            this.database.create();
         } else if(token.equals("TABLE")) {
             currentToken++;
             this.parseTableName();
@@ -79,8 +89,6 @@ public class Parser {
         } else {
             throw new ParserException.InvalidCreate(token);
         }
-        currentToken++;
-        this.checkValidStatementEnd("CREATE");
     }
 
     public void parseTableName() throws ParserException {
