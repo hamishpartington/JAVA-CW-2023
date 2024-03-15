@@ -9,6 +9,8 @@ public class Parser {
 
     private Database database;
 
+    private DBServer server;
+
     private static Integer currentToken;
 
     public Parser(String query) {
@@ -46,9 +48,10 @@ public class Parser {
         this.parseDatabaseName();
         String databaseName = this.tokens.get(currentToken);
         currentToken++;
-        this.checkValidStatementEnd("CREATE");
+        this.checkValidStatementEnd("USE");
         this.database = new Database(databaseName);
         this.database.use();
+        this.server.setDatabaseInUse(this.database);
     }
 
     public void parseDatabaseName() throws ParserException {
@@ -84,11 +87,16 @@ public class Parser {
         } else if(token.equals("TABLE")) {
             currentToken++;
             this.parseTableName();
+            String tableName = this.tokens.get(currentToken);
             currentToken++;
+            ArrayList<String> attributeList = null;
             if(this.tokens.get(currentToken).equals("(")){
                 currentToken++;
-                this.parseAttributeList(")");
+                attributeList = this.parseAttributeList(")");
             }
+            currentToken++;
+            this.checkValidStatementEnd("CREATE");
+            this.database.createTable(tableName, attributeList);
         } else {
             throw new ParserException.InvalidCreate(token);
         }
@@ -98,15 +106,18 @@ public class Parser {
         this.parsePlainText(false, false);
     }
 
-    public void parseAttributeList(String terminator) throws ParserException {
+    public ArrayList<String> parseAttributeList(String terminator) throws ParserException {
         this.checkForListTerminator(terminator, "Attribute");
+        ArrayList<String> attributeList = new ArrayList<>();
         while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(currentToken).equals(",")) {
                 currentToken++;
             }
             this.parseAttributeName();
+            attributeList.add(this.tokens.get(currentToken));
             currentToken++;
         }
+        return attributeList;
     }
 
     private void checkForListTerminator(String terminator, String type) throws ParserException {
@@ -393,5 +404,13 @@ public class Parser {
         this.parseAttributeName();
         currentToken++;
         this.checkValidStatementEnd("JOIN");
+    }
+
+    public void setServer(DBServer server) {
+        this.server = server;
+    }
+
+    public void setDatabase(Database database) {
+        this.database = database;
     }
 }

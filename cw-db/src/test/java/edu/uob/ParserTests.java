@@ -62,15 +62,7 @@ public class ParserTests {
     }
 
     @Test
-    public void testParseUse1() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        String query = "uSe Cen1us;";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand, "Problem with parsing use command");
-    }
-
-    @Test
-    public void testParseUse2() {
+    public void testParseUse() {
         String query = "uSe Cen$sus;";
         Parser parser = new Parser(query);
         assertThrows(ParserException.InvalidDatabaseName.class, parser::parseCommand,
@@ -99,14 +91,6 @@ public class ParserTests {
         Parser parser = new Parser(query);
         assertThrows(ParserException.InvalidTableName.class, parser::parseCommand,
                 "Exception not thrown for invalid table name");
-    }
-
-    @Test
-    public void testParseCreate4() {
-        String query = "CREATE TABLE census (name, age, weight);";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown for valid create statement");
     }
 
     @Test

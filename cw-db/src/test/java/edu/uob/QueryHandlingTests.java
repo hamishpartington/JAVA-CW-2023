@@ -55,11 +55,20 @@ public class QueryHandlingTests {
 
     }
 
-//    @Test
-//    public void testUse() {
-//        String response = sendCommandToServer("USE test;");
-//        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
-//        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-//
-//    }
+    @Test
+    public void testCreateTable() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        String response = sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+    }
+
+    @Test
+    public void testUse() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String response = sendCommandToServer("uSe Cen1us;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+    }
 }

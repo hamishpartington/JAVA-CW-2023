@@ -12,6 +12,8 @@ public class DBServer {
     private static final char END_OF_TRANSMISSION = 4;
     private String storageFolderPath;
 
+    private Database databaseInUse;
+
     public static void main(String args[]) throws IOException {
         DBServer server = new DBServer();
         server.blockingListenOn(8888);
@@ -43,8 +45,9 @@ public class DBServer {
     */
 
     public String handleCommand(String command) {
-        // TODO implement your server logic here
         Parser parser = new Parser(command);
+        parser.setServer(this);
+        parser.setDatabase(this.databaseInUse);
         try {
             parser.parseQuery();
         } catch (ParserException | DBException error) {
@@ -54,6 +57,10 @@ public class DBServer {
         }
 
         return "[OK]";
+    }
+
+    public void setDatabaseInUse(Database databaseInUse) {
+        this.databaseInUse = databaseInUse;
     }
 
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===
