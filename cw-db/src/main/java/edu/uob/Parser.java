@@ -96,6 +96,9 @@ public class Parser {
             }
             currentToken++;
             this.checkValidStatementEnd("CREATE");
+            if(this.server.getDatabaseInUse() == null) {
+                throw new ParserException.NoDatabaseInUse("CREATE");
+            }
             this.database.createTable(tableName, attributeList);
         } else {
             throw new ParserException.InvalidCreate(token);
@@ -134,21 +137,32 @@ public class Parser {
         this.parsePlainText(false, true);
     }
 
-    public void parseDrop() throws ParserException {
+    public void parseDrop() throws ParserException, DBException {
         currentToken++;
         String token = this.tokens.get(currentToken).toUpperCase();
 
         if(token.equals("TABLE")){
             currentToken++;
             this.parseTableName();
+            String tableName = this.tokens.get(currentToken);
+            currentToken++;
+            this.checkValidStatementEnd("DROP");
+            if(this.server.getDatabaseInUse() == null) {
+                throw new ParserException.NoDatabaseInUse("DROP");
+            }
+            this.database.dropTable(tableName);
         } else if(token.equals("DATABASE")){
             currentToken++;
             this.parseDatabaseName();
+            String databaseName = this.tokens.get(currentToken);
+            currentToken++;
+            this.checkValidStatementEnd("DROP");
+            this.database = new Database(databaseName);
+            this.database.drop();
         } else {
             throw new ParserException.InvalidDrop(token);
         }
-        currentToken++;
-        this.checkValidStatementEnd("DROP");
+
     }
 
     public void parseAlter() throws ParserException {

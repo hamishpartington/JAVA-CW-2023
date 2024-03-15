@@ -63,6 +63,10 @@ public class DBServer {
         this.databaseInUse = databaseInUse;
     }
 
+    public Database getDatabaseInUse() {
+        return databaseInUse;
+    }
+
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===
 
     public void blockingListenOn(int portNumber) throws IOException {

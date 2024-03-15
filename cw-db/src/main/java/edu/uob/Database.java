@@ -79,7 +79,7 @@ public class Database {
     }
 
     public void createTable(String tableName, ArrayList<String> attributes) throws IOException, DBException {
-        if(this.tables.containsKey(name)){
+        if(this.tables.containsKey(tableName)){
             throw new DBException.TableAlreadyExists(tableName, this.name);
         }
         if(attributes != null){
@@ -87,9 +87,9 @@ public class Database {
                 throw new DBException.duplicateFields();
             }
         }
-        Table newTable = new Table(name, this);
+        Table newTable = new Table(tableName, this);
         newTable.create(attributes);
-        tables.put(name, newTable);
+        tables.put(tableName, newTable);
     }
     public boolean checkForDuplicates(ArrayList<String> attributes) {
         HashSet<String> hSet = new HashSet<>();

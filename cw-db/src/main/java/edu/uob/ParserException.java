@@ -139,4 +139,10 @@ public class ParserException extends Exception {
             super("Invalid JOIN! Expected " + expected + " not " + token);
         }
     }
+
+    public static class NoDatabaseInUse extends ParserException {
+        public NoDatabaseInUse(String statementType) {
+            super("Database must be in use to " + statementType + " tables");
+        }
+    }
 }
