@@ -1,9 +1,41 @@
 package edu.uob;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import java.io.File;
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ParserTests {
+
+    private DBServer server;
+
+    // Create a new server _before_ every @Test
+    @BeforeEach
+    public void setup() {
+        server = new DBServer();
+        // delete all existing databases
+        File databaseDirectory = new File(server.getStorageFolderPath());
+        File[] directories = databaseDirectory.listFiles();
+        if(directories != null) {
+            for(File d : directories){
+                File[] files = d.listFiles();
+                if(files != null){
+                    for(File f : files) {
+                        f.delete();
+                    }
+                }
+                d.delete();
+            }
+        }
+    }
+    private String sendCommandToServer(String command) {
+        // Try to send a command to the server - this call will timeout if it takes too long (in case the server enters an infinite loop)
+        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
+                "Server took too long to respond (probably stuck in an infinite loop)");
+    }
 
     @Test
     public void testParseCommand1() {
@@ -31,6 +63,7 @@ public class ParserTests {
 
     @Test
     public void testParseUse1() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
         String query = "uSe Cen1us;";
         Parser parser = new Parser(query);
         assertDoesNotThrow(parser::parseCommand, "Problem with parsing use command");

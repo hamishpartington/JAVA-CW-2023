@@ -36,6 +36,44 @@ public class Database {
         databaseDirectory.delete();
     }
 
+    public void use() throws DBException, IOException {
+        if(!Files.isDirectory(Paths.get(this.folderPath))){
+            throw new DBException.DBDoesNotExist(this.name);
+        }
+        File databaseDirectory = new File(this.folderPath);
+        File[] contents = databaseDirectory.listFiles();
+        if(contents != null) {
+            for(File f : contents){
+                String tableName = f.getName().replaceAll(".tab", "");
+                Table table = readTable(f, tableName);
+                this.tables.put(tableName, table);
+            }
+        }
+    }
+
+    private Table readTable(File tableFile, String tableName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(tableFile));
+        int lineNum = 0;
+        String currentLine = reader.readLine();
+        Table table = new Table(tableName, this);
+        do {
+            String procLine = currentLine.replaceAll("\n", "");
+            String[] data = procLine.split("\t");
+            for(int i = 0; i < data.length; i++) {
+                if(lineNum == 0){
+                    table.getFields().add(data[i]);
+                    table.getData().add(new ArrayList<>());
+                }else {
+                    table.getData().get(i).add(data[i]);
+                }
+            }
+            lineNum++;
+            currentLine = reader.readLine();
+        } while (currentLine != null);
+
+        return table;
+    }
+
     public String getFolderPath() {
         return folderPath;
     }

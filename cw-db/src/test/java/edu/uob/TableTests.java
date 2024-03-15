@@ -233,7 +233,6 @@ public class TableTests {
                 "Exception thrown attempting to insert values");
         assertDoesNotThrow(()->database.alterTable("test", "age", "DROP"));
         String expectedString = "id\tDoB\tgender\t\n1\t23/08/1997\tMale\t\n";
-        System.out.println(database.getTables().get("test").toString());
         assertEquals(database.getTables().get("test").toString(), expectedString, "Drop not working");
         assertThrows(DBException.fieldDoesNotExist.class,
                 ()->database.alterTable("test", "age", "DROP"),

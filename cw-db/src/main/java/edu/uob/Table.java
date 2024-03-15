@@ -145,4 +145,12 @@ public class Table {
     public File getTableFile() {
         return tableFile;
     }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public List<List<String>> getData() {
+        return data;
+    }
 }

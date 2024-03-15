@@ -32,7 +32,7 @@ public class Tokeniser {
             }
         }
         // Finally, loop through the result array list, printing out each token a line at a time
-        for (String token : tokens) System.out.println(token);
+        //for (String token : tokens) System.out.println(token);
     }
 
     private String[] tokenise(String input)

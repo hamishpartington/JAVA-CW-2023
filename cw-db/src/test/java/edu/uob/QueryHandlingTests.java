@@ -17,10 +17,16 @@ public class QueryHandlingTests {
         server = new DBServer();
         // delete all existing databases
         File databaseDirectory = new File(server.getStorageFolderPath());
-        File[] contents = databaseDirectory.listFiles();
-        if(contents != null) {
-            for(File f : contents){
-                f.delete();
+        File[] directories = databaseDirectory.listFiles();
+        if(directories != null) {
+            for(File d : directories){
+                File[] files = d.listFiles();
+                if(files != null){
+                    for(File f : files) {
+                        f.delete();
+                    }
+                }
+                d.delete();
             }
         }
     }
@@ -48,4 +54,12 @@ public class QueryHandlingTests {
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
 
     }
+
+//    @Test
+//    public void testUse() {
+//        String response = sendCommandToServer("USE test;");
+//        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+//        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+//
+//    }
 }

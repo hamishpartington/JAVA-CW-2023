@@ -30,9 +30,7 @@ public class Parser {
         String firstToken = this.tokens.get(0).toUpperCase();
         switch (firstToken) {
             case "USE" -> this.parseUse();
-            case "CREATE" -> {
-                this.parseCreate();
-            }
+            case "CREATE" -> this.parseCreate();
             case "DROP" -> this.parseDrop();
             case "ALTER" -> this.parseAlter();
             case "INSERT" -> this.parseInsert();
@@ -43,9 +41,14 @@ public class Parser {
             default -> throw new ParserException.NotACommandType(firstToken);
         }
     }
-    public void parseUse() throws ParserException {
+    public void parseUse() throws ParserException, DBException, IOException {
         currentToken++;
         this.parseDatabaseName();
+        String databaseName = this.tokens.get(currentToken);
+        currentToken++;
+        this.checkValidStatementEnd("CREATE");
+        this.database = new Database(databaseName);
+        this.database.use();
     }
 
     public void parseDatabaseName() throws ParserException {

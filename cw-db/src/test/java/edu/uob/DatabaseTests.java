@@ -46,4 +46,5 @@ public class DatabaseTests {
         assertThrows(DBException.DBDoesNotExist.class, database::drop,
                 "Cannot drop database which does not exist");
     }
+
 }
