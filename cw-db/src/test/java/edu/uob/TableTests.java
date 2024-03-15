@@ -207,7 +207,7 @@ public class TableTests {
         assertDoesNotThrow(()->database.insertIntoTable("test", values),
                 "Exception thrown attempting to insert values");
         assertDoesNotThrow(()->database.alterTable("test", "name", "ADD"));
-        String expectedString = "id\tage\tDoB\tgender\tname\t\n1\t25\t23/08/1997\tMale\t\n";
+        String expectedString = "id\tage\tDoB\tgender\tname\t\n1\t25\t23/08/1997\tMale\t\t\n";
         assertEquals(database.getTables().get("test").toString(), expectedString, "Add not working");
         assertThrows(DBException.duplicateFields.class,
                 ()->database.alterTable("test", "name", "ADD"),

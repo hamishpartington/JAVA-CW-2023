@@ -70,7 +70,6 @@ public class QueryHandlingTests {
     public void testCreateTableNoUse() {
         sendCommandToServer("CREATE DATABASE Cen1us;");
         String response = sendCommandToServer("CREATE TABLE census (name, age, weight);");
-        System.out.println(response);
         assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");
@@ -88,7 +87,6 @@ public class QueryHandlingTests {
     public void testDropDatabase() {
         sendCommandToServer("CREATE DATABASE Cen1us;");
         String response = sendCommandToServer("drop database Cen1us;");
-        System.out.println(response);
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         boolean folderExists = Files.exists(Paths.get("databases" + File.separator + "Cen1us"));
         assertFalse(folderExists, "Database folder has not been deleted by drop");
@@ -101,7 +99,6 @@ public class QueryHandlingTests {
         sendCommandToServer("Use Cen1us;");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("drop table census;");
-        System.out.println(response);
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         boolean fileExists = Files.exists(Paths.get("databases" + File.separator + "Cen1us" + File.separator + "census"));
         assertFalse(fileExists, "Database folder has not been deleted by drop");
@@ -112,7 +109,25 @@ public class QueryHandlingTests {
     public void testDropTableNoInUseDatabase() {
         sendCommandToServer("CREATE DATABASE Cen1us;");
         String response = sendCommandToServer("drop table census;");
-        System.out.println(response);
+        assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");
+    }
+
+    @Test
+    public void testAlter() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        String response = sendCommandToServer("ALTER TABLE census ADD height;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+    }
+
+    @Test
+    public void testAlterTableNoInUseDatabase() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String response = sendCommandToServer("alter table census add age;");
         assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");

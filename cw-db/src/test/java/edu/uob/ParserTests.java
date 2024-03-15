@@ -117,7 +117,7 @@ public class ParserTests {
                 "Exception not thrown for invalid table name in drop");
     }
     @Test
-    public void testAlter1() {
+    public void testAlter() {
         String query = "ALTER TBLE census ADD age;";
         Parser parser = new Parser(query);
         assertThrows(ParserException.InvalidAlter.class, parser::parseCommand,
@@ -129,13 +129,6 @@ public class ParserTests {
         Parser parser = new Parser(query);
         assertThrows(ParserException.InvalidAlterationType.class, parser::parseCommand,
                 "Exception not thrown for invalid alteration type");
-    }
-    @Test
-    public void testAlter2() {
-        String query = "ALTER TABLE census ADD age;";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown for valid alter");
     }
 
     @Test

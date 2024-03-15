@@ -165,26 +165,33 @@ public class Parser {
 
     }
 
-    public void parseAlter() throws ParserException {
+    public void parseAlter() throws ParserException, DBException, IOException {
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("TABLE")){
             throw new ParserException.InvalidAlter();
         }
         currentToken++;
         this.parseTableName();
+        String tableName = this.tokens.get(currentToken);
         currentToken++;
-        this.parseAlterationType();
+        String alterationType = this.parseAlterationType();
+        String attributeName = this.tokens.get(currentToken);
         currentToken++;
         this.checkValidStatementEnd("ALTER");
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("ALTER");
+        }
+        this.database.alterTable(tableName, attributeName, alterationType);
     }
 
-    public void parseAlterationType() throws ParserException {
+    public String parseAlterationType() throws ParserException {
         String token = this.tokens.get(currentToken).toUpperCase();
         if(!(token.equals("DROP") || token.equals("ADD"))){
             throw new ParserException.InvalidAlterationType(token);
         }
         currentToken++;
         this.parseAttributeName();
+        return token;
     }
 
     public void parseInsert() throws ParserException {

@@ -83,14 +83,19 @@ public class Table {
     }
 
     public void alter(String attribute, String alterationType) throws DBException, IOException {
-        if(alterationType.equals("ADD")){
+        if(alterationType.equalsIgnoreCase("ADD")){
             if(this.fields.contains(attribute)){
                 throw new DBException.duplicateFields();
             }
             this.fields.add(attribute);
             this.data.add(new ArrayList<>());
+            int tableLength = this.data.get(0).size();
+            int colNumber = this.fields.size() - 1;
+            for(int i = 0; i < tableLength; i++) {
+                this.data.get(colNumber).add("");
+            }
         }
-        if(alterationType.equals("DROP")){
+        if(alterationType.equalsIgnoreCase("DROP")){
             if(attribute.equals("id")){
                 throw new DBException.cannotRemoveID();
             }
