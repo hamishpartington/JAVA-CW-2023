@@ -1,12 +1,10 @@
 package edu.uob;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Table {
     private String name;
@@ -22,7 +20,7 @@ public class Table {
     public Table(String name, Database parentDatabase) {
         this.name = name;
         this.parentDatabase = parentDatabase;
-        this.currentId = 1;
+        currentId = 1;
         this.data = new ArrayList<>();
         this.fields = new ArrayList<>();
     }
@@ -117,7 +115,7 @@ public class Table {
         outputString = outputString.concat("\n");
         for(int i = 0; i < this.data.get(0).size(); i++){
             for(List<String> a : this.data){
-                if(a.size() == 0){
+                if(a.isEmpty()){
                     break;
                 }
                 outputString = outputString.concat(a.get(i) + "\t");
@@ -135,7 +133,7 @@ public class Table {
         writer.write("\n");
         for(int i = 0; i < this.data.get(0).size(); i++){
             for(List<String> a : this.data) {
-                if(a.size() == 0){
+                if(a.isEmpty()){
                     writer.write("\t");
                     break;
                 }
