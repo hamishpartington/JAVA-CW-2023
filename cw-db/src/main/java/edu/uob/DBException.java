@@ -37,7 +37,7 @@ public class DBException extends Exception {
     public static class incorrectNumberOfValues extends DBException {
         @Serial private static final long serialVersionUID = 1;
         public incorrectNumberOfValues(String tableName, int size) {
-            super("Incorrect number of values! The table: " + tableName + " has " + size + " fields");
+            super("Incorrect number of values! The table: " + tableName + " has " + size + " non-id fields");
         }
     }
 

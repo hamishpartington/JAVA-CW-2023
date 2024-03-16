@@ -41,14 +41,6 @@ public class ParserTests {
     }
 
     @Test
-    public void testParseCommand2() {
-        String query = "  INSERT  INTO  people   VALUES(  'Simon Lock'  ,35, 'simon@bristol.ac.uk' , 1.8  ) ;   ";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown when query terminated with ;");
-    }
-
-    @Test
     public void testParseCommand3() {
         String query = "  INERT  INTO  people   VALUES(  'Simon Lock'  ,35, 'simon@bristol.ac.uk' , 1.8  ) ;   ";
         Parser parser = new Parser(query);

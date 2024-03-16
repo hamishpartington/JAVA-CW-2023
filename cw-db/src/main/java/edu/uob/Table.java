@@ -48,7 +48,7 @@ public class Table {
 
     public void insert(ArrayList<String> values) throws IOException, DBException {
         if(values.size() != this.fields.size() - 1){
-            throw new DBException.incorrectNumberOfValues(this.name, this.fields.size());
+            throw new DBException.incorrectNumberOfValues(this.name, this.fields.size() - 1);
         }
         int i = 1;
         data.get(0).add(currentId.toString());

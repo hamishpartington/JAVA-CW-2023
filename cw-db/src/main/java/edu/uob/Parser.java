@@ -194,13 +194,14 @@ public class Parser {
         return token;
     }
 
-    public void parseInsert() throws ParserException {
+    public void parseInsert() throws ParserException, DBException, IOException {
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("INTO")){
             throw new ParserException.NoInto();
         }
         currentToken++;
         this.parseTableName();
+        String tableName = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("VALUES")){
             throw new ParserException.NoValues();
@@ -209,21 +210,28 @@ public class Parser {
         if(!this.tokens.get(currentToken).equals("(")){
             throw new ParserException.NoValueList();
         }
-        this.parseValueList(")");
+        ArrayList<String> valueList = this.parseValueList(")");
         currentToken++;
         this.checkValidStatementEnd("INSERT");
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("INSERT");
+        }
+        this.database.insertIntoTable(tableName, valueList);
     }
 
-    public void parseValueList(String terminator) throws ParserException {
+    public ArrayList<String> parseValueList(String terminator) throws ParserException {
         currentToken++;
         this.checkForListTerminator(terminator, "Value");
+        ArrayList<String> valueList = new ArrayList<>();
         while(!this.tokens.get(currentToken).equalsIgnoreCase(terminator)){
             if(this.tokens.get(currentToken).equals(",")) {
                 currentToken++;
             }
             this.parseValue();
+            valueList.add(this.tokens.get(currentToken));
             currentToken++;
         }
+        return valueList;
     }
 
     public void parseValue() throws ParserException {

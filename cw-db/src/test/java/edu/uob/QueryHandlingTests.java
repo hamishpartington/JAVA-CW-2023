@@ -70,9 +70,9 @@ public class QueryHandlingTests {
     public void testCreateTableNoUse() {
         sendCommandToServer("CREATE DATABASE Cen1us;");
         String response = sendCommandToServer("CREATE TABLE census (name, age, weight);");
-        assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
-        assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
+        assertTrue(response.contains("Database must be in use"), "An invalid query was made, however the [ERROR] message was not correct");
     }
 
     @Test
@@ -109,9 +109,9 @@ public class QueryHandlingTests {
     public void testDropTableNoInUseDatabase() {
         sendCommandToServer("CREATE DATABASE Cen1us;");
         String response = sendCommandToServer("drop table census;");
-        assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
-        assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
+        assertTrue(response.contains("Database must be in use"), "An invalid query was made, however the [ERROR] message was not correct");
     }
 
     @Test
@@ -130,6 +130,36 @@ public class QueryHandlingTests {
         String response = sendCommandToServer("alter table census add age;");
         assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("Database must be in use"), "A valid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Database must be in use"), "An invalid query was made, however the [ERROR] message was not correct");
+    }
+
+    @Test
+    public void testInsert() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  ,35, 1.8  ) ;   ");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+    }
+
+    @Test
+    public void testInsertTableNoInUseDatabase() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  ,35, 1.8  ) ;   ");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
+        assertTrue(response.contains("Database must be in use"), "An invalid query was made, however the [ERROR] message was not correct");
+    }
+
+    @Test
+    public void testInsertNotEnoughValues() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  , 1.8  ) ;   ");
+        System.out.println(response);
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
+        assertTrue(response.contains("[ERROR] Incorrect number of values"), "An invalid query was made, however an [ERROR] tag was not returned with the correct message");
     }
 }
