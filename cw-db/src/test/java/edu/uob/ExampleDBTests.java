@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
 import java.time.Duration;
 
-/*public class ExampleDBTests {
+public class ExampleDBTests {
 
     private DBServer server;
 
@@ -16,6 +18,20 @@ import java.time.Duration;
     @BeforeEach
     public void setup() {
         server = new DBServer();
+        // delete all existing databases
+        File databaseDirectory = new File(server.getStorageFolderPath());
+        File[] directories = databaseDirectory.listFiles();
+        if(directories != null) {
+            for(File d : directories){
+                File[] files = d.listFiles();
+                if(files != null){
+                    for(File f : files) {
+                        f.delete();
+                    }
+                }
+                d.delete();
+            }
+        }
     }
 
     // Random name generator - useful for testing "bare earth" queries (i.e. where tables don't previously exist)
@@ -101,4 +117,4 @@ import java.time.Duration;
         assertFalse(response.contains("[OK]"), "An attempt was made to access a non-existent table, however an [OK] tag was returned");
     }
 
-}*/
+}

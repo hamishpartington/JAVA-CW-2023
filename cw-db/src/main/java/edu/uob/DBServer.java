@@ -55,6 +55,9 @@ public class DBServer {
         } catch (IOException ioe) {
             return "Something went wrong with file handling";
         }
+        if(parser.getQueryResult() != null) {
+            return "[OK]\n" + parser.getQueryResult().toString();
+        }
 
         return "[OK]";
     }

@@ -13,6 +13,8 @@ public class Parser {
 
     private static Integer currentToken;
 
+    private Table queryResult;
+
     public Parser(String query) {
         this.tokeniser = new Tokeniser(query);
         this.tokeniser.setup();
@@ -281,11 +283,12 @@ public class Parser {
         return token.equalsIgnoreCase("TRUE") || token.equalsIgnoreCase("FALSE");
     }
 
-    public void parseSelect() throws ParserException {
+    public void parseSelect() throws ParserException, DBException {
         currentToken++;
-        this.parseWildAttributeList();
+        ArrayList<String> attributeList = this.parseWildAttributeList();
         currentToken++;
         this.parseTableName();
+        String tableName = this.tokens.get(currentToken);
         currentToken++;
         String token = this.tokens.get(currentToken).toUpperCase();
         if(!(token.equals(";") || token.equals("WHERE"))) {
@@ -296,14 +299,20 @@ public class Parser {
             this.parseCondition(false);
         }
         this.checkValidStatementEnd("SELECT");
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("INSERT");
+        }
+        this.queryResult = this.database.selectFromTable(attributeList, tableName);
     }
 
-    public void parseWildAttributeList() throws ParserException {
+    public ArrayList<String> parseWildAttributeList() throws ParserException {
+        ArrayList<String> attributeList = new ArrayList<>();
         if(this.tokens.get(currentToken).equals("*")) {
+            attributeList.add("*");
             currentToken++;
-            return;
+            return attributeList;
         }
-        this.parseAttributeList("FROM");
+        return this.parseAttributeList("FROM");
     }
 
     public void parseCondition(boolean isRecursive) throws ParserException {
@@ -441,5 +450,9 @@ public class Parser {
 
     public void setDatabase(Database database) {
         this.database = database;
+    }
+
+    public Table getQueryResult() {
+        return queryResult;
     }
 }
