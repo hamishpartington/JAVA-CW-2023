@@ -38,9 +38,9 @@ public class Table {
                 this.data.add(new ArrayList<>());
                 writer.write(a + "\t");
             }
-            writer.flush();
-            writer.close();
         }
+        writer.flush();
+        writer.close();
     }
     public void drop()  {
         this.tableFile.delete();

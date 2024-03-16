@@ -18,6 +18,14 @@ public class TableTests {
         if(!Files.exists(Paths.get(database.getFolderPath()))){
             assertDoesNotThrow(database::create);
         }
+
+        File databaseDirectory = new File(database.getFolderPath());
+        File[] files = databaseDirectory.listFiles();
+        if(files != null) {
+            for(File f : files){
+                f.delete();
+            }
+        }
     }
 
     @Test
