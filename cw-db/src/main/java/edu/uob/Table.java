@@ -49,7 +49,7 @@ public class Table {
 
     public void insert(ArrayList<String> values) throws IOException, DBException {
         if(values.size() != this.fields.size() - 1){
-            throw new DBException.incorrectNumberOfValues(this.name, this.fields.size() - 1);
+            throw new DBException.IncorrectNumberOfValues(this.name, this.fields.size() - 1);
         }
         int i = 1;
         data.get(0).add(currentId.toString());
@@ -72,7 +72,7 @@ public class Table {
         Table procTable = new Table(null, null);
         for(String f : fields) {
             if(!this.fields.contains(f)){
-                throw new DBException.fieldDoesNotExist(f);
+                throw new DBException.FieldDoesNotExist(f);
             }
             procTable.fields.add(f);
             int dataIndex = this.fields.indexOf(f);
@@ -104,7 +104,7 @@ public class Table {
     public void alter(String attribute, String alterationType) throws DBException, IOException {
         if(alterationType.equalsIgnoreCase("ADD")){
             if(this.fields.contains(attribute)){
-                throw new DBException.duplicateFields();
+                throw new DBException.DuplicateFields();
             }
             this.fields.add(attribute);
             this.data.add(new ArrayList<>());
@@ -116,10 +116,10 @@ public class Table {
         }
         if(alterationType.equalsIgnoreCase("DROP")){
             if(attribute.equals("id")){
-                throw new DBException.cannotRemoveID();
+                throw new DBException.CannotRemoveID();
             }
             if(!this.fields.contains(attribute)){
-                throw new DBException.fieldDoesNotExist(attribute);
+                throw new DBException.FieldDoesNotExist(attribute);
             }
             int fieldIndex = this.fields.indexOf(attribute);
             this.fields.remove(attribute);

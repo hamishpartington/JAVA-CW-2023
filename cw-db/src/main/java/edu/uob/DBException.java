@@ -34,31 +34,38 @@ public class DBException extends Exception {
         }
     }
 
-    public static class incorrectNumberOfValues extends DBException {
+    public static class IncorrectNumberOfValues extends DBException {
         @Serial private static final long serialVersionUID = 1;
-        public incorrectNumberOfValues(String tableName, int size) {
+        public IncorrectNumberOfValues(String tableName, int size) {
             super("Incorrect number of values! The table: " + tableName + " has " + size + " non-id fields");
         }
     }
 
-    public static class duplicateFields extends DBException {
+    public static class DuplicateFields extends DBException {
         @Serial private static final long serialVersionUID = 1;
-        public duplicateFields() {
+        public DuplicateFields() {
             super("All fields must be unique");
         }
     }
 
-    public static class fieldDoesNotExist extends DBException {
+    public static class FieldDoesNotExist extends DBException {
         @Serial private static final long serialVersionUID = 1;
-        public fieldDoesNotExist(String field) {
+        public FieldDoesNotExist(String field) {
             super("Cannot SELECT " + field + " as it does not exist");
         }
     }
 
-    public static class cannotRemoveID extends DBException {
+    public static class CannotRemoveID extends DBException {
         @Serial private static final long serialVersionUID = 1;
-        public cannotRemoveID() {
+        public CannotRemoveID() {
             super("The id field cannot be removed");
+        }
+    }
+
+    public static class ReservedKeyWord extends DBException {
+        @Serial private static final long serialVersionUID = 1;
+        public ReservedKeyWord(String name) {
+            super(name + " is a reserved keyword so cannot be used as a name");
         }
     }
 }

@@ -29,7 +29,7 @@ public class Condition {
         int dataIndex = table.getFields().indexOf(this.attributeName);
         this.trueIds = new ArrayList<>();
         if(dataIndex == -1) {
-            throw new DBException.fieldDoesNotExist(this.attributeName);
+            throw new DBException.FieldDoesNotExist(this.attributeName);
         }
         int i = 0;
         for(String d : table.getData().get(dataIndex)) {

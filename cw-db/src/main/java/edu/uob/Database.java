@@ -8,7 +8,6 @@ import java.util.*;
 public class Database {
     private String name, folderPath;
     private Map<String, Table> tables;
-    // TODO maybe check database name is valid or this may happen in parse
     public Database(String name) {
         this.name = name;
         this.folderPath = Paths.get("databases", this.name).toAbsolutePath().toString();
@@ -18,6 +17,9 @@ public class Database {
     public void create() throws IOException, DBException {
         if(Files.isDirectory(Paths.get(this.folderPath))){
             throw new DBException.DBAlreadyExists(this.name);
+        }
+        if(isReservedKeyWord(this.name)) {
+            throw new DBException.ReservedKeyWord(this.name);
         }
         Files.createDirectories(Paths.get(this.folderPath));
     }
@@ -82,9 +84,12 @@ public class Database {
         if(this.tables.containsKey(tableName)){
             throw new DBException.TableAlreadyExists(tableName, this.name);
         }
+        if(isReservedKeyWord(tableName)) {
+            throw new DBException.ReservedKeyWord(tableName);
+        }
         if(attributes != null){
             if(this.checkForDuplicates(attributes)){
-                throw new DBException.duplicateFields();
+                throw new DBException.DuplicateFields();
             }
         }
         Table newTable = new Table(tableName, this);
@@ -130,10 +135,22 @@ public class Database {
         if(!this.tables.containsKey(tableName)) {
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
+        if(isReservedKeyWord(tableName)) {
+            throw new DBException.ReservedKeyWord(tableName);
+        }
         this.tables.get(tableName).alter(tableAttribute, alterationType);
     }
 
     public Map<String, Table> getTables() {
         return tables;
+    }
+
+    private boolean isReservedKeyWord(String name) {
+        switch (name.toUpperCase()) {
+            case "SELECT", "JOIN", "USE", "CREATE", "DATABASE", "LIKE", "TABLE", "DROP", "ALTER",
+                    "INSERT", "INTO", "VALUES", "FROM", "WHERE", "SET", "UPDATE", "DELETE",
+                    "ON", "AND", "OR", "ADD", "TRUE", "FALSE", "NULL" -> {return true;}
+            default -> {return false;}
+        }
     }
 }

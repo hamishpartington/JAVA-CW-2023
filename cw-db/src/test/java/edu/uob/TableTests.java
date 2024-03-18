@@ -115,7 +115,7 @@ public class TableTests {
         ArrayList<String> values = new ArrayList<>();
         values.add("25");
         values.add("23/08/1997");
-        assertThrows(DBException.incorrectNumberOfValues.class, ()->database.insertIntoTable("test", values),
+        assertThrows(DBException.IncorrectNumberOfValues.class, ()->database.insertIntoTable("test", values),
                 "incorrectNumberOfValues exception not thrown");
     }
 
@@ -125,7 +125,7 @@ public class TableTests {
         attributes.add("age");
         attributes.add("DoB");
         attributes.add("age");
-        assertThrows(DBException.duplicateFields.class, ()->database.createTable("test", attributes),
+        assertThrows(DBException.DuplicateFields.class, ()->database.createTable("test", attributes),
                 "duplicateFields exception not thrown");
     }
 
@@ -196,7 +196,7 @@ public class TableTests {
                 "Exception thrown attempting to insert values");
         ArrayList<String> fields = new ArrayList<>();
         fields.add("NotAField");
-        assertThrows(DBException.fieldDoesNotExist.class, ()->database.selectFromTable(fields, "test", false, null),
+        assertThrows(DBException.FieldDoesNotExist.class, ()->database.selectFromTable(fields, "test", false, null),
                 "Exception thrown when selecting *");
     }
 
@@ -217,7 +217,7 @@ public class TableTests {
         assertDoesNotThrow(()->database.alterTable("test", "name", "ADD"));
         String expectedString = "id\tage\tDoB\tgender\tname\t\n1\t25\t23/08/1997\tMale\t\t\n";
         assertEquals(database.getTables().get("test").toString(), expectedString, "Add not working");
-        assertThrows(DBException.duplicateFields.class,
+        assertThrows(DBException.DuplicateFields.class,
                 ()->database.alterTable("test", "name", "ADD"),
                 "Didn't throw exception when attempting to add field which already exists");
         assertThrows(DBException.TableDoesNotExist.class,
@@ -242,10 +242,10 @@ public class TableTests {
         assertDoesNotThrow(()->database.alterTable("test", "age", "DROP"));
         String expectedString = "id\tDoB\tgender\t\n1\t23/08/1997\tMale\t\n";
         assertEquals(database.getTables().get("test").toString(), expectedString, "Drop not working");
-        assertThrows(DBException.fieldDoesNotExist.class,
+        assertThrows(DBException.FieldDoesNotExist.class,
                 ()->database.alterTable("test", "age", "DROP"),
                 "Didn't throw exception when attempting to drop field which does not exist");
-        assertThrows(DBException.cannotRemoveID.class,
+        assertThrows(DBException.CannotRemoveID.class,
                 ()->database.alterTable("test", "id", "DROP"),
                 "Didn't throw exception when attempting to drop id field");
     }

@@ -393,6 +393,7 @@ public class Parser {
     public void parseUpdate() throws ParserException {
         currentToken++;
         this.parseTableName();
+        String tableName = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("SET")){
             throw new ParserException.NoSetInUpdate(this.tokens.get(currentToken));
