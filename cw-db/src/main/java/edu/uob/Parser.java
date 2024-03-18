@@ -2,6 +2,7 @@ package edu.uob;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Parser {
     private Tokeniser tokeniser;
@@ -14,6 +15,10 @@ public class Parser {
     private static Integer currentToken;
 
     private Table queryResult;
+
+    private ArrayList<Condition> conditions;
+
+    private HashSet<String> trueIds;
 
     public Parser(String query) {
         this.tokeniser = new Tokeniser(query);
@@ -302,7 +307,15 @@ public class Parser {
         if(this.server.getDatabaseInUse() == null) {
             throw new ParserException.NoDatabaseInUse("INSERT");
         }
-        this.queryResult = this.database.selectFromTable(attributeList, tableName);
+        if(this.conditions != null) {
+            for(Condition c : this.conditions) {
+                c.findTrueIds(this.database.getTables().get(tableName));
+            }
+            this.combineConditions();
+            this.queryResult = this.database.selectFromTable(attributeList, tableName, true, this.trueIds);
+        } else{
+            this.queryResult = this.database.selectFromTable(attributeList, tableName, false, null);
+        }
     }
 
     public ArrayList<String> parseWildAttributeList() throws ParserException {
@@ -317,6 +330,7 @@ public class Parser {
 
     public void parseCondition(boolean isRecursive) throws ParserException {
         if(!isRecursive){
+            this.conditions = new ArrayList<>();
             if(!this.checkConditionParentheses()) {
                 throw new ParserException.UnmatchedParentheses();
             }
@@ -325,17 +339,24 @@ public class Parser {
             currentToken++;
         }
         this.parseAttributeName();
+        String attributeName = this.tokens.get(currentToken);
         currentToken++;
         this.parseComparator();
+        String comparator = this.tokens.get(currentToken - 1);
         this.parseValue();
+        String value = this.tokens.get(currentToken);
         currentToken++;
         while(this.tokens.get(currentToken).equals(")")){
             currentToken++;
         }
-        if(this.tokens.get(currentToken).equalsIgnoreCase("AND") ||
-                this.tokens.get(currentToken).equalsIgnoreCase("OR")) {
+        String boolOperator = this.tokens.get(currentToken);
+        if(boolOperator.equalsIgnoreCase("AND") ||
+                boolOperator.equalsIgnoreCase("OR")) {
+            this.conditions.add(new Condition(attributeName, comparator, value, boolOperator));
             currentToken++;
             this.parseCondition(true);
+        } else {
+            this.conditions.add(new Condition(attributeName, comparator, value));
         }
     }
 
@@ -454,5 +475,28 @@ public class Parser {
 
     public Table getQueryResult() {
         return queryResult;
+    }
+
+    private void combineConditions () {
+        this.trueIds = new HashSet<>();
+        //first, add ids of first condition to hash set;
+        for(String id : this.conditions.get(0).getTrueIds()) {
+            this.trueIds.add(id);
+        }
+        // then add or remove based on boolean operator relationship to next condition
+        for(int i = 1; i < this.conditions.size(); i++) {
+            String boolOperator = this.conditions.get(i-1).getRelationShipToNextCondition();
+            this.combineTrueIds(this.conditions.get(i).getTrueIds(), boolOperator);
+        }
+    }
+
+    private void combineTrueIds(ArrayList<String> nextConditionIds, String boolOperator) {
+        if(boolOperator.equalsIgnoreCase("OR")) {
+            for(String id : nextConditionIds) {
+                this.trueIds.add(id);
+            }
+        } else {
+            this.trueIds.removeIf(id -> !nextConditionIds.contains(id));
+        }
     }
 }

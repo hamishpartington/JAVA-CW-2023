@@ -147,7 +147,7 @@ public class TableTests {
                 "Exception thrown attempting to insert values");
         ArrayList<String> fields = new ArrayList<>();
         fields.add("*");
-        Table procTable = assertDoesNotThrow(()->database.selectFromTable(fields, "test"),
+        Table procTable = assertDoesNotThrow(()->database.selectFromTable(fields, "test", false, null),
                 "Exception thrown when selecting *");
         String expectedString = "id\tage\tDoB\tgender\t\n1\t25\t23/08/1997\tMale\t\n2\t25\t23/08/1997\tMale\t\n";
         String actualString = procTable.toString();
@@ -171,7 +171,7 @@ public class TableTests {
         assertDoesNotThrow(()->database.insertIntoTable("test", values),
                 "Exception thrown attempting to insert values");
         attributes.remove("DoB");
-        Table procTable = assertDoesNotThrow(()->database.selectFromTable(attributes, "test"),
+        Table procTable = assertDoesNotThrow(()->database.selectFromTable(attributes, "test", false, null),
                 "Exception thrown when selecting *");
         String expectedString = "age\tgender\t\n25\tMale\t\n25\tMale\t\n";
         String actualString = procTable.toString();
@@ -196,7 +196,7 @@ public class TableTests {
                 "Exception thrown attempting to insert values");
         ArrayList<String> fields = new ArrayList<>();
         fields.add("NotAField");
-        assertThrows(DBException.fieldDoesNotExist.class, ()->database.selectFromTable(fields, "test"),
+        assertThrows(DBException.fieldDoesNotExist.class, ()->database.selectFromTable(fields, "test", false, null),
                 "Exception thrown when selecting *");
     }
 

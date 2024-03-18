@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Table {
@@ -75,10 +76,30 @@ public class Table {
             }
             procTable.fields.add(f);
             int dataIndex = this.fields.indexOf(f);
-            procTable.data.add(this.data.get(dataIndex));
+            procTable.data.add(new ArrayList<>(this.data.get(dataIndex)));
         }
         return procTable;
     }
+
+   public Table selectWithConditions(HashSet<String> trueIds) {
+        Table filteredTable = new Table(null, null);
+
+       filteredTable.fields.addAll(this.fields);
+
+       int j = 0;
+       for(List<String> a : this.data) {
+           filteredTable.data.add(new ArrayList<>());
+           for(int i = 0; i < a.size(); i++) {
+               String dataEntry = a.get(i);
+               String associatedId = this.data.get(0).get(i);
+               if(trueIds.contains(associatedId)) {
+                   filteredTable.data.get(j).add(dataEntry);
+               }
+           }
+           j++;
+       }
+       return filteredTable;
+   }
 
     public void alter(String attribute, String alterationType) throws DBException, IOException {
         if(alterationType.equalsIgnoreCase("ADD")){

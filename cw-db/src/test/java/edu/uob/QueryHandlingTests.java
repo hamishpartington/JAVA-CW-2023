@@ -158,7 +158,6 @@ public class QueryHandlingTests {
         sendCommandToServer("Use Cen1us;");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  , 1.8  ) ;   ");
-        System.out.println(response);
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
         assertTrue(response.contains("[ERROR] Incorrect number of values"), "An invalid query was made, however an [ERROR] tag was not returned with the correct message");
     }
@@ -185,7 +184,6 @@ public class QueryHandlingTests {
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 1.8  ) ;   ");
         String response = sendCommandToServer("SELECT name, id, age FROM census;");
-        System.out.println(response);
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("name"), "name not returned by SELECT name");
@@ -195,11 +193,84 @@ public class QueryHandlingTests {
         assertTrue(response.contains("name\tid\tage\t"), "fields not returned in order of selection");
     }
 
-   /* @Test
+   @Test
+    public void testConditionalSelect1() {
+       sendCommandToServer("CREATE DATABASE Cen1us;");
+       sendCommandToServer("Use Cen1us;");
+       sendCommandToServer("CREATE TABLE census (name, age, weight);");
+       sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+       sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+       sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+       String response = sendCommandToServer("SELECT name, id, age FROM census WHERE age == 18;");
+       assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+       assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+       assertTrue(response.contains("Simon Lock"), "entry with valid age not returned");
+       assertTrue(response.contains("Sam Lock"), "entry with valid age not returned");
+    }
+
+    @Test
+    public void testConditionalSelect2() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE age > 18;");
+        System.out.println(response);
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Simon Simpson"), "entry with valid age not returned");
+    }
+
+    @Test
+    public void testConditionalSelect3() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE name LIKE 'Lock';");
+        System.out.println(response);
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        assertFalse(response.contains("Simon Simpson"), "entry with invalid name returned");
+        assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
+        assertTrue(response.contains("Sam Lock"), "entry with valid name not returned");
+    }
+
+    @Test
     public void testConditionalSelect4() {
-        String query = "SELECT name, id, age FROM census WHERE (name == 'Simon' AND age == 30) OR weight >= 50 AND name LIKE 'ham';";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown for valid select");
-    }*/
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE name LIKE 'Lock' OR age >= 23;");
+        System.out.println(response);
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Simon Simpson"), "entry with valid name returned");
+        assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
+        assertTrue(response.contains("Sam Lock"), "entry with valid name not returned");
+    }
+
+    @Test
+    public void testConditionalSelect5() {
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE name LIKE 'Lock' AND weight <= 80;");
+        System.out.println(response);
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        assertFalse(response.contains("Simon Simpson"), "entry with invalid name returned");
+        assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
+        assertFalse(response.contains("Sam Lock"), "entry with invalid name returned");
+    }
 }

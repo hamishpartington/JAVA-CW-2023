@@ -115,9 +115,13 @@ public class Database {
         this.tables.get(tableName).insert(values);
     }
 
-    public Table selectFromTable(ArrayList<String> fields, String tableName) throws DBException {
+    public Table selectFromTable(ArrayList<String> fields, String tableName, boolean isConditional, HashSet<String> trueIds) throws DBException {
         if(!this.tables.containsKey(tableName)){
             throw new DBException.TableDoesNotExist(tableName, this.name);
+        }
+        if(isConditional) {
+            Table filteredTable = this.tables.get(tableName).selectWithConditions(trueIds);
+            return filteredTable.select(fields);
         }
         return this.tables.get(tableName).select(fields);
     }
