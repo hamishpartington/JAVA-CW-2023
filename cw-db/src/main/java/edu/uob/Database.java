@@ -9,7 +9,7 @@ public class Database {
     private String name, folderPath;
     private Map<String, Table> tables;
     public Database(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.folderPath = Paths.get("databases", this.name).toAbsolutePath().toString();
         this.tables = new HashMap<>();
     }
@@ -81,7 +81,7 @@ public class Database {
     }
 
     public void createTable(String tableName, ArrayList<String> attributes) throws IOException, DBException {
-        if(this.tables.containsKey(tableName)){
+        if(this.tables.containsKey(tableName.toLowerCase())){
             throw new DBException.TableAlreadyExists(tableName, this.name);
         }
         if(isReservedKeyWord(tableName)) {
@@ -106,7 +106,7 @@ public class Database {
         return false;
     }
     public void dropTable(String tableName) throws DBException {
-        if(!this.tables.containsKey(tableName)){
+        if(!this.tables.containsKey(tableName.toLowerCase())){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         this.tables.get(tableName).drop();
@@ -114,7 +114,7 @@ public class Database {
     }
 
     public void insertIntoTable(String tableName, ArrayList<String> values) throws DBException, IOException {
-        if(!this.tables.containsKey(tableName)){
+        if(!this.tables.containsKey(tableName.toLowerCase())){
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
         this.tables.get(tableName).insert(values);

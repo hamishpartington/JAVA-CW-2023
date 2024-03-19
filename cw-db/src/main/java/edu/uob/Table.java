@@ -19,7 +19,7 @@ public class Table {
     private File tableFile;
 
     public Table(String name, Database parentDatabase) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.parentDatabase = parentDatabase;
         currentId = 1;
         this.data = new ArrayList<>();
@@ -69,7 +69,7 @@ public class Table {
         if(fields.get(0).equals("*")){
             return this;
         }
-        Table procTable = new Table(null, null);
+        Table procTable = new Table("temp", null);
         for(String f : fields) {
             if(!this.fields.contains(f)){
                 throw new DBException.FieldDoesNotExist(f);
@@ -82,7 +82,7 @@ public class Table {
     }
 
    public Table selectWithConditions(HashSet<String> trueIds) {
-        Table filteredTable = new Table(null, null);
+        Table filteredTable = new Table("temp", null);
 
        filteredTable.fields.addAll(this.fields);
 

@@ -14,7 +14,7 @@ public class TableTests {
 
     @BeforeEach
     public void setup() {
-        database = new Database("test");
+        database = new Database("Test");
         if(!Files.exists(Paths.get(database.getFolderPath()))){
             assertDoesNotThrow(database::create);
         }
@@ -42,7 +42,7 @@ public class TableTests {
         assertDoesNotThrow(()->database.createTable("test", null),
                 "Io exception thrown when creating table");
         assertThrows(DBException.TableAlreadyExists.class,
-                ()->database.createTable("test", null),
+                ()->database.createTable("tEst", null),
                 "Table already exists");
     }
 

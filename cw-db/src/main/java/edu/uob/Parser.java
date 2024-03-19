@@ -53,7 +53,7 @@ public class Parser {
     public void parseUse() throws ParserException, DBException, IOException {
         currentToken++;
         this.parseDatabaseName();
-        String databaseName = this.tokens.get(currentToken);
+        String databaseName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         this.checkValidStatementEnd("USE");
         this.database = new Database(databaseName);
@@ -86,7 +86,7 @@ public class Parser {
         if(token.equals("DATABASE")){
             currentToken++;
             this.parseDatabaseName();
-            String databaseName = this.tokens.get(currentToken);
+            String databaseName = this.tokens.get(currentToken).toLowerCase();
             currentToken++;
             this.checkValidStatementEnd("CREATE");
             this.database = new Database(databaseName);
@@ -94,7 +94,7 @@ public class Parser {
         } else if(token.equals("TABLE")) {
             currentToken++;
             this.parseTableName();
-            String tableName = this.tokens.get(currentToken);
+            String tableName = this.tokens.get(currentToken).toLowerCase();
             currentToken++;
             ArrayList<String> attributeList = null;
             if(this.tokens.get(currentToken).equals("(")){
@@ -151,7 +151,7 @@ public class Parser {
         if(token.equals("TABLE")){
             currentToken++;
             this.parseTableName();
-            String tableName = this.tokens.get(currentToken);
+            String tableName = this.tokens.get(currentToken).toLowerCase();
             currentToken++;
             this.checkValidStatementEnd("DROP");
             if(this.server.getDatabaseInUse() == null) {
@@ -161,7 +161,7 @@ public class Parser {
         } else if(token.equals("DATABASE")){
             currentToken++;
             this.parseDatabaseName();
-            String databaseName = this.tokens.get(currentToken);
+            String databaseName = this.tokens.get(currentToken).toLowerCase();
             currentToken++;
             this.checkValidStatementEnd("DROP");
             this.database = new Database(databaseName);
@@ -179,7 +179,7 @@ public class Parser {
         }
         currentToken++;
         this.parseTableName();
-        String tableName = this.tokens.get(currentToken);
+        String tableName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         String alterationType = this.parseAlterationType();
         String attributeName = this.tokens.get(currentToken);
@@ -208,7 +208,7 @@ public class Parser {
         }
         currentToken++;
         this.parseTableName();
-        String tableName = this.tokens.get(currentToken);
+        String tableName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("VALUES")){
             throw new ParserException.NoValues();
@@ -293,7 +293,7 @@ public class Parser {
         ArrayList<String> attributeList = this.parseWildAttributeList();
         currentToken++;
         this.parseTableName();
-        String tableName = this.tokens.get(currentToken);
+        String tableName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         String token = this.tokens.get(currentToken).toUpperCase();
         if(!(token.equals(";") || token.equals("WHERE"))) {
@@ -393,7 +393,7 @@ public class Parser {
     public void parseUpdate() throws ParserException {
         currentToken++;
         this.parseTableName();
-        String tableName = this.tokens.get(currentToken);
+        String tableName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("SET")){
             throw new ParserException.NoSetInUpdate(this.tokens.get(currentToken));
