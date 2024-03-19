@@ -99,7 +99,7 @@ public class Database {
     public boolean checkForDuplicates(ArrayList<String> attributes) {
         HashSet<String> hSet = new HashSet<>();
         for(String a : attributes){
-            if(!hSet.add(a)){
+            if(!hSet.add(a.toLowerCase())){
                 return true;
             }
         }

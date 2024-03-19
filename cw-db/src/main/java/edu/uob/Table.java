@@ -71,14 +71,23 @@ public class Table {
         }
         Table procTable = new Table("temp", null);
         for(String f : fields) {
-            if(!this.fields.contains(f)){
+            if(!this.fields.stream().anyMatch(f::equalsIgnoreCase)){
                 throw new DBException.FieldDoesNotExist(f);
             }
             procTable.fields.add(f);
-            int dataIndex = this.fields.indexOf(f);
+            int dataIndex = this.findFieldIndex(f);
             procTable.data.add(new ArrayList<>(this.data.get(dataIndex)));
         }
         return procTable;
+    }
+
+    private int findFieldIndex(String field) {
+        for(int i = 0; i < this.fields.size(); i++) {
+            if(this.fields.get(i).equalsIgnoreCase(field)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
    public Table selectWithConditions(HashSet<String> trueIds) {
@@ -103,7 +112,7 @@ public class Table {
 
     public void alter(String attribute, String alterationType) throws DBException, IOException {
         if(alterationType.equalsIgnoreCase("ADD")){
-            if(this.fields.contains(attribute)){
+            if(this.fields.stream().anyMatch(attribute::equalsIgnoreCase)){
                 throw new DBException.DuplicateFields();
             }
             this.fields.add(attribute);
@@ -118,7 +127,7 @@ public class Table {
             if(attribute.equals("id")){
                 throw new DBException.CannotRemoveID();
             }
-            if(!this.fields.contains(attribute)){
+            if(!this.fields.stream().anyMatch(attribute::equalsIgnoreCase)){
                 throw new DBException.FieldDoesNotExist(attribute);
             }
             int fieldIndex = this.fields.indexOf(attribute);

@@ -201,7 +201,7 @@ public class QueryHandlingTests {
        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
-       String response = sendCommandToServer("SELECT name, id, age FROM census WHERE age == 18;");
+       String response = sendCommandToServer("SELECT nAme, id, aGe FROM census WHERE age == 18;");
        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
        assertTrue(response.contains("Simon Lock"), "entry with valid age not returned");

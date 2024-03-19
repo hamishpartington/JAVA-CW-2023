@@ -124,7 +124,7 @@ public class TableTests {
         ArrayList<String> attributes = new ArrayList<>();
         attributes.add("age");
         attributes.add("DoB");
-        attributes.add("age");
+        attributes.add("aGe");
         assertThrows(DBException.DuplicateFields.class, ()->database.createTable("test", attributes),
                 "duplicateFields exception not thrown");
     }
