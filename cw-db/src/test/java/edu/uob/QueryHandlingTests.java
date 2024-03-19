@@ -269,4 +269,70 @@ public class QueryHandlingTests {
         assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
         assertFalse(response.contains("Sam Lock"), "entry with invalid name returned");
     }
+
+    @Test
+    public void testUpdate1(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("UPDATE census SET Age = 24 WHERE name LIKE 'Sam';");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        server = new DBServer();
+        sendCommandToServer("Use Cen1us;");
+        String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
+        String expectedSubString = "\'Sam Lock\'\t24\t";
+        assertTrue(updatedTableString.contains(expectedSubString), "The table has not updated correctly");
+    }
+
+    @Test
+    public void testUpdate2(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("UPDATE census SET Age = 24 WHERE name LIKE 'Simon';");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        server = new DBServer();
+        sendCommandToServer("Use Cen1us;");
+        String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
+        String expectedSubString1 = "\'Simon Lock\'\t24\t";
+        String expectedSubString2 = "\'Simon Simpson\'\t24\t";
+        assertTrue(updatedTableString.contains(expectedSubString1), "The table has not updated correctly");
+        assertTrue(updatedTableString.contains(expectedSubString2), "The table has not updated correctly");
+    }
+
+    @Test
+    public void testUpdate3(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("UPDATE census SET id = 24 WHERE name LIKE 'Simon';");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("The id field cannot be updated"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testUpdate4(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("UPDATE census SET height = 24 WHERE name LIKE 'Simon';");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Cannot UPDATE height as it does not exist"), "Expected exception not thrown");
+    }
 }

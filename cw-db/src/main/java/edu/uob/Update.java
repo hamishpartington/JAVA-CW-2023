@@ -8,4 +8,12 @@ public class Update {
         this.attributeName = attributeName;
         this.newValue = newValue;
     }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public String getNewValue() {
+        return newValue;
+    }
 }

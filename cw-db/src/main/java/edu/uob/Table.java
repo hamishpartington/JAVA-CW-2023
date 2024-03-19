@@ -72,7 +72,7 @@ public class Table {
         Table procTable = new Table("temp", null);
         for(String f : fields) {
             if(!this.fields.stream().anyMatch(f::equalsIgnoreCase)){
-                throw new DBException.FieldDoesNotExist(f);
+                throw new DBException.FieldDoesNotExist(f, "SELECT");
             }
             procTable.fields.add(f);
             int dataIndex = this.findFieldIndex(f);
@@ -128,7 +128,7 @@ public class Table {
                 throw new DBException.CannotRemoveID();
             }
             if(!this.fields.stream().anyMatch(attribute::equalsIgnoreCase)){
-                throw new DBException.FieldDoesNotExist(attribute);
+                throw new DBException.FieldDoesNotExist(attribute, "DROP");
             }
             int fieldIndex = this.fields.indexOf(attribute);
             this.fields.remove(attribute);
@@ -153,6 +153,25 @@ public class Table {
             outputString = outputString.concat("\n");
         }
         return outputString;
+    }
+
+    public void update(ArrayList<Update> updates, HashSet<String> trueIds) throws IOException, DBException {
+        for(Update u : updates) {
+            String field = u.getAttributeName();
+            if(!this.fields.stream().anyMatch(field::equalsIgnoreCase)) {
+                throw new DBException.FieldDoesNotExist(field, "UPDATE");
+            }
+            if(field.equalsIgnoreCase("id")) {
+                throw new DBException.CannotUpdateID();
+            }
+            int fieldIndex = this.findFieldIndex(field);
+            String newValue = u.getNewValue();
+            for(String id : trueIds) {
+                int dataIndex = this.data.get(0).indexOf(id);
+                this.data.get(fieldIndex).set(dataIndex, newValue);
+            }
+        }
+        this.updateTableFile();
     }
 
     public void updateTableFile() throws IOException {

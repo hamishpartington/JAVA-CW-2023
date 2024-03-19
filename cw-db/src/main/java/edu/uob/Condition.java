@@ -25,11 +25,11 @@ public class Condition {
         this.relationShipToNextCondition = relationShipToNextCondition;
     }
 
-    public void findTrueIds(Table table) throws DBException {
+    public void findTrueIds(Table table, String commandType) throws DBException {
         int dataIndex = table.getFields().indexOf(this.attributeName);
         this.trueIds = new ArrayList<>();
         if(dataIndex == -1) {
-            throw new DBException.FieldDoesNotExist(this.attributeName);
+            throw new DBException.FieldDoesNotExist(this.attributeName, commandType);
         }
         int i = 0;
         for(String d : table.getData().get(dataIndex)) {

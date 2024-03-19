@@ -20,6 +20,8 @@ public class Parser {
 
     private HashSet<String> trueIds;
 
+    private ArrayList<Update> updates;
+
     public Parser(String query) {
         this.tokeniser = new Tokeniser(query);
         this.tokeniser.setup();
@@ -305,11 +307,11 @@ public class Parser {
         }
         this.checkValidStatementEnd("SELECT");
         if(this.server.getDatabaseInUse() == null) {
-            throw new ParserException.NoDatabaseInUse("INSERT");
+            throw new ParserException.NoDatabaseInUse("SELECT");
         }
         if(this.conditions != null) {
             for(Condition c : this.conditions) {
-                c.findTrueIds(this.database.getTables().get(tableName));
+                c.findTrueIds(this.database.getTables().get(tableName), "SELECT");
             }
             this.combineConditions();
             this.queryResult = this.database.selectFromTable(attributeList, tableName, true, this.trueIds);
@@ -390,7 +392,7 @@ public class Parser {
         }
     }
 
-    public void parseUpdate() throws ParserException {
+    public void parseUpdate() throws ParserException, DBException, IOException {
         currentToken++;
         this.parseTableName();
         String tableName = this.tokens.get(currentToken).toLowerCase();
@@ -403,22 +405,34 @@ public class Parser {
         currentToken++;
         this.parseCondition(false);
         this.checkValidStatementEnd("UPDATE");
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("UPDATE");
+        }
+        for(Condition c : this.conditions) {
+            c.findTrueIds(this.database.getTables().get(tableName), "UPDATE");
+        }
+        this.combineConditions();
+        this.database.updateTable(tableName, this.updates, this.trueIds);
     }
 
     public void parseNameValueList() throws ParserException {
         checkForListTerminator("WHERE", "NameValue");
+        this.updates = new ArrayList<>();
         this.parseNameValuePair();
     }
 
     public void parseNameValuePair() throws ParserException {
         this.parseAttributeName();
+        String attributeName = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equals("=")) {
             throw new ParserException.InvalidNameValuePair();
         }
         currentToken++;
         this.parseValue();
+        String value = this.tokens.get(currentToken);
         currentToken++;
+        this.updates.add(new Update(attributeName, value));
         if(this.tokens.get(currentToken).equals(",")) {
             currentToken++;
             this.parseNameValuePair();

@@ -262,14 +262,6 @@ public class ParserTests {
     }
 
     @Test
-    public void testUpdate5() {
-        String query = "UPDATE census SET age = 10, name = 'Isaac', weight = 50 WHERE name == 'Chris';";
-        Parser parser = new Parser(query);
-        assertDoesNotThrow(parser::parseCommand,
-                "Exception thrown for valid update statement");
-    }
-
-    @Test
     public void testDelete1() {
         String query = "DELETE FROM Census WHERE (id != 1 AND name LIKE 'I') OR ((age >= 18) AND height <= 180);";
         Parser parser = new Parser(query);

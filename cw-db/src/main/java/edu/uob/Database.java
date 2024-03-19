@@ -91,12 +91,13 @@ public class Database {
             if(this.checkForDuplicates(attributes)){
                 throw new DBException.DuplicateFields();
             }
+            this.checkForKeywords(attributes);
         }
         Table newTable = new Table(tableName, this);
         newTable.create(attributes);
         tables.put(tableName, newTable);
     }
-    public boolean checkForDuplicates(ArrayList<String> attributes) {
+    private boolean checkForDuplicates(ArrayList<String> attributes) {
         HashSet<String> hSet = new HashSet<>();
         for(String a : attributes){
             if(!hSet.add(a.toLowerCase())){
@@ -135,10 +136,17 @@ public class Database {
         if(!this.tables.containsKey(tableName)) {
             throw new DBException.TableDoesNotExist(tableName, this.name);
         }
-        if(isReservedKeyWord(tableName)) {
-            throw new DBException.ReservedKeyWord(tableName);
+        if(isReservedKeyWord(tableAttribute)) {
+            throw new DBException.ReservedKeyWord(tableAttribute);
         }
         this.tables.get(tableName).alter(tableAttribute, alterationType);
+    }
+
+    public void updateTable(String tableName, ArrayList<Update> updates, HashSet<String> trueIds) throws DBException, IOException {
+        if(!this.tables.containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.name);
+        }
+        this.tables.get(tableName).update(updates, trueIds);
     }
 
     public Map<String, Table> getTables() {
@@ -151,6 +159,14 @@ public class Database {
                     "INSERT", "INTO", "VALUES", "FROM", "WHERE", "SET", "UPDATE", "DELETE",
                     "ON", "AND", "OR", "ADD", "TRUE", "FALSE", "NULL" -> {return true;}
             default -> {return false;}
+        }
+    }
+
+    private void checkForKeywords(ArrayList<String> attributes) throws DBException {
+        for(String a : attributes){
+            if(isReservedKeyWord(a)){
+                throw new DBException.ReservedKeyWord(a);
+            }
         }
     }
 }

@@ -50,8 +50,8 @@ public class DBException extends Exception {
 
     public static class FieldDoesNotExist extends DBException {
         @Serial private static final long serialVersionUID = 1;
-        public FieldDoesNotExist(String field) {
-            super("Cannot SELECT " + field + " as it does not exist");
+        public FieldDoesNotExist(String field, String commandType) {
+            super("Cannot " + commandType + " " + field + " as it does not exist");
         }
     }
 
@@ -59,6 +59,13 @@ public class DBException extends Exception {
         @Serial private static final long serialVersionUID = 1;
         public CannotRemoveID() {
             super("The id field cannot be removed");
+        }
+    }
+
+    public static class CannotUpdateID extends DBException {
+        @Serial private static final long serialVersionUID = 1;
+        public CannotUpdateID() {
+            super("The id field cannot be updated");
         }
     }
 
