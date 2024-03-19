@@ -149,6 +149,13 @@ public class Database {
         this.tables.get(tableName).update(updates, trueIds);
     }
 
+    public void deleteTable(String tableName, HashSet<String> trueIds) throws DBException, IOException {
+        if(!this.tables.containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.name);
+        }
+        this.tables.get(tableName).delete(trueIds);
+    }
+
     public Map<String, Table> getTables() {
         return tables;
     }
@@ -168,5 +175,9 @@ public class Database {
                 throw new DBException.ReservedKeyWord(a);
             }
         }
+    }
+
+    public String getName() {
+        return name;
     }
 }

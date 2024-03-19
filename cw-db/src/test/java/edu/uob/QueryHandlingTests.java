@@ -335,4 +335,68 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("Cannot UPDATE height as it does not exist"), "Expected exception not thrown");
     }
+
+    @Test
+    public void testDelete1(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("DELETE FROM census WHERE name LIKE 'Simon';");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        server = new DBServer();
+        sendCommandToServer("Use Cen1us;");
+        String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
+        String unexpectedSubString = "\'Simon\'";
+        assertFalse(updatedTableString.contains(unexpectedSubString), "The table has not deleted correctly");
+    }
+
+    @Test
+    public void testDelete2(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("DELETE FROM census WHERE name LIKE 'Simon' AND age == 18;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        server = new DBServer();
+        sendCommandToServer("Use Cen1us;");
+        String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
+        String unexpectedSubString = "\'Simon Lock\'";
+        assertFalse(updatedTableString.contains(unexpectedSubString), "The table has not deleted correctly");
+    }
+
+    @Test
+    public void testDelete3(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("DELETE FROM census WHERE name LIKE 'Simon' AND height == 18;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Cannot DELETE height as it does not exist"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testDelete4(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        String response = sendCommandToServer("DELETE FROM censs WHERE name LIKE 'Simon' AND height == 18;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("The table: censs does not exist in the cen1us database"), "Expected exception not thrown");
+    }
 }

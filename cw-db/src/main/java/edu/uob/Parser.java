@@ -309,6 +309,9 @@ public class Parser {
         if(this.server.getDatabaseInUse() == null) {
             throw new ParserException.NoDatabaseInUse("SELECT");
         }
+        if(!this.database.getTables().containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.database.getName());
+        }
         if(this.conditions != null) {
             for(Condition c : this.conditions) {
                 c.findTrueIds(this.database.getTables().get(tableName), "SELECT");
@@ -408,6 +411,9 @@ public class Parser {
         if(this.server.getDatabaseInUse() == null) {
             throw new ParserException.NoDatabaseInUse("UPDATE");
         }
+        if(!this.database.getTables().containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.database.getName());
+        }
         for(Condition c : this.conditions) {
             c.findTrueIds(this.database.getTables().get(tableName), "UPDATE");
         }
@@ -439,13 +445,14 @@ public class Parser {
         }
     }
 
-    public void parseDelete() throws ParserException {
+    public void parseDelete() throws ParserException, DBException, IOException {
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("FROM")) {
             throw new ParserException.NoFromDelete(this.tokens.get(currentToken));
         }
         currentToken++;
         this.parseTableName();
+        String tableName = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("WHERE")) {
             throw new ParserException.NoWhere(this.tokens.get(currentToken));
@@ -453,6 +460,18 @@ public class Parser {
         currentToken++;
         this.parseCondition(false);
         this.checkValidStatementEnd("DELETE");
+
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("DELETE");
+        }
+        if(!this.database.getTables().containsKey(tableName)) {
+            throw new DBException.TableDoesNotExist(tableName, this.database.getName());
+        }
+        for(Condition c : this.conditions) {
+            c.findTrueIds(this.database.getTables().get(tableName), "DELETE");
+        }
+        this.combineConditions();
+        this.database.deleteTable(tableName, this.trueIds);
     }
 
     public void parseJoin() throws ParserException {
