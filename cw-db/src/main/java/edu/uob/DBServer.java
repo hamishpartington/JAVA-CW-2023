@@ -54,6 +54,8 @@ public class DBServer {
             return "[ERROR] " + error.getLocalizedMessage();
         } catch (IOException ioe) {
             return "Something went wrong with file handling";
+        } catch (CloneNotSupportedException ce) {
+            return "Something went wrong with the clone method";
         }
         if(parser.getQueryResult() != null) {
             return "[OK]\n" + parser.getQueryResult().toString();

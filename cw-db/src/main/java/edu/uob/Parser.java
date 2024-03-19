@@ -29,10 +29,10 @@ public class Parser {
         currentToken = 0;
     }
 
-    public void parseQuery() throws ParserException, DBException, IOException {
+    public void parseQuery() throws ParserException, DBException, IOException, CloneNotSupportedException {
         this.parseCommand();
     }
-    public void parseCommand() throws ParserException, DBException, IOException {
+    public void parseCommand() throws ParserException, DBException, IOException, CloneNotSupportedException {
         int lastTokenIndex = this.tokens.size() - 1;
         String lastToken = this.tokens.get(lastTokenIndex);
         if(!lastToken.equals(";")){
@@ -474,29 +474,37 @@ public class Parser {
         this.database.deleteTable(tableName, this.trueIds);
     }
 
-    public void parseJoin() throws ParserException {
+    public void parseJoin() throws ParserException, DBException, CloneNotSupportedException {
         currentToken++;
         this.parseTableName();
+        String table1Name = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("AND")){
             throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "AND");
         }
         currentToken++;
         this.parseTableName();
+        String table2Name = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("ON")){
             throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "ON");
         }
         currentToken++;
         this.parseAttributeName();
+        String table1Attribute = this.tokens.get(currentToken);
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("AND")){
             throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "AND");
         }
         currentToken++;
         this.parseAttributeName();
+        String table2Attribute = this.tokens.get(currentToken);
         currentToken++;
         this.checkValidStatementEnd("JOIN");
+        if(this.server.getDatabaseInUse() == null) {
+            throw new ParserException.NoDatabaseInUse("JOIN");
+        }
+        this.queryResult = this.database.joinTables(table1Name, table2Name, table1Attribute, table2Attribute);
     }
 
     public void setServer(DBServer server) {

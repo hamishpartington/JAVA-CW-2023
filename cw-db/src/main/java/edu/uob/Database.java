@@ -156,6 +156,39 @@ public class Database {
         this.tables.get(tableName).delete(trueIds);
     }
 
+    public Table joinTables(String table1Name, String table2Name, String table1Attribute, String table2Attribute) throws DBException, CloneNotSupportedException {
+        if(!this.tables.containsKey(table1Name)) {
+            throw new DBException.TableDoesNotExist(table1Name, this.name);
+        }
+        if(!this.tables.containsKey(table2Name)) {
+            throw new DBException.TableDoesNotExist(table2Name, this.name);
+        }
+        if(!this.tables.get(table1Name).getFields().contains(table1Attribute)) {
+            throw new DBException.FieldDoesNotExist(table1Attribute, "JOIN ON");
+        }
+        if(!this.tables.get(table2Name).getFields().contains(table2Attribute)) {
+            throw new DBException.FieldDoesNotExist(table2Attribute, "JOIN ON");
+        }
+        Table table1 = this.tables.get(table1Name).clone();
+        Table table2 = this.tables.get(table1Name).clone();
+
+        int table2Ids = table2.getFields().indexOf(table2Attribute);
+        int table1Ids = table1.getFields().indexOf(table1Attribute);
+        //filter down tables and remove id and join cols
+        table1.filterTableByForeignKeys(table2.getData().get(table2Ids), table1Attribute);
+        //table2.filterTableByForeignKeys(table1.getData().get(table1Ids), table2Attribute);
+
+        int table1Size = table1.getData().get(0).size();
+
+        table1.getData().add(new ArrayList<>(table1Size));
+
+//        for(String id: table1.getData().get(0)) {
+//            for()
+//        }
+//
+        return table1;
+    }
+
     public Map<String, Table> getTables() {
         return tables;
     }

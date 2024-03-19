@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class Table {
+public class Table implements Cloneable {
     private String name;
     private Database parentDatabase;
     private static Integer currentId;
@@ -214,5 +214,35 @@ public class Table {
 
     public List<List<String>> getData() {
         return data;
+    }
+
+    public void filterTableByForeignKeys (List<String> foreignKeys, String joinAttribute) {
+
+        int keyIndex = this.fields.indexOf(joinAttribute);
+
+        for(String dataEntry : this.data.get(keyIndex)) {
+            if(!foreignKeys.contains(dataEntry)){
+                int dataIndex = this.data.get(keyIndex).indexOf(dataEntry);
+                this.removeDataAtIndex(dataIndex);
+            }
+        }
+    }
+
+    private void removeDataAtIndex(int dataIndex) {
+        for(List<String> column : this.data) {
+            column.remove(dataIndex);
+        }
+    }
+
+    public void renameColsForJoin() {
+        for(int i = 0; i < this.fields.size(); i++){
+            String oldName = this.fields.get(i);
+            this.fields.set(i, this.name + "." + oldName);
+        }
+    }
+
+    @Override
+    public Table clone() throws CloneNotSupportedException {
+        return (Table)super.clone();
     }
 }
