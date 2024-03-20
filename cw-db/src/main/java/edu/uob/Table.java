@@ -81,7 +81,7 @@ public class Table implements Cloneable {
         return procTable;
     }
 
-    private int findFieldIndex(String field) {
+    public int findFieldIndex(String field) {
         for(int i = 0; i < this.fields.size(); i++) {
             if(this.fields.get(i).equalsIgnoreCase(field)) {
                 return i;
@@ -218,13 +218,18 @@ public class Table implements Cloneable {
 
     public void filterTableByForeignKeys (List<String> foreignKeys, String joinAttribute) {
 
-        int keyIndex = this.fields.indexOf(joinAttribute);
+        int keyIndex = this.findFieldIndex(joinAttribute);
+        ArrayList<Integer> dataIndexesToRemove = new ArrayList<>();
 
         for(String dataEntry : this.data.get(keyIndex)) {
             if(!foreignKeys.contains(dataEntry)){
                 int dataIndex = this.data.get(keyIndex).indexOf(dataEntry);
-                this.removeDataAtIndex(dataIndex);
+                dataIndexesToRemove.add(dataIndex);
             }
+        }
+
+        for(Integer i: dataIndexesToRemove) {
+            this.removeDataAtIndex((int)i);
         }
     }
 
@@ -235,9 +240,37 @@ public class Table implements Cloneable {
     }
 
     public void renameColsForJoin() {
+        this.fields.replaceAll(s -> this.name + "." + s);
+    }
+
+    public void generateNewIdAfterJoin() {
+        this.fields.set(0, "id");
+        for(Integer i = 0; i < this.data.get(0).size(); i++) {
+            Integer id = i+1;
+            this.data.get(0).set(i, id.toString());
+        }
+    }
+
+    public void removePreviousIdAndJoiningColumns(String table1Name, String table2Name, String table1Attribute, String table2Attribute) {
+        ArrayList<String> colNamesToRemove = new ArrayList<>();
+        colNamesToRemove.add(table1Name + ".id");
+        colNamesToRemove.add(table2Name + ".id");
+        colNamesToRemove.add(table1Name + "." + table1Attribute);
+        colNamesToRemove.add(table2Name + "." + table2Attribute);
+
+        ArrayList<String> fieldToRemove = new ArrayList<>();
+        ArrayList<Integer> dataIndexToRemove = new ArrayList<>();
+
         for(int i = 0; i < this.fields.size(); i++){
-            String oldName = this.fields.get(i);
-            this.fields.set(i, this.name + "." + oldName);
+            String field = this.fields.get(i);
+            if(colNamesToRemove.stream().anyMatch(field::equalsIgnoreCase)) {
+                dataIndexToRemove.add(i);
+                fieldToRemove.add(field);
+            }
+        }
+        this.fields.removeAll(fieldToRemove);
+        for(int i = dataIndexToRemove.size() - 1; i >= 0; i--) {
+            this.data.remove((int)dataIndexToRemove.get(i));
         }
     }
 

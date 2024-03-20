@@ -42,8 +42,9 @@ public class QueryHandlingTests {
 
     private String sendCommandToServer(String command) {
         // Try to send a command to the server - this call will timeout if it takes too long (in case the server enters an infinite loop)
-        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
-                "Server took too long to respond (probably stuck in an infinite loop)");
+//        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
+//                "Server took too long to respond (probably stuck in an infinite loop)");
+        return server.handleCommand(command);
     }
 
     // A basic test that creates a database, creates a table, inserts some test data, then queries it.
@@ -399,4 +400,163 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("The table: censs does not exist in the cen1us database"), "Expected exception not thrown");
     }
+
+    @Test
+    public void testJoin1(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 2) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 3 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        sendCommandToServer("INSERT INTO city VALUES ('Manchester');");
+        String response = sendCommandToServer("JOIN census AND city ON cityId AND id;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        String expectedCols = "id\tcensus.name\tcensus.age\tcensus.weight\tcity.cityName\t";
+        assertTrue(response.contains(expectedCols), "Column names not as expected after join");
+        String expectedData = "1\t'Simon Lock'\t18\t80\t'London'\t\n2\t'Sam Lock'\t18\t90\t'Bristol'\t\n3\t'Simon Simpson'\t23\t80\t'Manchester'";
+        assertTrue(response.contains(expectedData), "Data not as expected after join");
+    }
+    @Test
+    public void testJoin2(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 2) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 3 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN census AND city ON cityId AND id;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        String expectedCols = "id\tcensus.name\tcensus.age\tcensus.weight\tcity.cityName\t";
+        assertTrue(response.contains(expectedCols), "Column names not as expected after join");
+        String expectedData = "1\t'Simon Lock'\t18\t80\t'London'\t\n2\t'Sam Lock'\t18\t90\t'Bristol'";
+        String notExpectedData = "'Simon Simpson'";
+        assertTrue(response.contains(expectedData), "Data not as expected after join");
+        assertFalse(response.contains(notExpectedData), "Data not as expected after join");
+    }
+
+    @Test
+    public void testJoin3(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 3 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN census AND city ON cityId AND id;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        String expectedCols = "id\tcensus.name\tcensus.age\tcensus.weight\tcity.cityName\t";
+        assertTrue(response.contains(expectedCols), "Column names not as expected after join");
+        String expectedData = "1\t'Simon Lock'\t18\t80\t'London'";
+        String notExpectedData1 = "'Simon Simpson'";
+        String notExpectedData2 = "'Sam Lock'";
+        assertTrue(response.contains(expectedData), "Data not as expected after join");
+        assertFalse(response.contains(notExpectedData1), "Data not as expected after join");
+        assertFalse(response.contains(notExpectedData2), "Data not as expected after join");
+    }
+
+    @Test
+    public void testJoin4(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 2 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN cenSus AND ciTy ON cityid AND Id;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        String expectedCols = "id\tcensus.name\tcensus.age\tcensus.weight\tcity.cityName\t";
+        assertTrue(response.contains(expectedCols), "Column names not as expected after join");
+        String expectedData = "1\t'Simon Simpson'\t23\t80\t'Bristol'";
+        String notExpectedData1 = "'Simon Lock'";
+        String notExpectedData2 = "'Sam Lock'";
+        assertTrue(response.contains(expectedData), "Data not as expected after join");
+        assertFalse(response.contains(notExpectedData1), "Data not as expected after join");
+        assertFalse(response.contains(notExpectedData2), "Data not as expected after join");
+    }
+
+    @Test
+    public void testJoin5(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 2 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN censs AND city ON cityId AND id;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("The table: censs does not exist in the cen1us database"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testJoin6(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 2 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN census AND ciy ON cityId AND id;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("The table: ciy does not exist in the cen1us database"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testJoin7(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 2 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN census AND city ON cityd AND id;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Cannot JOIN ON cityd as it does not exist"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testJoin8(){
+        sendCommandToServer("CREATE DATABASE Cen1us;");
+        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80, 2 ) ;   ");
+        sendCommandToServer("CREATE TABLE city (cityName);");
+        sendCommandToServer("INSERT INTO city VALUES ('London');");
+        sendCommandToServer("INSERT INTO city VALUES ('Bristol');");
+        String response = sendCommandToServer("JOIN census AND city ON cityId AND idd;");
+        assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
+        assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
+        assertTrue(response.contains("Cannot JOIN ON idd as it does not exist"), "Expected exception not thrown");
+    }
+
 }

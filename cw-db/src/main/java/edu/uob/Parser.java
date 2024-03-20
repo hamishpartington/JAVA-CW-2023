@@ -477,14 +477,14 @@ public class Parser {
     public void parseJoin() throws ParserException, DBException, CloneNotSupportedException {
         currentToken++;
         this.parseTableName();
-        String table1Name = this.tokens.get(currentToken);
+        String table1Name = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("AND")){
             throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "AND");
         }
         currentToken++;
         this.parseTableName();
-        String table2Name = this.tokens.get(currentToken);
+        String table2Name = this.tokens.get(currentToken).toLowerCase();
         currentToken++;
         if(!this.tokens.get(currentToken).equalsIgnoreCase("ON")){
             throw new ParserException.InvalidJoin(this.tokens.get(currentToken), "ON");

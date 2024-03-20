@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.ArrayList;
 
 public class Database {
     private String name, folderPath;
@@ -163,29 +164,41 @@ public class Database {
         if(!this.tables.containsKey(table2Name)) {
             throw new DBException.TableDoesNotExist(table2Name, this.name);
         }
-        if(!this.tables.get(table1Name).getFields().contains(table1Attribute)) {
+        if(this.tables.get(table1Name).getFields().stream().noneMatch(table1Attribute::equalsIgnoreCase)) {
             throw new DBException.FieldDoesNotExist(table1Attribute, "JOIN ON");
         }
-        if(!this.tables.get(table2Name).getFields().contains(table2Attribute)) {
+        if(this.tables.get(table2Name).getFields().stream().noneMatch(table2Attribute::equalsIgnoreCase)) {
             throw new DBException.FieldDoesNotExist(table2Attribute, "JOIN ON");
         }
         Table table1 = this.tables.get(table1Name).clone();
-        Table table2 = this.tables.get(table1Name).clone();
+        Table table2 = this.tables.get(table2Name).clone();
 
-        int table2Ids = table2.getFields().indexOf(table2Attribute);
-        int table1Ids = table1.getFields().indexOf(table1Attribute);
-        //filter down tables and remove id and join cols
+        int table2Ids = table2.findFieldIndex(table2Attribute);
+        int table1Ids = table1.findFieldIndex(table1Attribute);
+
         table1.filterTableByForeignKeys(table2.getData().get(table2Ids), table1Attribute);
-        //table2.filterTableByForeignKeys(table1.getData().get(table1Ids), table2Attribute);
+        table1.renameColsForJoin();
+        table2.renameColsForJoin();
 
         int table1Size = table1.getData().get(0).size();
 
-        table1.getData().add(new ArrayList<>(table1Size));
+        for(String id: table1.getData().get(table1Ids)) {
+            int table2DataIndex = table2.getData().get(table2Ids).indexOf(id);
+            for(int i = 0; i < table2.getData().size(); i++) {
+                String fieldName = table2.getFields().get(i);
+                if(table1.getFields().stream().noneMatch(fieldName::equalsIgnoreCase)) {
+                    table1.getFields().add(fieldName);
+                    table1.getData().add(new ArrayList<>(Arrays.asList(new String[table1Size])));
+                }
+                int table1Index = table1.getData().get(table1Ids).indexOf(id);
+                int table1ColIndex = table1.findFieldIndex(fieldName);
+                String dataToAdd = table2.getData().get(i).get(table2DataIndex);
+                table1.getData().get(table1ColIndex).set(table1Index, dataToAdd);
+            }
+        }
+        table1.generateNewIdAfterJoin();
+        table1.removePreviousIdAndJoiningColumns(table1Name, table2Name, table1Attribute, table2Attribute);
 
-//        for(String id: table1.getData().get(0)) {
-//            for()
-//        }
-//
         return table1;
     }
 
