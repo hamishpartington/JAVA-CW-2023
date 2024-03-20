@@ -18,18 +18,28 @@ public class Table implements Cloneable {
 
     private File tableFile;
 
-    public Table(String name, Database parentDatabase) {
+    public Table(String name, Database parentDatabase, int idNum) {
         this.name = name.toLowerCase();
         this.parentDatabase = parentDatabase;
-        currentId = 1;
+        currentId = idNum;
         this.data = new ArrayList<>();
         this.fields = new ArrayList<>();
+    }
+
+    public Table(String name, Database parentDatabase, int idNum, File tableFile) {
+        this.name = name.toLowerCase();
+        this.parentDatabase = parentDatabase;
+        currentId = idNum;
+        this.data = new ArrayList<>();
+        this.fields = new ArrayList<>();
+        this.tableFile = tableFile;
     }
     public void create(ArrayList<String> attributes) throws IOException {
         this.tableFile = new File(this.parentDatabase.getFolderPath(), this.name + ".tab");
         this.tableFile.setWritable(true);
         this.tableFile.setReadable(true);
         FileWriter writer = new FileWriter(this.tableFile);
+        writer.write(currentId + "\n");
         writer.write("id\t");
         this.fields.add("id");
         this.data.add(new ArrayList<>());
@@ -53,23 +63,19 @@ public class Table implements Cloneable {
         }
         int i = 1;
         data.get(0).add(currentId.toString());
-        FileWriter writer = new FileWriter(tableFile, true);
-        writer.write("\n" + currentId.toString() + "\t");
         currentId++;
         for(String v : values){
           data.get(i).add(v);
-          writer.write(v + "\t");
           i++;
         }
-        writer.flush();
-        writer.close();
+        this.updateTableFile();
     }
 
     public Table select(ArrayList<String> fields) throws DBException {
         if(fields.get(0).equals("*")){
             return this;
         }
-        Table procTable = new Table("temp", null);
+        Table procTable = new Table("temp", null, 0);
         for(String f : fields) {
             if(this.fields.stream().noneMatch(f::equalsIgnoreCase)){
                 throw new DBException.FieldDoesNotExist(f, "SELECT");
@@ -91,7 +97,7 @@ public class Table implements Cloneable {
     }
 
    public Table selectWithConditions(HashSet<String> trueIds) {
-        Table filteredTable = new Table("temp", null);
+        Table filteredTable = new Table("temp", null, 0);
 
        filteredTable.fields.addAll(this.fields);
 
@@ -186,6 +192,7 @@ public class Table implements Cloneable {
 
     public void updateTableFile() throws IOException {
         FileWriter writer = new FileWriter(this.tableFile);
+        writer.write(currentId + "\n");
         for (String f : this.fields) {
             writer.write(f + "\t");
         }

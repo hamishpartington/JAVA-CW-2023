@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Database {
     private String name, folderPath;
     private Map<String, Table> tables;
+
     public Database(String name) {
         this.name = name.toLowerCase();
         this.folderPath = Paths.get("databases", this.name).toAbsolutePath().toString();
@@ -23,6 +24,7 @@ public class Database {
             throw new DBException.ReservedKeyWord(this.name);
         }
         Files.createDirectories(Paths.get(this.folderPath));
+
     }
 
     public void drop() throws DBException {
@@ -48,7 +50,7 @@ public class Database {
         if(contents != null) {
             for(File f : contents){
                 String tableName = f.getName().replaceAll(".tab", "");
-                Table table = readTable(f, tableName);
+                Table table = this.readTable(f, tableName);
                 this.tables.put(tableName, table);
             }
         }
@@ -56,9 +58,10 @@ public class Database {
 
     private Table readTable(File tableFile, String tableName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(tableFile));
+        String idNum = reader.readLine().replaceAll("\n", "");
         int lineNum = 0;
         String currentLine = reader.readLine();
-        Table table = new Table(tableName, this);
+        Table table = new Table(tableName, this, Integer.parseInt(idNum), tableFile);
         do {
             String procLine = currentLine.replaceAll("\n", "");
             String[] data = procLine.split("\t");
@@ -94,7 +97,7 @@ public class Database {
             }
             this.checkForKeywords(attributes);
         }
-        Table newTable = new Table(tableName, this);
+        Table newTable = new Table(tableName, this, 1);
         newTable.create(attributes);
         tables.put(tableName, newTable);
     }

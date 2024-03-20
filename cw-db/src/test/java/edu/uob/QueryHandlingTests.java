@@ -42,9 +42,8 @@ public class QueryHandlingTests {
 
     private String sendCommandToServer(String command) {
         // Try to send a command to the server - this call will timeout if it takes too long (in case the server enters an infinite loop)
-//        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
-//                "Server took too long to respond (probably stuck in an infinite loop)");
-        return server.handleCommand(command);
+        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
+                "Server took too long to respond (probably stuck in an infinite loop)");
     }
 
     // A basic test that creates a database, creates a table, inserts some test data, then queries it.
@@ -60,8 +59,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testCreateTable() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         String response = sendCommandToServer("CREATE TABLE census (name, age, weight);");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
@@ -69,7 +69,8 @@ public class QueryHandlingTests {
 
     @Test
     public void testCreateTableNoUse() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
         String response = sendCommandToServer("CREATE TABLE census (name, age, weight);");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
@@ -86,8 +87,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testDropDatabase() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        String response = sendCommandToServer("drop database Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        String response = sendCommandToServer("drop database " + randomName + ";");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         boolean folderExists = Files.exists(Paths.get("databases" + File.separator + "Cen1us"));
         assertFalse(folderExists, "Database folder has not been deleted by drop");
@@ -96,8 +98,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testDropTable() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("drop table census;");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
@@ -108,7 +111,8 @@ public class QueryHandlingTests {
 
     @Test
     public void testDropTableNoInUseDatabase() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
         String response = sendCommandToServer("drop table census;");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
@@ -117,8 +121,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testAlter() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("ALTER TABLE census ADD height;");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
@@ -127,7 +132,8 @@ public class QueryHandlingTests {
 
     @Test
     public void testAlterTableNoInUseDatabase() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
         String response = sendCommandToServer("alter table census add age;");
         assertFalse(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
@@ -136,8 +142,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testInsert() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  ,35, 1.8  ) ;   ");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
@@ -146,7 +153,8 @@ public class QueryHandlingTests {
 
     @Test
     public void testInsertTableNoInUseDatabase() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
         String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  ,35, 1.8  ) ;   ");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was not returned");
@@ -155,8 +163,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testInsertNotEnoughValues() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         String response = sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock'  , 1.8  ) ;   ");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was returned");
@@ -165,8 +174,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testSimpleSelect1() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 1.8  ) ;   ");
         String response = sendCommandToServer("SELECT * FROM census;");
@@ -180,8 +190,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testSimpleSelect2() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 1.8  ) ;   ");
         String response = sendCommandToServer("SELECT name, id, age FROM census;");
@@ -196,8 +207,9 @@ public class QueryHandlingTests {
 
    @Test
     public void testConditionalSelect1() {
-       sendCommandToServer("CREATE DATABASE Cen1us;");
-       sendCommandToServer("Use Cen1us;");
+       String randomName = generateRandomName();
+       sendCommandToServer("CREATE DATABASE " + randomName + ";");
+       sendCommandToServer("Use " + randomName + ";");
        sendCommandToServer("CREATE TABLE census (name, age, weight);");
        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -211,8 +223,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testConditionalSelect2() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -225,8 +238,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testConditionalSelect3() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -241,8 +255,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testConditionalSelect4() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -257,8 +272,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testConditionalSelect5() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -273,8 +289,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testUpdate1(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -283,16 +300,17 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         server = new DBServer();
-        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("Use " + randomName + ";");
         String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
-        String expectedSubString = "\'Sam Lock\'\t24\t";
+        String expectedSubString = "'Sam Lock'\t24\t";
         assertTrue(updatedTableString.contains(expectedSubString), "The table has not updated correctly");
     }
 
     @Test
     public void testUpdate2(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -301,18 +319,19 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         server = new DBServer();
-        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("Use " + randomName + ";");
         String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
-        String expectedSubString1 = "\'Simon Lock\'\t24\t";
-        String expectedSubString2 = "\'Simon Simpson\'\t24\t";
+        String expectedSubString1 = "'Simon Lock'\t24\t";
+        String expectedSubString2 = "'Simon Simpson'\t24\t";
         assertTrue(updatedTableString.contains(expectedSubString1), "The table has not updated correctly");
         assertTrue(updatedTableString.contains(expectedSubString2), "The table has not updated correctly");
     }
 
     @Test
     public void testUpdate3(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -325,8 +344,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testUpdate4(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -339,8 +359,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testDelete1(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -349,16 +370,17 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         server = new DBServer();
-        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("Use " + randomName + ";");
         String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
-        String unexpectedSubString = "\'Simon\'";
+        String unexpectedSubString = "'Simon'";
         assertFalse(updatedTableString.contains(unexpectedSubString), "The table has not deleted correctly");
     }
 
     @Test
     public void testDelete2(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -367,16 +389,17 @@ public class QueryHandlingTests {
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         server = new DBServer();
-        sendCommandToServer("Use Cen1us;");
+        sendCommandToServer("Use " + randomName + ";");
         String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
-        String unexpectedSubString = "\'Simon Lock\'";
+        String unexpectedSubString = "'Simon Lock'";
         assertFalse(updatedTableString.contains(unexpectedSubString), "The table has not deleted correctly");
     }
 
     @Test
     public void testDelete3(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -389,8 +412,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testDelete4(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
@@ -398,13 +422,14 @@ public class QueryHandlingTests {
         String response = sendCommandToServer("DELETE FROM censs WHERE name LIKE 'Simon' AND height == 18;");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("The table: censs does not exist in the cen1us database"), "Expected exception not thrown");
+        assertTrue(response.contains("The table: censs does not exist in the " + randomName + " database"), "Expected exception not thrown");
     }
 
     @Test
     public void testJoin1(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 2) ;   ");
@@ -423,8 +448,9 @@ public class QueryHandlingTests {
     }
     @Test
     public void testJoin2(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 2) ;   ");
@@ -445,8 +471,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testJoin3(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 1 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -469,8 +496,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testJoin4(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -493,8 +521,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testJoin5(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -505,13 +534,14 @@ public class QueryHandlingTests {
         String response = sendCommandToServer("JOIN censs AND city ON cityId AND id;");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("The table: censs does not exist in the cen1us database"), "Expected exception not thrown");
+        assertTrue(response.contains("The table: censs does not exist in the " + randomName + " database"), "Expected exception not thrown");
     }
 
     @Test
     public void testJoin6(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -522,13 +552,14 @@ public class QueryHandlingTests {
         String response = sendCommandToServer("JOIN census AND ciy ON cityId AND id;");
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
-        assertTrue(response.contains("The table: ciy does not exist in the cen1us database"), "Expected exception not thrown");
+        assertTrue(response.contains("The table: ciy does not exist in the " + randomName + " database"), "Expected exception not thrown");
     }
 
     @Test
     public void testJoin7(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -544,8 +575,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testJoin8(){
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        sendCommandToServer("Use Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
         sendCommandToServer("CREATE TABLE census (name, age, weight, cityId);");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80, 3 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90, 3) ;   ");
@@ -557,6 +589,24 @@ public class QueryHandlingTests {
         assertFalse(response.contains("[OK]"), "An invalid query was made, however an [OK] tag was not returned");
         assertTrue(response.contains("[ERROR]"), "An invalid query was made, however an [ERROR] tag was returned");
         assertTrue(response.contains("Cannot JOIN ON idd as it does not exist"), "Expected exception not thrown");
+    }
+
+    @Test
+    public void testPersistenceOfCurrentId(){
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        sendCommandToServer("Use " + randomName + ";");
+        sendCommandToServer("CREATE TABLE census (name, age, weight);");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
+        sendCommandToServer("DELETE FROM census WHERE name LIKE 'Simon ';");
+        server = new DBServer();
+        sendCommandToServer("Use " + randomName + ";");
+        sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
+        String updatedTableString = server.getDatabaseInUse().getTables().get("census").toString();
+        String expectedSubString = "4\t'Simon Lock'";
+        assertTrue(updatedTableString.contains(expectedSubString), "The table has not deleted correctly");
     }
 
 }
