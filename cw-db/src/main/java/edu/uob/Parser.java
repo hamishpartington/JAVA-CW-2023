@@ -328,6 +328,9 @@ public class Parser {
         if(this.tokens.get(currentToken).equals("*")) {
             attributeList.add("*");
             currentToken++;
+            if(!this.tokens.get(currentToken).equalsIgnoreCase("FROM")) {
+                throw new ParserException.InvalidWildAttributeList();
+            }
             return attributeList;
         }
         return this.parseAttributeList("FROM");
@@ -390,8 +393,13 @@ public class Parser {
     }
 
     private void checkValidStatementEnd(String statementType) throws ParserException {
+
         if(!this.tokens.get(currentToken).equals(";")) {
             throw new ParserException.InvalidStatementSyntax(this.tokens.get(currentToken), statementType);
+        }
+
+        if((this.tokens.size() - 1) != currentToken) {
+            throw new ParserException.CannotEnterMultipleQueries();
         }
     }
 

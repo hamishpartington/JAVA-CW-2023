@@ -173,4 +173,18 @@ public class ParserException extends Exception {
             super("Database must be in use to " + statementType + " tables");
         }
     }
+
+    public static class CannotEnterMultipleQueries extends ParserException {
+        @Serial private static final long serialVersionUID = 1;
+        public CannotEnterMultipleQueries() {
+            super("The server can only handle one query at a time. It is forbidden to chain multiple queries togeter with ;");
+        }
+    }
+
+    public static class InvalidWildAttributeList extends ParserException {
+        @Serial private static final long serialVersionUID = 1;
+        public InvalidWildAttributeList() {
+            super("SELECT * cannot include extra attributes");
+        }
+    }
 }

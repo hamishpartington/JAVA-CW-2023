@@ -316,4 +316,20 @@ public class ParserTests {
         assertThrows(ParserException.InvalidJoin.class, parser::parseCommand,
                 "Exception not thrown for invalid join");
     }
+
+    @Test
+    public void testMultipleQueries() {
+        String query = "JOIN table1 AND table2 On id AND id;SELECT * FROM census;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.CannotEnterMultipleQueries.class, parser::parseCommand,
+                "Exception not thrown for multiple queries");
+    }
+
+    @Test
+    public void testInvalidWildAttributeList() {
+        String query = "SELECT *, name FROM table1;";
+        Parser parser = new Parser(query);
+        assertThrows(ParserException.InvalidWildAttributeList.class, parser::parseCommand,
+                "Exception not thrown invalid wild attribute list");
+    }
 }
