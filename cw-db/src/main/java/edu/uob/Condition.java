@@ -41,23 +41,33 @@ public class Condition {
     }
 
     private boolean evaluateCondition(String dataEntry) {
+        double doubleDataEntry = 0;
+        double doubleVal = 0;
+        boolean isDataNumeric = true;
+        
+        try {
+            doubleDataEntry = Double.parseDouble(dataEntry);
+            doubleVal = Double.parseDouble(this.value);
+        } catch (NumberFormatException nfe) {
+            isDataNumeric = false;
+        }
         switch (this.comparator) {
-            case "==" -> {return dataEntry.equals(this.value);}
-            case "!=" -> {return !dataEntry.equals(this.value);}
+            case "==" -> {
+                if(!isDataNumeric) {
+                    return dataEntry.equals(this.value);
+                }
+                return doNumericComparison(doubleDataEntry, doubleVal);}
+            case "!=" -> {
+                if(!isDataNumeric) {
+                    return !dataEntry.equals(this.value);
+                }
+                return doNumericComparison(doubleDataEntry, doubleVal); }
             case "LIKE" -> {return dataEntry.contains(this.value.replaceAll("'", ""));}
             case ">", "<", ">=", "<=" -> {
-                double doubleDataEntry;
-                double doubleVal;
-                try {
-                    doubleDataEntry = Double.parseDouble(dataEntry);
-                    doubleVal = Double.parseDouble(this.value);
-                } catch (NumberFormatException nfe) {
-                    return false;
+                if(isDataNumeric) {
+                    return this.doNumericComparison(doubleDataEntry, doubleVal);
                 }
-                if(this.comparator.contains("=")){
-                    return this.doNumericComparison(doubleDataEntry, doubleVal) || dataEntry.equals(this.value);
-                }
-                return this.doNumericComparison(doubleDataEntry, doubleVal);
+                return false;
             }
             default -> {
                 return false;
@@ -67,8 +77,12 @@ public class Condition {
 
     private boolean doNumericComparison(double dataEntry, double value) {
         switch (this.comparator) {
-            case ">", ">=" -> {return dataEntry > value;}
-            case "<", "<=" -> {return dataEntry < value;}
+            case ">" -> {return dataEntry > value;}
+            case ">=" -> {return dataEntry >= value;}
+            case "<" -> {return dataEntry < value;}
+            case "<=" -> {return dataEntry <= value;}
+            case "==" -> {return dataEntry == value;}
+            case "!=" -> {return dataEntry != value;}
             default -> { return false;}
         }
     }
