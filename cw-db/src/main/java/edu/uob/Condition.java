@@ -44,6 +44,11 @@ public class Condition {
         double doubleDataEntry = 0;
         double doubleVal = 0;
         boolean isDataNumeric = true;
+        boolean isDataBoolean = false;
+
+        if(dataEntry.equalsIgnoreCase("TRUE") || dataEntry.equalsIgnoreCase("FALSE")) {
+            isDataBoolean = true;
+        }
         
         try {
             doubleDataEntry = Double.parseDouble(dataEntry);
@@ -53,13 +58,19 @@ public class Condition {
         }
         switch (this.comparator) {
             case "==" -> {
-                if(!isDataNumeric) {
+                if(!isDataNumeric && !isDataBoolean) {
                     return dataEntry.equals(this.value);
+                }
+                if(isDataBoolean) {
+                    return dataEntry.equalsIgnoreCase(this.value);
                 }
                 return doNumericComparison(doubleDataEntry, doubleVal);}
             case "!=" -> {
                 if(!isDataNumeric) {
                     return !dataEntry.equals(this.value);
+                }
+                if(isDataBoolean) {
+                    return !dataEntry.equalsIgnoreCase(this.value);
                 }
                 return doNumericComparison(doubleDataEntry, doubleVal); }
             case "LIKE" -> {return dataEntry.contains(this.value.replaceAll("'", ""));}

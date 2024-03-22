@@ -626,5 +626,4 @@ public class QueryHandlingTests {
         assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
         assertFalse(response.contains("Sam Lock"), "entry with invalid name returned");
     }
-
 }
