@@ -10,7 +10,7 @@ public class Tokeniser {
 
     public Tokeniser(String query) {
         this.query = query;
-        this.specialCharacters = new String[]{"(", ")", ",", ";"};
+        this.specialCharacters = new String[]{"(", ")", ",", ";", "=", "!", "<", ">"};
         this.tokens = new ArrayList<>();
     }
 

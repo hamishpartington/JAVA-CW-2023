@@ -98,7 +98,7 @@ public class ParserTests {
 
     @Test
     public void testDrop2() {
-        String query = "DROP TABLE ce<sus;";
+        String query = "DROP TABLE ce*sus;";
         Parser parser = new Parser(query);
         assertThrows(ParserException.InvalidTableName.class, parser::parseCommand,
                 "Exception not thrown for invalid table name in drop");
