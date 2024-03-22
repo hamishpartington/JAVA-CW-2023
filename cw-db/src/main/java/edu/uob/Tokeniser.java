@@ -31,6 +31,7 @@ public class Tokeniser {
                 tokens.addAll(Arrays.asList(nextBatchOfTokens));
             }
         }
+        this.mergeComparatorsWithWhiteSpace();
         // Finally, loop through the result array list, printing out each token a line at a time
         //for (String token : tokens) System.out.println(token);
     }
@@ -49,6 +50,20 @@ public class Tokeniser {
         input = input.trim();
         // Finally split on the space char (since there will now ALWAYS be a space between tokens)
         return input.split(" ");
+    }
+
+    private void mergeComparatorsWithWhiteSpace() {
+        for(int i = 0; i < this.tokens.size() - 1; i++){
+            String token = this.tokens.get(i);
+            switch(token) {
+                case "!", "<", ">", "=" -> {
+                    if(this.tokens.get(i+1).equals("=")){
+                        this.tokens.set(i, token + "=");
+                        this.tokens.remove(i+1);
+                    }
+                }
+            }
+        }
     }
 
     public ArrayList<String> getTokens() {

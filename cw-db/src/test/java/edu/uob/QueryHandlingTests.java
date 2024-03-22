@@ -79,8 +79,9 @@ public class QueryHandlingTests {
 
     @Test
     public void testUse() {
-        sendCommandToServer("CREATE DATABASE Cen1us;");
-        String response = sendCommandToServer("uSe Cen1us;");
+        String randomName = generateRandomName();
+        sendCommandToServer("CREATE DATABASE " + randomName + ";");
+        String response = sendCommandToServer("uSe " + randomName + ";");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
     }
@@ -618,11 +619,12 @@ public class QueryHandlingTests {
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Lock',  18, 80 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Sam Lock',  18, 90 ) ;   ");
         sendCommandToServer("  INSERT  INTO  census   VALUES(  'Simon Simpson',  23, 80 ) ;   ");
-        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE name LIKE 'Lock' AND weight <= 80.0;");
+        String response = sendCommandToServer("SELECT name, id, age FROM census WHERE name LIKE 'Lock' AND weight < = 80.0;");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
         assertFalse(response.contains("Simon Simpson"), "entry with invalid name returned");
         assertTrue(response.contains("Simon Lock"), "entry with valid name not returned");
         assertFalse(response.contains("Sam Lock"), "entry with invalid name returned");
     }
+
 }
