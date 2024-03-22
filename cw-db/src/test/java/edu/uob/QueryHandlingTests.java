@@ -627,10 +627,4 @@ public class QueryHandlingTests {
         assertFalse(response.contains("Sam Lock"), "entry with invalid name returned");
     }
 
-    @Test
-    public void testTokeniser(){
-        String query = "SELECT * FROM people WHERE Name=='Steve';";
-        Tokeniser t = new Tokeniser(query);
-        t.setup();
-    }
 }
