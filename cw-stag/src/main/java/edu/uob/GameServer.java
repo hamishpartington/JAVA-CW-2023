@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -17,12 +17,15 @@ public final class GameServer {
 
     private static final char END_OF_TRANSMISSION = 4;
     private File entitiesFile, actionsFile;
-    private HashSet<Location> locations;
+    private HashMap<String, Location> locations;
 
-    public static void main(String[] args) throws IOException {
+    private HashMap<String, Player> players;
+
+    public static void main(String[] args) throws IOException, ParseException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
         GameServer server = new GameServer(entitiesFile, actionsFile);
+        server.parseEntitiesFile();
         server.blockingListenOn(8888);
     }
 
@@ -36,10 +39,11 @@ public final class GameServer {
     public GameServer(File entitiesFile, File actionsFile) {
         this.entitiesFile = entitiesFile;
         this.actionsFile = actionsFile;
-        this.locations = new HashSet<>();
+        this.locations = new HashMap<>();
+        this.players = new HashMap<>();
     }
 
-    public void parseEntitiesFile() throws FileNotFoundException, ParseException {
+    private void parseEntitiesFile() throws FileNotFoundException, ParseException {
         Parser parser = new Parser();
         FileReader reader = new FileReader(this.entitiesFile);
         parser.parse(reader);
@@ -50,13 +54,17 @@ public final class GameServer {
 
         for(Graph loc: locations) {
             Node details = loc.getNodes(false).get(0);
-            this.locations.add(new Location(details, loc));
+            this.locations.put(details.getId().getId().toLowerCase(), new Location(details, loc));
         }
 
-    }
+        for(Edge path : paths) {
+            Node fromLocation = path.getSource().getNode();
+            String fromName = fromLocation.getId().getId().toLowerCase();
+            Node toLocation = path.getTarget().getNode();
+            String toName = toLocation.getId().getId().toLowerCase();
+            this.locations.get(fromName).addAccessibleLocation(toName);
+        }
 
-    public HashSet<Location> getLocations() {
-        return locations;
     }
 
     /**
@@ -66,7 +74,11 @@ public final class GameServer {
     * @param command The incoming command to be processed
     */
     public String handleCommand(String command) {
-
+        CommandParser commandParser = new CommandParser(command);
+        String currPlayer = commandParser.getPlayerName();
+        if(!this.players.containsKey(currPlayer)) {
+            this.players.put(currPlayer, new Player(currPlayer));
+        }
         return "";
     }
 

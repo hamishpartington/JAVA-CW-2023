@@ -13,7 +13,7 @@ public class CommandParser {
     }
 
     private void extractPlayerName() {
-        this.playerName = this.originalCommand.split(":")[0];
+        this.playerName = this.originalCommand.split(":")[0].toLowerCase();
     }
 
     private void processCommand(){

@@ -6,19 +6,21 @@ import com.alexmerz.graphviz.objects.Node;
 import com.alexmerz.graphviz.objects.Edge;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class Location extends GameEntity{
 
-    private HashSet<GameEntity> furniture;
-    private HashSet<GameEntity> characters;
-    private HashSet<GameEntity> artefacts;
+    private HashMap<String, GameEntity> furniture;
+    private HashMap<String, GameEntity> characters;
+    private HashMap<String, GameEntity> artefacts;
+
+    private ArrayList<String> accessibleLocations;
 
     public Location(Node details, Graph location){
-        super(details.getId().getId(), details.getAttribute("description"));
-        this.characters = new HashSet<>();
-        this.furniture = new HashSet<>();
-        this.artefacts = new HashSet<>();
+        super(details.getId().getId().toLowerCase(), details.getAttribute("description"));
+        this.characters = new HashMap<>();
+        this.furniture = new HashMap<>();
+        this.artefacts = new HashMap<>();
         this.addAssociatedEntities(location);
     }
 
@@ -29,18 +31,21 @@ public class Location extends GameEntity{
             String entityType = e.getId().getId();
             ArrayList<Node> nodes = e.getNodes(false);
             for(Node n : nodes) {
-                String name = n.getId().getId();
+                String name = n.getId().getId().toLowerCase();
                 String description = n.getAttribute("description");
 
                 if(entityType.equalsIgnoreCase("furniture")) {
-                    this.furniture.add(new Furniture(name, description));
+                    this.furniture.put(name, new Furniture(name, description));
                 } else if (entityType.equalsIgnoreCase("artefacts")) {
-                    this.artefacts.add(new Artefact(name, description));
+                    this.artefacts.put(name, new Artefact(name, description));
                 } else if (entityType.equalsIgnoreCase("characters")) {
-                    this.characters.add(new Character(name, description));
+                    this.characters.put(name, new Character(name, description));
                 }
             }
         }
     }
 
+    public void addAccessibleLocation(String location) {
+        this.accessibleLocations.add(location);
+    }
 }
