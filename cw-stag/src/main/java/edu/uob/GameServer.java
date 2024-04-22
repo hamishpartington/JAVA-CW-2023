@@ -6,12 +6,21 @@ import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
 import com.alexmerz.graphviz.objects.Graph;
 import com.alexmerz.graphviz.objects.Node;
 import com.alexmerz.graphviz.objects.Edge;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public final class GameServer {
 
@@ -20,6 +29,8 @@ public final class GameServer {
     private HashMap<String, Location> locations;
 
     private HashMap<String, Player> players;
+
+    private HashMap<String, HashSet<GameAction>> gameActions;
 
     public static void main(String[] args) throws IOException, ParseException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
@@ -41,6 +52,7 @@ public final class GameServer {
         this.actionsFile = actionsFile;
         this.locations = new HashMap<>();
         this.players = new HashMap<>();
+        this.gameActions = new HashMap<>();
     }
 
     private void parseEntitiesFile() throws FileNotFoundException, ParseException {
@@ -65,6 +77,24 @@ public final class GameServer {
             this.locations.get(fromName).addAccessibleLocation(toName);
         }
 
+    }
+
+    void parseActionsFile() throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.parse(this.actionsFile);
+        Element root = document.getDocumentElement();
+        NodeList actions = root.getChildNodes();
+        int length = actions.getLength();
+        for(int i = 1; i < actions.getLength(); i+=2) {
+            GameAction currentAction = new GameAction((Element)actions.item(i));
+            //map action to trigger phrases
+            for(String keyphrase: currentAction.getTriggers()) {
+                if(!this.gameActions.containsKey(keyphrase)) {
+                    this.gameActions.put(keyphrase, new HashSet<>());
+                }
+                this.gameActions.get(keyphrase).add(currentAction);
+            }
+        }
     }
 
     /**
