@@ -31,12 +31,14 @@ public final class GameServer {
     private HashMap<String, Player> players;
 
     private HashMap<String, HashSet<GameAction>> gameActions;
+    private String startLocationKey;
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, ParserConfigurationException, SAXException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
         GameServer server = new GameServer(entitiesFile, actionsFile);
         server.parseEntitiesFile();
+        server.parseActionsFile();
         server.blockingListenOn(8888);
     }
 
@@ -63,6 +65,7 @@ public final class GameServer {
         ArrayList<Graph> sections = wholeDocument.getSubgraphs();
         ArrayList<Graph> locations = sections.get(0).getSubgraphs();
         ArrayList<Edge> paths = sections.get(1).getEdges();
+        this.startLocationKey = locations.get(0).getNodes(false).get(0).getId().getId().toLowerCase();
 
         for(Graph loc: locations) {
             Node details = loc.getNodes(false).get(0);
@@ -84,7 +87,6 @@ public final class GameServer {
         Document document = builder.parse(this.actionsFile);
         Element root = document.getDocumentElement();
         NodeList actions = root.getChildNodes();
-        int length = actions.getLength();
         for(int i = 1; i < actions.getLength(); i+=2) {
             GameAction currentAction = new GameAction((Element)actions.item(i));
             //map action to trigger phrases
@@ -107,9 +109,16 @@ public final class GameServer {
         CommandParser commandParser = new CommandParser(command);
         String currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
-            this.players.put(currPlayer, new Player(currPlayer));
+            this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
         }
+
+        this.interpretCommand(commandParser.getProcessedCommand());
+
         return "";
+    }
+
+    public void interpretCommand(String processedCommand) {
+
     }
 
     /**

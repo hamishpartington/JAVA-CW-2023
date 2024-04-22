@@ -17,7 +17,7 @@ public class CommandParser {
     }
 
     private void processCommand(){
-        this.processedCommand = this.originalCommand.replaceAll(":", "");
+        this.processedCommand = this.originalCommand.replaceAll(":", "").toLowerCase();
         this.processedCommand = this.processedCommand.replaceFirst(this.playerName, "");
     }
 
