@@ -18,12 +18,4 @@ public class CommandParserTests {
         CommandParser cp = new CommandParser(command);
         assertEquals(" look in cellar", cp.getProcessedCommand(), "processed command not as expected");
     }
-
-    @Test
-    void testMultipleBasicTriggers () {
-        String command = "hamish: look look in cellar";
-        CommandParser cp = new CommandParser(command);
-        assertThrows(STAGException.MultipleTriggers.class, cp::checkTokensForMultipleBasicTriggers,
-                "Command has multiple triggers but does not throw exception");
-    }
 }

@@ -1,6 +1,7 @@
 package edu.uob;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandParser {
@@ -41,10 +42,10 @@ public class CommandParser {
         return tokenisedCommand;
     }
 
-    public void checkTokensForMultipleBasicTriggers() throws STAGException {
+    public void checkTokensForMultipleTriggers(Set<String> definedTriggers) throws STAGException {
         AtomicInteger triggerCount = new AtomicInteger();
         Arrays.stream(tokenisedCommand).forEach(token -> {
-            if(isBasicTrigger(token)) {
+            if(isBasicTrigger(token) | isDefinedTrigger(token, definedTriggers)) {
                 triggerCount.getAndIncrement();
             }
         });
@@ -62,5 +63,9 @@ public class CommandParser {
                 return false;
             }
         }
+    }
+
+    private boolean isDefinedTrigger(String token, Set<String> definedTriggers) {
+        return definedTriggers.contains(token);
     }
 }

@@ -12,7 +12,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.time.Duration;
-public class STAGTests {
+public class STAGTestsBasic {
     private GameServer server;
 
     // Create a new server _before_ every @Test
@@ -54,8 +54,22 @@ public class STAGTests {
     }
 
     @Test
-    void testTooManyTriggers() {
+    void testTooManyTriggers1() {
         String response = sendCommandToServer("hamish: inv goto cabin");
+        assertEquals("There are too many trigger words in this command", response,
+                "No error message for too many triggers");
+    }
+
+    @Test
+    void testTooManyTriggers2() {
+        String response = sendCommandToServer("hamish: unlock open door with key");
+        assertEquals("There are too many trigger words in this command", response,
+                "No error message for too many triggers");
+    }
+
+    @Test
+    void testTooManyTriggers3() {
+        String response = sendCommandToServer("hamish: look open door with key");
         assertEquals("There are too many trigger words in this command", response,
                 "No error message for too many triggers");
     }

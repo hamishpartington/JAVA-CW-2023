@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -127,7 +128,7 @@ public final class GameServer {
     public String handleCommand(String command) {
         CommandParser commandParser = new CommandParser(command);
         try {
-            commandParser.checkTokensForMultipleBasicTriggers();
+            commandParser.checkTokensForMultipleTriggers(gameActions.keySet());
         } catch (STAGException e) {
             return e.getLocalizedMessage();
         }
@@ -151,10 +152,11 @@ public final class GameServer {
 
     public void inventory() {
         if(!this.players.get(this.currPlayer).getInventory().isEmpty()) {
-            this.returnString = "You have:\n";
+            StringBuilder builder = new StringBuilder("You have:\n");
             for (Artefact artefact : this.players.get(this.currPlayer).getInventory()) {
-                this.returnString = this.returnString + artefact.toString();
+                builder.append(artefact.toString());
             }
+            this.returnString = builder.toString();
         } else {
             this.returnString = "You have no artefacts in your inventory\n";
         }
