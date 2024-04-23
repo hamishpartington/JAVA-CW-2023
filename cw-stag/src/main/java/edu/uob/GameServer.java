@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -32,6 +33,9 @@ public final class GameServer {
 
     private HashMap<String, HashSet<GameAction>> gameActions;
     private String startLocationKey;
+    private String currPlayer;
+
+    private String returnString;
 
     public static void main(String[] args) throws IOException, ParseException, ParserConfigurationException, SAXException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
@@ -55,6 +59,7 @@ public final class GameServer {
         this.locations = new HashMap<>();
         this.players = new HashMap<>();
         this.gameActions = new HashMap<>();
+        this.returnString = "";
     }
 
     private void parseEntitiesFile() throws FileNotFoundException, ParseException {
@@ -107,17 +112,31 @@ public final class GameServer {
     */
     public String handleCommand(String command) {
         CommandParser commandParser = new CommandParser(command);
-        String currPlayer = commandParser.getPlayerName();
+        this.currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
             this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
         }
 
-        this.interpretCommand(commandParser.getProcessedCommand());
+        this.interpretCommand(commandParser.getTokenisedCommand());
 
-        return "";
+        return this.returnString;
     }
 
-    public void interpretCommand(String processedCommand) {
+    public void interpretCommand(String[] tokens) {
+        if(Arrays.stream(tokens).anyMatch(s->s.equals("inv") || s.equals("inventory"))) {
+            inventory();
+        }
+    }
+
+    public void inventory() {
+        if(!this.players.get(this.currPlayer).getInventory().isEmpty()) {
+            this.returnString = "You have:\n";
+            for (Artefact artefact : this.players.get(this.currPlayer).getInventory()) {
+                this.returnString = this.returnString + artefact.toString();
+            }
+        } else {
+            this.returnString = "You have no artefacts in your inventory\n";
+        }
 
     }
 

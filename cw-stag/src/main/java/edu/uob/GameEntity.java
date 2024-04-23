@@ -21,4 +21,9 @@ public abstract class GameEntity
         return description;
     }
 
+    @Override
+    public String toString() {
+        return this.name + ": " + this.description + "\n";
+    }
+
 }
