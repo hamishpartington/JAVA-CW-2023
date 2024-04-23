@@ -52,4 +52,11 @@ public class STAGTests {
         assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
         assertTrue(response.contains("forest"), "Did not see available paths in response to look");
     }
+
+    @Test
+    void testTooManyTriggers() {
+        String response = sendCommandToServer("hamish: inv goto cabin");
+        assertEquals("There are too many trigger words in this command", response,
+                "No error message for too many triggers");
+    }
 }

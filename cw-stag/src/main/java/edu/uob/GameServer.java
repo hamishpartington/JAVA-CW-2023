@@ -126,6 +126,11 @@ public final class GameServer {
     */
     public String handleCommand(String command) {
         CommandParser commandParser = new CommandParser(command);
+        try {
+            commandParser.checkTokensForMultipleBasicTriggers();
+        } catch (STAGException e) {
+            return e.getLocalizedMessage();
+        }
         this.currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
             this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));

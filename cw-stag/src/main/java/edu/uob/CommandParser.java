@@ -1,6 +1,7 @@
 package edu.uob;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandParser {
     private String playerName;
@@ -13,7 +14,6 @@ public class CommandParser {
         this.extractPlayerName();
         this.processCommand();
         this.tokenise();
-
     }
 
     private void extractPlayerName() {
@@ -39,5 +39,28 @@ public class CommandParser {
 
     public String[] getTokenisedCommand() {
         return tokenisedCommand;
+    }
+
+    public void checkTokensForMultipleBasicTriggers() throws STAGException {
+        AtomicInteger triggerCount = new AtomicInteger();
+        Arrays.stream(tokenisedCommand).forEach(token -> {
+            if(isBasicTrigger(token)) {
+                triggerCount.getAndIncrement();
+            }
+        });
+        if(triggerCount.get() > 1) {
+            throw new STAGException.MultipleTriggers();
+        }
+    }
+
+    private boolean isBasicTrigger(String token) {
+        switch(token) {
+            case "inv", "inventory", "get", "drop", "goto", "look" -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 }
