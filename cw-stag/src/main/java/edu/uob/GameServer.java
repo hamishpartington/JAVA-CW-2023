@@ -37,11 +37,25 @@ public final class GameServer {
 
     private String returnString;
 
-    public static void main(String[] args) throws IOException, ParseException, ParserConfigurationException, SAXException {
+    public static void main(String[] args) {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        GameServer server = new GameServer(entitiesFile, actionsFile);
-        server.blockingListenOn(8888);
+        try {
+            GameServer server = new GameServer(entitiesFile, actionsFile);
+            server.blockingListenOn(8888);
+        } catch (IOException ioe) {
+            System.out.println("IOException was thrown when trying to construct server");
+            System.exit(1);
+        } catch (ParseException pe) {
+            System.out.println("ParseException was thrown when trying to construct server");
+            System.exit(1);
+        } catch (ParserConfigurationException pce) {
+            System.out.println("ParserConfigurationException was thrown when trying to construct server");
+            System.exit(1);
+        } catch (SAXException se) {
+            System.out.println("SAXException was thrown when trying to construct server");
+            System.exit(1);
+        }
     }
 
     /**
