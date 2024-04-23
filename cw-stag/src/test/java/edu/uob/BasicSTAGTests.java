@@ -12,7 +12,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.time.Duration;
-public class STAGTestsBasic {
+public class BasicSTAGTests {
     private GameServer server;
 
     // Create a new server _before_ every @Test
