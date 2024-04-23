@@ -41,8 +41,6 @@ public final class GameServer {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
         GameServer server = new GameServer(entitiesFile, actionsFile);
-        server.parseEntitiesFile();
-        server.parseActionsFile();
         server.blockingListenOn(8888);
     }
 
@@ -53,16 +51,18 @@ public final class GameServer {
     * @param entitiesFile The game configuration file containing all game entities to use in your game
     * @param actionsFile The game configuration file containing all game actions to use in your game
     */
-    public GameServer(File entitiesFile, File actionsFile) {
+    public GameServer(File entitiesFile, File actionsFile) throws IOException, ParseException, ParserConfigurationException, SAXException {
         this.entitiesFile = entitiesFile;
         this.actionsFile = actionsFile;
         this.locations = new HashMap<>();
         this.players = new HashMap<>();
         this.gameActions = new HashMap<>();
         this.returnString = "";
+        this.parseEntitiesFile();
+        this.parseActionsFile();
     }
 
-    private void parseEntitiesFile() throws FileNotFoundException, ParseException {
+    public void parseEntitiesFile() throws FileNotFoundException, ParseException {
         Parser parser = new Parser();
         FileReader reader = new FileReader(this.entitiesFile);
         parser.parse(reader);
@@ -87,7 +87,7 @@ public final class GameServer {
 
     }
 
-    void parseActionsFile() throws ParserConfigurationException, IOException, SAXException {
+    public void parseActionsFile() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = builder.parse(this.actionsFile);
         Element root = document.getDocumentElement();
@@ -124,7 +124,9 @@ public final class GameServer {
 
     public void interpretCommand(String[] tokens) {
         if(Arrays.stream(tokens).anyMatch(s->s.equals("inv") || s.equals("inventory"))) {
-            inventory();
+            this.inventory();
+        } else if (Arrays.stream(tokens).anyMatch(s->s.equals("look"))) {
+            this.look();
         }
     }
 
@@ -137,7 +139,12 @@ public final class GameServer {
         } else {
             this.returnString = "You have no artefacts in your inventory\n";
         }
+    }
 
+    public void look() {
+        String playerLocation = this.players.get(this.currPlayer).getCurrentLocation();
+
+        this.returnString = this.locations.get(playerLocation).toString();
     }
 
     /**

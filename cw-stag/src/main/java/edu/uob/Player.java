@@ -16,4 +16,8 @@ public class Player {
     public ArrayList<Artefact> getInventory() {
         return inventory;
     }
+
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
 }

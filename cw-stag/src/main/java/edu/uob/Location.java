@@ -21,6 +21,7 @@ public class Location extends GameEntity{
         this.characters = new HashMap<>();
         this.furniture = new HashMap<>();
         this.artefacts = new HashMap<>();
+        this.accessibleLocations = new ArrayList<>();
         this.addAssociatedEntities(location);
     }
 
@@ -47,5 +48,18 @@ public class Location extends GameEntity{
 
     public void addAccessibleLocation(String location) {
         this.accessibleLocations.add(location);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("You are in a " + super.toString() + "You can see:\n");
+        this.furniture.forEach((key, entry) -> builder.append(entry.toString()));
+        this.artefacts.forEach((key, entry) -> builder.append(entry.toString()));
+        this.characters.forEach((key, entry) -> builder.append(entry.toString()));
+        builder.append("You can access from here:\n");
+        this.accessibleLocations.forEach(loc -> builder.append(loc + "\n"));
+
+        return builder.toString();
     }
 }

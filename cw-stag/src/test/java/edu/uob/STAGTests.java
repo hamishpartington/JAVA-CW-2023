@@ -1,6 +1,8 @@
 package edu.uob;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import com.alexmerz.graphviz.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -15,7 +17,7 @@ public class STAGTests {
 
     // Create a new server _before_ every @Test
     @BeforeEach
-    void setup() throws ParserConfigurationException, IOException, SAXException {
+    void setup() throws ParserConfigurationException, IOException, SAXException, ParseException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
         server = new GameServer(entitiesFile, actionsFile);
@@ -39,5 +41,15 @@ public class STAGTests {
         String response = sendCommandToServer("simon: Inventory");
         assertEquals("You have no artefacts in your inventory\n", response,
                 "inventory command not working as expected");
+    }
+
+    @Test
+    void testLook1() {
+        String response = sendCommandToServer("simon: look").toLowerCase();
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
     }
 }
