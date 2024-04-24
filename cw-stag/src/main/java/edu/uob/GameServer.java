@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -148,6 +145,7 @@ public final class GameServer {
             case "inv", "inventory" -> this.inventory();
             case "look" -> this.look();
             case "goto" -> this.goTo();
+            case "get" -> this.get();
         }
     }
 
@@ -174,6 +172,19 @@ public final class GameServer {
         this.commandParser.checkLocation(this.locations.keySet(), this.locations.get(playerLocationKey).getAccessibleLocations());
         String destination = commandParser.getDestination();
         this.players.get(currPlayer).setCurrentLocation(destination);
+        this.returnString = this.locations.get(destination).toString();
+    }
+
+    public void get() {
+
+    }
+
+    private Set<String> getAllGameArtefacts() {
+        Set<String> artefacts = new HashSet<>();
+
+        //this.locations.forEach(key,entry)->;
+
+        return artefacts;
     }
 
     /**

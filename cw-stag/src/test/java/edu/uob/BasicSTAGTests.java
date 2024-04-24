@@ -76,8 +76,7 @@ public class BasicSTAGTests {
 
     @Test
     void testGoto1() {
-        sendCommandToServer("hamish: goto forest");
-        String response = sendCommandToServer("hamish: look");
+        String response = sendCommandToServer("hamish: goto forest");
         assertTrue(response.contains("forest"), "Did not see the name of the current room in response to look");
         assertTrue(response.contains("dark forest"), "Did not see a description of the room in response to look");
         assertTrue(response.contains("brass key"), "Did not see a description of artefacts in response to look");
