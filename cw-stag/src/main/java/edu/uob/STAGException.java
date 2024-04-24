@@ -36,22 +36,25 @@ public class STAGException extends Exception {
 
     public static class MultipleArtefacts extends STAGException {
         @Serial private static final long serialVersionUID = 1;
-        public MultipleArtefacts() {
-            super("There are too many artefacts in this command. You can only use one of them");
+        public MultipleArtefacts(String trigger) {
+            super("There are too many artefacts in this command. You can only " + trigger + " one of them");
         }
     }
 
     public static class NoArtefact extends STAGException {
         @Serial private static final long serialVersionUID = 1;
-        public NoArtefact() {
-            super("There is no artefact in your use command");
+        public NoArtefact(String trigger) {
+            super("There is no artefact in your " + trigger + " command");
         }
     }
 
     public static class NotAvailable extends STAGException {
         @Serial private static final long serialVersionUID = 1;
         public NotAvailable(String artefact) {
-            super("The " + artefact + " is not in your current location");
+            super("The " + artefact + " is not in your current location so cannot be picked up");
+        }
+        public NotAvailable(String artefact, boolean isDrop){
+            super("The " + artefact + " is not in your inventory so cannot be dropped");
         }
     }
 }

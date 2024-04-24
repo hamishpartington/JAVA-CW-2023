@@ -131,7 +131,7 @@ public class BasicSTAGTests {
     @Test
     void testGet2() {
         String response = sendCommandToServer("hamish: get poem");
-        assertEquals("There is no artefact in your use command", response, "Get response not as expected");
+        assertEquals("There is no artefact in your get command", response, "Get response not as expected");
         assertEquals("You have no artefacts in your inventory\n", sendCommandToServer("hamish: inv"),
                 "inv command not working as expected");
     }
@@ -139,6 +139,32 @@ public class BasicSTAGTests {
     @Test
     void testGet3() {
         String response = sendCommandToServer("hamish: get key");
-        assertEquals("The key is not in your current location", response, "Get response not as expected");
+        assertEquals("The key is not in your current location so cannot be picked up", response, "Get response not as expected");
+    }
+
+    @Test
+    void testDrop1() {
+        String response = sendCommandToServer("hamish: drop axe");
+        assertEquals("The axe is not in your inventory so cannot be dropped", response, "Drop response not as expected");
+    }
+
+    @Test
+    void testDrop2() {
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        assertEquals("You dropped a key", sendCommandToServer("hamish: drop key"), "Drop response not as expected");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("brass key"), "Did not see a description of dropped artefact in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+    }
+
+    @Test
+    void testDrop3() {
+        String response = sendCommandToServer("hamish: drop poem");
+        assertEquals("There is no artefact in your drop command", response, "Drop response not as expected");
     }
 }

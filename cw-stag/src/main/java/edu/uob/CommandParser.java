@@ -89,15 +89,19 @@ public class CommandParser {
             }
         });
         if(artefactCount.get() > 1) {
-            throw new STAGException.MultipleArtefacts();
+            throw new STAGException.MultipleArtefacts(this.triggerWord);
         }
 
         if(artefactCount.get() == 0) {
-            throw new STAGException.NoArtefact();
+            throw new STAGException.NoArtefact(this.triggerWord);
         }
 
         if(!availableItems.contains(this.artefact)){
-            throw new STAGException.NotAvailable(this.artefact);
+            if(this.triggerWord.equals("get")) {
+                throw new STAGException.NotAvailable(this.artefact);
+            } else if (this.triggerWord.equals("drop")) {
+                throw new STAGException.NotAvailable(this.artefact, true);
+            }
         }
     }
 

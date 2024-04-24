@@ -146,6 +146,7 @@ public final class GameServer {
             case "look" -> this.look();
             case "goto" -> this.goTo();
             case "get" -> this.get();
+            case "drop" -> this.drop();
         }
     }
 
@@ -184,10 +185,22 @@ public final class GameServer {
         this.returnString = "You picked up a " + artefact.getName();
     }
 
+    public void drop() throws STAGException {
+        Set<String> artefactsInInv = this.players.get(currPlayer).getInventory().keySet();
+        Set<String> allGameArtefacts = this.getAllGameArtefacts();
+        commandParser.checkArtefacts(allGameArtefacts, artefactsInInv);
+        GameEntity artefact = this.players.get(currPlayer).getInventory().get(commandParser.getArtefact());
+        this.players.get(currPlayer).getInventory().remove(commandParser.getArtefact());
+        String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
+        this.locations.get(playerLocationKey).getArtefacts().put(artefact.getName(), artefact);
+        this.returnString = "You dropped a " + artefact.getName();
+    }
+
     private Set<String> getAllGameArtefacts() {
         Set<String> artefacts = new HashSet<>();
 
         this.locations.forEach((key, entry) -> artefacts.addAll(entry.getArtefacts().keySet()));
+        this.players.forEach((key, entry) -> artefacts.addAll(entry.getInventory().keySet()));
 
         return artefacts;
     }
