@@ -73,4 +73,51 @@ public class BasicSTAGTests {
         assertEquals("There are too many trigger words in this command", response,
                 "No error message for too many triggers");
     }
+
+    @Test
+    void testGoto1() {
+        sendCommandToServer("hamish: goto forest");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("forest"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("dark forest"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("brass key"), "Did not see a description of artefacts in response to look");
+        assertTrue(response.contains("big tree"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("cabin"), "Did not see available paths in response to look");
+    }
+
+    @Test
+    void testGoto2() {
+        String response = sendCommandToServer("hamish: goto cellar");
+        assertEquals("The cellar cannot be accessed from your current location", response, "Correct error message not shown");
+        response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+    }
+
+    @Test
+    void testGoto3() {
+        String response = sendCommandToServer("hamish: goto cellar forest");
+        assertEquals("There are too many locations in this command. You can only goto one of them", response, "Correct error message not shown");
+        response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+    }
+
+    @Test
+    void testGoto4() {
+        String response = sendCommandToServer("hamish: goto");
+        assertEquals("There is no location in your goto command", response, "Correct error message not shown");
+        response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+    }
 }

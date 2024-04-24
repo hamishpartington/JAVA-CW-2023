@@ -17,7 +17,7 @@ public class Location extends GameEntity{
     private ArrayList<String> accessibleLocations;
 
     public Location(Node details, Graph location){
-        super(details.getId().getId().toLowerCase(), details.getAttribute("description"));
+        super(details.getId().getId(), details.getAttribute("description"));
         this.characters = new HashMap<>();
         this.furniture = new HashMap<>();
         this.artefacts = new HashMap<>();
@@ -61,5 +61,9 @@ public class Location extends GameEntity{
         this.accessibleLocations.forEach(loc -> builder.append(loc + "\n"));
 
         return builder.toString();
+    }
+
+    public ArrayList<String> getAccessibleLocations() {
+        return accessibleLocations;
     }
 }

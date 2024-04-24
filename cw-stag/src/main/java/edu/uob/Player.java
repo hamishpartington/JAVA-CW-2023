@@ -20,4 +20,8 @@ public class Player {
     public String getCurrentLocation() {
         return currentLocation;
     }
+
+    public void setCurrentLocation(String currentLocation) {
+        this.currentLocation = currentLocation;
+    }
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -37,6 +36,8 @@ public final class GameServer {
     private String currPlayer;
 
     private String returnString;
+
+    private CommandParser commandParser;
 
     public static void main(String[] args) {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
@@ -126,27 +127,27 @@ public final class GameServer {
     * @param command The incoming command to be processed
     */
     public String handleCommand(String command) {
-        CommandParser commandParser = new CommandParser(command);
-        try {
-            commandParser.checkTokensForMultipleTriggers(gameActions.keySet());
-        } catch (STAGException e) {
-            return e.getLocalizedMessage();
-        }
+        this.commandParser = new CommandParser(command);
         this.currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
             this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
         }
-
-        this.interpretCommand(commandParser.getTokenisedCommand());
+        try {
+            commandParser.checkTokensForMultipleTriggers(gameActions.keySet());
+            this.interpretCommand();
+        } catch (STAGException e) {
+            return e.getLocalizedMessage();
+        }
 
         return this.returnString;
     }
 
-    public void interpretCommand(String[] tokens) {
-        if(Arrays.stream(tokens).anyMatch(s->s.equals("inv") || s.equals("inventory"))) {
-            this.inventory();
-        } else if (Arrays.stream(tokens).anyMatch(s->s.equals("look"))) {
-            this.look();
+    public void interpretCommand() throws STAGException {
+        String trigger = commandParser.getTriggerWord();
+        switch(trigger) {
+            case "inv", "inventory" -> this.inventory();
+            case "look" -> this.look();
+            case "goto" -> this.goTo();
         }
     }
 
@@ -166,6 +167,13 @@ public final class GameServer {
         String playerLocation = this.players.get(this.currPlayer).getCurrentLocation();
 
         this.returnString = this.locations.get(playerLocation).toString();
+    }
+
+    public void goTo() throws STAGException {
+        String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
+        this.commandParser.checkLocation(this.locations.keySet(), this.locations.get(playerLocationKey).getAccessibleLocations());
+        String destination = commandParser.getDestination();
+        this.players.get(currPlayer).setCurrentLocation(destination);
     }
 
     /**

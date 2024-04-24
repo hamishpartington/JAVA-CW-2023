@@ -1,5 +1,6 @@
 package edu.uob;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,6 +10,8 @@ public class CommandParser {
     private String originalCommand;
     private String processedCommand;
     private String[] tokenisedCommand;
+    private String triggerWord;
+    private String destination;
 
     public CommandParser(String originalCommand) {
         this.originalCommand = originalCommand;
@@ -45,12 +48,34 @@ public class CommandParser {
     public void checkTokensForMultipleTriggers(Set<String> definedTriggers) throws STAGException {
         AtomicInteger triggerCount = new AtomicInteger();
         Arrays.stream(tokenisedCommand).forEach(token -> {
-            if(isBasicTrigger(token) | isDefinedTrigger(token, definedTriggers)) {
+            if(isBasicTrigger(token) | isDefined(token, definedTriggers)) {
+                this.triggerWord = token;
                 triggerCount.getAndIncrement();
             }
         });
         if(triggerCount.get() > 1) {
             throw new STAGException.MultipleTriggers();
+        }
+    }
+
+    public void checkLocation(Set<String> locationKeys, ArrayList<String> accessibleLocations) throws STAGException {
+        AtomicInteger locationCount = new AtomicInteger();
+        Arrays.stream(tokenisedCommand).forEach(token -> {
+            if(isDefined(token, locationKeys)) {
+                this.destination = token;
+                locationCount.getAndIncrement();
+            }
+        });
+        if(locationCount.get() > 1) {
+            throw new STAGException.MultipleLocations();
+        }
+
+        if(locationCount.get() == 0) {
+            throw new STAGException.NoLocation();
+        }
+
+        if(!accessibleLocations.contains(this.destination)){
+            throw new STAGException.Inaccessible(this.destination);
         }
     }
 
@@ -65,7 +90,15 @@ public class CommandParser {
         }
     }
 
-    private boolean isDefinedTrigger(String token, Set<String> definedTriggers) {
-        return definedTriggers.contains(token);
+    private boolean isDefined(String token, Set<String> defined) {
+        return defined.contains(token);
+    }
+
+    public String getTriggerWord() {
+        return triggerWord;
+    }
+
+    public String getDestination() {
+        return destination;
     }
 }
