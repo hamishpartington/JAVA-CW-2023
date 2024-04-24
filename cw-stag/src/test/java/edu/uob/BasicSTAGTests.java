@@ -119,4 +119,26 @@ public class BasicSTAGTests {
         assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
         assertTrue(response.contains("forest"), "Did not see available paths in response to look");
     }
+
+    @Test
+    void testGet1() {
+        String response = sendCommandToServer("hamish: get axe");
+        assertEquals("You picked up a axe", response, "Get response not as expected");
+        assertTrue(sendCommandToServer("hamish: inv").contains("axe"));
+        assertFalse(sendCommandToServer("hamish: look").contains("axe"), "Axe not removed from room");
+    }
+
+    @Test
+    void testGet2() {
+        String response = sendCommandToServer("hamish: get poem");
+        assertEquals("There is no artefact in your use command", response, "Get response not as expected");
+        assertEquals("You have no artefacts in your inventory\n", sendCommandToServer("hamish: inv"),
+                "inv command not working as expected");
+    }
+
+    @Test
+    void testGet3() {
+        String response = sendCommandToServer("hamish: get key");
+        assertEquals("The key is not in your current location", response, "Get response not as expected");
+    }
 }

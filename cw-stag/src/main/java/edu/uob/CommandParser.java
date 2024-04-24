@@ -12,6 +12,7 @@ public class CommandParser {
     private String[] tokenisedCommand;
     private String triggerWord;
     private String destination;
+    private String artefact;
 
     public CommandParser(String originalCommand) {
         this.originalCommand = originalCommand;
@@ -79,6 +80,27 @@ public class CommandParser {
         }
     }
 
+    public void checkArtefacts(Set<String> allGameArtefacts, Set<String> availableItems) throws STAGException {
+        AtomicInteger artefactCount = new AtomicInteger();
+        Arrays.stream(tokenisedCommand).forEach(token -> {
+            if(isDefined(token, allGameArtefacts)) {
+                this.artefact = token;
+                artefactCount.getAndIncrement();
+            }
+        });
+        if(artefactCount.get() > 1) {
+            throw new STAGException.MultipleArtefacts();
+        }
+
+        if(artefactCount.get() == 0) {
+            throw new STAGException.NoArtefact();
+        }
+
+        if(!availableItems.contains(this.artefact)){
+            throw new STAGException.NotAvailable(this.artefact);
+        }
+    }
+
     private boolean isBasicTrigger(String token) {
         switch(token) {
             case "inv", "inventory", "get", "drop", "goto", "look" -> {
@@ -100,5 +122,9 @@ public class CommandParser {
 
     public String getDestination() {
         return destination;
+    }
+
+    public String getArtefact() {
+        return artefact;
     }
 }

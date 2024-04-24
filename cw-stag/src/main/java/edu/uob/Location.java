@@ -66,4 +66,8 @@ public class Location extends GameEntity{
     public ArrayList<String> getAccessibleLocations() {
         return accessibleLocations;
     }
+
+    public HashMap<String, GameEntity> getArtefacts() {
+        return artefacts;
+    }
 }

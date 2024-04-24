@@ -33,4 +33,25 @@ public class STAGException extends Exception {
             super("There is no location in your goto command");
         }
     }
+
+    public static class MultipleArtefacts extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public MultipleArtefacts() {
+            super("There are too many artefacts in this command. You can only use one of them");
+        }
+    }
+
+    public static class NoArtefact extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public NoArtefact() {
+            super("There is no artefact in your use command");
+        }
+    }
+
+    public static class NotAvailable extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public NotAvailable(String artefact) {
+            super("The " + artefact + " is not in your current location");
+        }
+    }
 }

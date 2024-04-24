@@ -152,9 +152,7 @@ public final class GameServer {
     public void inventory() {
         if(!this.players.get(this.currPlayer).getInventory().isEmpty()) {
             StringBuilder builder = new StringBuilder("You have:\n");
-            for (Artefact artefact : this.players.get(this.currPlayer).getInventory()) {
-                builder.append(artefact.toString());
-            }
+            this.players.get(this.currPlayer).getInventory().forEach((key, entry) -> builder.append(entry.toString()));
             this.returnString = builder.toString();
         } else {
             this.returnString = "You have no artefacts in your inventory\n";
@@ -175,14 +173,21 @@ public final class GameServer {
         this.returnString = this.locations.get(destination).toString();
     }
 
-    public void get() {
-
+    public void get() throws STAGException {
+        Set<String> allGameArtefacts = this.getAllGameArtefacts();
+        String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
+        Set<String> availableArtefacts = this.locations.get(playerLocationKey).getArtefacts().keySet();
+        commandParser.checkArtefacts(allGameArtefacts, availableArtefacts);
+        GameEntity artefact = this.locations.get(playerLocationKey).getArtefacts().get(commandParser.getArtefact());
+        this.locations.get(playerLocationKey).getArtefacts().remove(commandParser.getArtefact());
+        this.players.get(currPlayer).addToInventory(artefact);
+        this.returnString = "You picked up a " + artefact.getName();
     }
 
     private Set<String> getAllGameArtefacts() {
         Set<String> artefacts = new HashSet<>();
 
-        //this.locations.forEach(key,entry)->;
+        this.locations.forEach((key, entry) -> artefacts.addAll(entry.getArtefacts().keySet()));
 
         return artefacts;
     }
