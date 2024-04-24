@@ -167,4 +167,17 @@ public class BasicSTAGTests {
         String response = sendCommandToServer("hamish: drop poem");
         assertEquals("There is no artefact in your drop command", response, "Drop response not as expected");
     }
+
+    @Test
+    void testLookWithOtherPlayers() {
+        sendCommandToServer("mickey_mouse: look");
+        sendCommandToServer("goofy: look");
+        sendCommandToServer("donald: look");
+        String response = sendCommandToServer("hamish: look");
+        System.out.println(response);
+        assertTrue(response.contains("mickey_mouse"), "Other player not displayed by look");
+        assertTrue(response.contains("goofy"), "Other player not displayed by look");
+        assertTrue(response.contains("donald"), "Other player not displayed by look");
+        assertFalse(response.contains("hamish"), "Current player should not be displayed by look");
+    }
 }

@@ -128,6 +128,7 @@ public final class GameServer {
         this.currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
             this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
+            this.locations.get(startLocationKey).getPlayers().add(currPlayer);
         }
         try {
             commandParser.checkTokensForMultipleTriggers(gameActions.keySet());
@@ -163,15 +164,17 @@ public final class GameServer {
     public void look() {
         String playerLocation = this.players.get(this.currPlayer).getCurrentLocation();
 
-        this.returnString = this.locations.get(playerLocation).toString();
+        this.returnString = this.locations.get(playerLocation).toString(currPlayer);
     }
 
     public void goTo() throws STAGException {
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
         this.commandParser.checkLocation(this.locations.keySet(), this.locations.get(playerLocationKey).getAccessibleLocations());
+        this.locations.get(playerLocationKey).getPlayers().remove(currPlayer);
         String destination = commandParser.getDestination();
         this.players.get(currPlayer).setCurrentLocation(destination);
-        this.returnString = this.locations.get(destination).toString();
+        this.locations.get(destination).getPlayers().add(currPlayer);
+        this.returnString = this.locations.get(destination).toString(currPlayer);
     }
 
     public void get() throws STAGException {
