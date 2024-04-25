@@ -2,6 +2,7 @@ package edu.uob;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,9 +58,12 @@ public class CommandParser {
         if(triggerCount.get() > 1) {
             throw new STAGException.MultipleTriggers();
         }
+        if(triggerCount.get() == 0) {
+            throw  new STAGException.NoTrigger();
+        }
     }
 
-    public void checkLocation(Set<String> locationKeys, ArrayList<String> accessibleLocations) throws STAGException {
+    public void checkLocation(Set<String> locationKeys, HashSet<String> accessibleLocations) throws STAGException {
         AtomicInteger locationCount = new AtomicInteger();
         Arrays.stream(tokenisedCommand).forEach(token -> {
             if(isDefined(token, locationKeys)) {

@@ -220,6 +220,7 @@ public final class GameServer {
         }
         this.consumerProducer(true, consumed);
         this.consumerProducer(false, produced);
+        returnString = this.actionToPerform.getNarration();
     }
 
     public void addEntityToLocation(String locationKey, GameEntity consumedEntity, String consumedPath) {
@@ -248,14 +249,19 @@ public final class GameServer {
         }
 
         for(String entity: entities) {
-            this.locations.forEach((key, entry) -> {
-                GameEntity consumedEntity = entry.consumeEntity(entity);
-                String consumedPath = null;
-                if(consumedEntity == null && entry.getAccessibleLocations().remove(entity)){
-                    consumedPath = entity;
-                }
-                this.addEntityToLocation("locationKey", consumedEntity, consumedPath);
-            });
+            if(this.players.get(currPlayer).getInventory().containsKey(entity) && isConsumption) {
+                Artefact removedArtefact = this.players.get(currPlayer).getInventory().remove(entity);
+                this.addEntityToLocation(locationKey, removedArtefact, null);
+            } else {
+                this.locations.forEach((key, entry) -> {
+                    GameEntity consumedEntity = entry.consumeEntity(entity);
+                    String consumedPath = null;
+                    if (consumedEntity == null && (entry.getAccessibleLocations().remove(entity) || !isConsumption)) {
+                        consumedPath = entity;
+                    }
+                    this.addEntityToLocation(locationKey, consumedEntity, consumedPath);
+                });
+            }
         }
     }
 

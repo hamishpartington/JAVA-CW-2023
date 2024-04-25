@@ -13,6 +13,13 @@ public class STAGException extends Exception {
         }
     }
 
+    public static class NoTrigger extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public NoTrigger() {
+            super("There are no trigger words in this command");
+        }
+    }
+
     public static class MultipleLocations extends STAGException {
         @Serial private static final long serialVersionUID = 1;
         public MultipleLocations() {
