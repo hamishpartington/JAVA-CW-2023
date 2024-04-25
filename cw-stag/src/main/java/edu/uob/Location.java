@@ -11,9 +11,9 @@ import java.util.HashSet;
 
 public class Location extends GameEntity{
 
-    private HashMap<String, GameEntity> furniture;
-    private HashMap<String, GameEntity> characters;
-    private HashMap<String, GameEntity> artefacts;
+    private HashMap<String, Furniture> furniture;
+    private HashMap<String, Character> characters;
+    private HashMap<String, Artefact> artefacts;
 
     private HashSet<String> players;
 
@@ -77,11 +77,39 @@ public class Location extends GameEntity{
         return accessibleLocations;
     }
 
-    public HashMap<String, GameEntity> getArtefacts() {
+    public HashMap<String, Artefact> getArtefacts() {
         return artefacts;
     }
 
     public HashSet<String> getPlayers() {
         return players;
+    }
+
+    public ArrayList<String> getAvailableEntities(){
+        ArrayList<String> availableEntities = new ArrayList<>();
+        availableEntities.addAll(this.accessibleLocations);
+        availableEntities.addAll(this.artefacts.keySet());
+        availableEntities.addAll(this.characters.keySet());
+        availableEntities.addAll(this.furniture.keySet());
+
+        return availableEntities;
+    }
+
+    public GameEntity consumeEntity(String consumed) {
+        if(this.artefacts.containsKey(consumed)){
+            return this.artefacts.remove(consumed);
+        } else if(this.characters.containsKey(consumed)) {
+            return this.characters.remove(consumed);
+        } else {
+            return this.furniture.remove(consumed);
+        }
+    }
+
+    public HashMap<String, Furniture> getFurniture() {
+        return furniture;
+    }
+
+    public HashMap<String, Character> getCharacters() {
+        return characters;
     }
 }

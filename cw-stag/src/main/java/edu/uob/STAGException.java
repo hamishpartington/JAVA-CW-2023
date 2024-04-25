@@ -56,5 +56,23 @@ public class STAGException extends Exception {
         public NotAvailable(String artefact, boolean isDrop){
             super("The " + artefact + " is not in your inventory so cannot be dropped");
         }
+
+        public NotAvailable(){
+            super("All subjects must either be in your current location or inventory in order to perform an action");
+        }
+    }
+
+    public static class NoSubject extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public NoSubject() {
+            super("You must specify at least one subject of an action");
+        }
+    }
+
+    public static class Ambiguous extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public Ambiguous(String trigger) {
+            super("There is more than one '" + trigger + "' action possible for the given command. You must be more specific.");
+        }
     }
 }

@@ -36,6 +36,10 @@ public final class GameServer {
 
     private CommandParser commandParser;
 
+    private ActionInterpreter actionInterpreter;
+
+    private GameAction actionToPerform;
+
     public static void main(String[] args) {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
@@ -148,6 +152,11 @@ public final class GameServer {
             case "goto" -> this.goTo();
             case "get" -> this.get();
             case "drop" -> this.drop();
+            default -> {
+                this.actionInterpreter = new ActionInterpreter(gameActions.get(trigger), commandParser.getTokenisedCommand(), trigger);
+                this.actionToPerform = this.actionInterpreter.determineViableAction();
+                this.performAction();
+            }
         }
     }
 
@@ -182,7 +191,7 @@ public final class GameServer {
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
         Set<String> availableArtefacts = this.locations.get(playerLocationKey).getArtefacts().keySet();
         commandParser.checkArtefacts(allGameArtefacts, availableArtefacts);
-        GameEntity artefact = this.locations.get(playerLocationKey).getArtefacts().get(commandParser.getArtefact());
+        Artefact artefact = this.locations.get(playerLocationKey).getArtefacts().get(commandParser.getArtefact());
         this.locations.get(playerLocationKey).getArtefacts().remove(commandParser.getArtefact());
         this.players.get(currPlayer).addToInventory(artefact);
         this.returnString = "You picked up a " + artefact.getName();
@@ -192,11 +201,62 @@ public final class GameServer {
         Set<String> artefactsInInv = this.players.get(currPlayer).getInventory().keySet();
         Set<String> allGameArtefacts = this.getAllGameArtefacts();
         commandParser.checkArtefacts(allGameArtefacts, artefactsInInv);
-        GameEntity artefact = this.players.get(currPlayer).getInventory().get(commandParser.getArtefact());
+        Artefact artefact = this.players.get(currPlayer).getInventory().get(commandParser.getArtefact());
         this.players.get(currPlayer).getInventory().remove(commandParser.getArtefact());
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
         this.locations.get(playerLocationKey).getArtefacts().put(artefact.getName(), artefact);
         this.returnString = "You dropped a " + artefact.getName();
+    }
+
+    public void performAction() throws STAGException {
+        HashSet<String> subjects = this.actionToPerform.getSubjects();
+        HashSet<String> consumed = this.actionToPerform.getConsumed();
+        HashSet<String> produced = this.actionToPerform.getProduced();
+        String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
+        for(String subject : subjects){
+            if(!(this.locations.get(playerLocationKey).getAvailableEntities().contains(subject) || this.players.get(currPlayer).getInventory().containsKey(subject))){
+                throw new STAGException.NotAvailable();
+            }
+        }
+        this.consumerProducer(true, consumed);
+        this.consumerProducer(false, produced);
+    }
+
+    public void addEntityToLocation(String locationKey, GameEntity consumedEntity, String consumedPath) {
+        Location location = this.locations.get(locationKey);
+        if(consumedEntity != null) {
+            if(consumedEntity instanceof Artefact) {
+                location.getArtefacts().put(consumedEntity.getName(), (Artefact)consumedEntity);
+            } else if (consumedEntity instanceof Furniture) {
+                location.getFurniture().put(consumedEntity.getName(), (Furniture)consumedEntity);
+            } else if(consumedEntity instanceof Character) {
+                location.getCharacters().put(consumedEntity.getName(), (Character)consumedEntity);
+            }
+        } else if (consumedPath != null) {
+            location.addAccessibleLocation(consumedPath);
+        }
+    }
+
+    void consumerProducer(boolean isConsumption, HashSet<String> entities) {
+
+        String locationKey;
+
+        if(isConsumption) {
+            locationKey = "storeroom";
+        } else {
+            locationKey = this.players.get(currPlayer).getCurrentLocation();
+        }
+
+        for(String entity: entities) {
+            this.locations.forEach((key, entry) -> {
+                GameEntity consumedEntity = entry.consumeEntity(entity);
+                String consumedPath = null;
+                if(consumedEntity == null && entry.getAccessibleLocations().remove(entity)){
+                    consumedPath = entity;
+                }
+                this.addEntityToLocation("locationKey", consumedEntity, consumedPath);
+            });
+        }
     }
 
     private Set<String> getAllGameArtefacts() {

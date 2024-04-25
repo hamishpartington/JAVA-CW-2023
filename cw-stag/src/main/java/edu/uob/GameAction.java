@@ -38,4 +38,20 @@ public class GameAction
     public HashSet<String> getTriggers() {
         return triggers;
     }
+
+    public HashSet<String> getSubjects() {
+        return subjects;
+    }
+
+    public HashSet<String> getConsumed() {
+        return consumed;
+    }
+
+    public HashSet<String> getProduced() {
+        return produced;
+    }
+
+    public String getNarration() {
+        return narration;
+    }
 }

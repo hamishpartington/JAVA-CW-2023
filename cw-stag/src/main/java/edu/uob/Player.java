@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Player {
     private String name;
     private String currentLocation;
-    private HashMap<String, GameEntity> inventory;
+    private HashMap<String, Artefact> inventory;
 
     public Player(String name, String startLocation) {
         this.name = name;
@@ -14,7 +14,7 @@ public class Player {
         this.inventory = new HashMap<>();
     }
 
-    public HashMap<String, GameEntity> getInventory() {
+    public HashMap<String, Artefact> getInventory() {
         return inventory;
     }
 
@@ -26,7 +26,7 @@ public class Player {
         this.currentLocation = currentLocation;
     }
 
-    public void addToInventory(GameEntity artefact){
+    public void addToInventory(Artefact artefact){
         inventory.put(artefact.getName(), artefact);
     }
 }
