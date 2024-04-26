@@ -128,7 +128,7 @@ public final class GameServer {
     * @param command The incoming command to be processed
     */
     public String handleCommand(String command) {
-        this.commandParser = new CommandParser(command);
+        this.commandParser = new CommandParser(command, this.gameActions.keySet());
         this.currPlayer = commandParser.getPlayerName();
         if(!this.players.containsKey(currPlayer)) {
             this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));

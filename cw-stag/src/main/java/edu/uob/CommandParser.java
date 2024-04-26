@@ -1,7 +1,6 @@
 package edu.uob;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,16 +9,16 @@ public class CommandParser {
     private String playerName;
     private String originalCommand;
     private String processedCommand;
-    private String[] tokenisedCommand;
+    private ArrayList<String> tokenisedCommand;
     private String triggerWord;
     private String destination;
     private String artefact;
 
-    public CommandParser(String originalCommand) {
+    public CommandParser(String originalCommand, Set<String> triggers) {
         this.originalCommand = originalCommand;
         this.extractPlayerName();
         this.processCommand();
-        this.tokenise();
+        this.tokenise(triggers);
     }
 
     private void extractPlayerName() {
@@ -31,8 +30,22 @@ public class CommandParser {
         this.processedCommand = this.processedCommand.replaceFirst(this.playerName, "");
     }
 
-    private void tokenise() {
-        this.tokenisedCommand = this.processedCommand.split("\\s+");
+    private void tokenise(Set<String> triggers) {
+        String[] initialPass = this.processedCommand.split("\\s+");
+        this.tokenisedCommand = new ArrayList<>();
+        int i;
+        for(i = 0; i < initialPass.length - 1; i++) {
+            String token = initialPass[i];
+            String nextToken = initialPass[i+1];
+            if(triggers.contains(token + " " + nextToken)){
+                tokenisedCommand.add(token + " " + nextToken);
+                i++;
+            } else {
+                tokenisedCommand.add(token);
+            }
+        }
+        // add final token
+        tokenisedCommand.add(initialPass[i]);
     }
 
     public String getPlayerName() {
@@ -43,13 +56,13 @@ public class CommandParser {
         return processedCommand;
     }
 
-    public String[] getTokenisedCommand() {
+    public ArrayList<String> getTokenisedCommand() {
         return tokenisedCommand;
     }
 
     public void checkTokensForMultipleTriggers(Set<String> definedTriggers) throws STAGException {
         AtomicInteger triggerCount = new AtomicInteger();
-        Arrays.stream(tokenisedCommand).forEach(token -> {
+        tokenisedCommand.forEach(token -> {
             if(isBasicTrigger(token) | isDefined(token, definedTriggers)) {
                 this.triggerWord = token;
                 triggerCount.getAndIncrement();
@@ -65,7 +78,7 @@ public class CommandParser {
 
     public void checkLocation(Set<String> locationKeys, HashSet<String> accessibleLocations) throws STAGException {
         AtomicInteger locationCount = new AtomicInteger();
-        Arrays.stream(tokenisedCommand).forEach(token -> {
+        tokenisedCommand.forEach(token -> {
             if(isDefined(token, locationKeys)) {
                 this.destination = token;
                 locationCount.getAndIncrement();
@@ -86,7 +99,7 @@ public class CommandParser {
 
     public void checkArtefacts(Set<String> allGameArtefacts, Set<String> availableItems) throws STAGException {
         AtomicInteger artefactCount = new AtomicInteger();
-        Arrays.stream(tokenisedCommand).forEach(token -> {
+        tokenisedCommand.forEach(token -> {
             if(isDefined(token, allGameArtefacts)) {
                 this.artefact = token;
                 artefactCount.getAndIncrement();
