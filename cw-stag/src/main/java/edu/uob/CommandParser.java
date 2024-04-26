@@ -111,7 +111,7 @@ public class CommandParser {
 
     private boolean isBasicTrigger(String token) {
         switch(token) {
-            case "inv", "inventory", "get", "drop", "goto", "look" -> {
+            case "inv", "inventory", "get", "drop", "goto", "look", "health" -> {
                 return true;
             }
             default -> {

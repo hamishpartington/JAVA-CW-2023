@@ -218,4 +218,52 @@ public class BasicSTAGTests {
         assertEquals("There are no trigger words in this command",
                 response, "Response to inviable action not as expected");
     }
+
+    @Test
+    void testHealth1() {
+        sendCommandToServer("hamish: get axe");
+        sendCommandToServer("hamish: get potion");
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        sendCommandToServer("hamish: open trapdoor");
+        sendCommandToServer("hamish: goto cellar");
+        sendCommandToServer("hamish: fight elf");
+        sendCommandToServer("simon: goto cellar");
+        sendCommandToServer("hamish: fight elf");
+        assertEquals("You have 1 health point(s) remaining", sendCommandToServer("hamish: health"), "Health level not as expected");
+        String response = sendCommandToServer("hamish: fight elf");
+        assertTrue(response.contains("lose some health"), "action narration not as expected");
+        assertTrue(response.contains("died"), "Player should have died");
+        response = sendCommandToServer("simon: look");
+        assertTrue(response.contains("axe"), "Dead player's dropped items should be here");
+        assertTrue(response.contains("potion"), "Dead player's dropped items should be here");
+        assertFalse(response.contains("hamish"), "Dead player should not be at this location");
+        assertEquals("You have no artefacts in your inventory\n", sendCommandToServer("hamish: inv"),
+                "Player who died should have no items");
+    }
+
+    @Test
+    void testHealth2() {
+        sendCommandToServer("hamish: get potion");
+        sendCommandToServer("hamish: drink potion");
+        String response = sendCommandToServer("hamish: health");
+        assertEquals("You have 3 health point(s) remaining", response, "Health level not as expected");
+    }
+
+    @Test
+    void testHealth3() {
+        sendCommandToServer("hamish: get potion");
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        sendCommandToServer("hamish: open trapdoor");
+        sendCommandToServer("hamish: goto cellar");
+        sendCommandToServer("hamish: fight elf");
+        sendCommandToServer("hamish: fight elf");
+        sendCommandToServer("hamish: drink potion");
+        String response = sendCommandToServer("hamish: health");
+        assertEquals("You have 2 health point(s) remaining", response, "Health level not as expected");
+    }
+
 }

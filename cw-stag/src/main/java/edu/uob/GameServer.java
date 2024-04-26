@@ -152,6 +152,7 @@ public final class GameServer {
             case "goto" -> this.goTo();
             case "get" -> this.get();
             case "drop" -> this.drop();
+            case "health" -> this.returnString = "You have " + this.players.get(currPlayer).getHealth() + " health point(s) remaining";
             default -> {
                 this.actionInterpreter = new ActionInterpreter(gameActions.get(trigger), commandParser.getTokenisedCommand(), trigger);
                 this.actionToPerform = this.actionInterpreter.determineViableAction();
@@ -221,6 +222,11 @@ public final class GameServer {
         this.consumerProducer(true, consumed);
         this.consumerProducer(false, produced);
         returnString = this.actionToPerform.getNarration();
+        if(this.players.get(currPlayer).getHealth() == 0) {
+            returnString = returnString + "\nyou died and lost all of your items, you must return to the start of the game";
+            String deathLocationKey = this.players.get(currPlayer).getCurrentLocation();
+            this.players.get(currPlayer).die(this.startLocationKey, this.locations.get(deathLocationKey));
+        }
     }
 
     public void addEntityToLocation(String locationKey, GameEntity consumedEntity, String consumedPath) {
@@ -252,6 +258,8 @@ public final class GameServer {
             if(this.players.get(currPlayer).getInventory().containsKey(entity) && isConsumption) {
                 Artefact removedArtefact = this.players.get(currPlayer).getInventory().remove(entity);
                 this.addEntityToLocation(locationKey, removedArtefact, null);
+            } else if (entity.equals("health")) {
+                this.players.get(currPlayer).adjustHealth(isConsumption);
             } else {
                 this.locations.forEach((key, entry) -> {
                     GameEntity consumedEntity = entry.consumeEntity(entity);
