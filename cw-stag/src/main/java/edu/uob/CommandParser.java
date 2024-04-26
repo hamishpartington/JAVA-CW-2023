@@ -31,7 +31,7 @@ public class CommandParser {
     }
 
     private void tokenise(Set<String> triggers) {
-        String[] initialPass = this.processedCommand.split("\\s+");
+        String[] initialPass = this.processedCommand.trim().split("\\s+");
         this.tokenisedCommand = new ArrayList<>();
         int i;
         for(i = 0; i < initialPass.length - 1; i++) {
