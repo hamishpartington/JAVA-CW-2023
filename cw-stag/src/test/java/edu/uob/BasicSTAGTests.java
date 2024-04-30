@@ -174,7 +174,6 @@ public class BasicSTAGTests {
         sendCommandToServer("goofy: look");
         sendCommandToServer("donald: look");
         String response = sendCommandToServer("hamish: look");
-        System.out.println(response);
         assertTrue(response.contains("mickey_mouse"), "Other player not displayed by look");
         assertTrue(response.contains("goofy"), "Other player not displayed by look");
         assertTrue(response.contains("donald"), "Other player not displayed by look");
@@ -263,6 +262,31 @@ public class BasicSTAGTests {
         sendCommandToServer("hamish: drink potion");
         String response = sendCommandToServer("hamish: health");
         assertEquals("You have 2 health point(s) remaining", response, "Health level not as expected");
+    }
+
+    @Test
+    void testPunctuation1() {
+        String response = sendCommandToServer("simon: inv!");
+        assertEquals("You have no artefacts in your inventory\n", response,
+                "inv command not working as expected");
+    }
+
+    @Test
+    void testPunctuation2() {
+        String response = sendCommandToServer("hamish: open the big, bad trapdoor.");
+        assertEquals("All subjects must either be in your current location or inventory in order to perform an action",
+                response, "Response to inviable action not as expected");
+    }
+
+    @Test
+    void testPunctuation3(){
+        sendCommandToServer("hamish: get that dangerous-looking axe.");
+        sendCommandToServer("hamish: goto the deep; dark forest?");
+        assertEquals("You cut down the tree with the axe", sendCommandToServer("hamish: chop tree with axe"),
+                "Action response not as expected");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("log"));
+        assertFalse(response.contains("tree"));
     }
 
 }
