@@ -24,6 +24,6 @@ public class CommandParserTests {
         Set<String> triggers = new HashSet<>();
         triggers.add("cut");
         CommandParser cp = new CommandParser(command, triggers);
-        assertEquals(" look in cellar", cp.getProcessedCommand(), "processed command not as expected");
+        assertEquals("  look in  cellar", cp.getProcessedCommand(), "processed command not as expected");
     }
 }

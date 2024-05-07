@@ -27,7 +27,7 @@ public class CommandParser {
 
     private void processCommand(){
         this.processedCommand = this.originalCommand.replaceFirst(this.playerName, "").toLowerCase();
-        this.processedCommand = this.processedCommand.replaceAll("[^a-z\\s]", "");
+        this.processedCommand = this.processedCommand.replaceAll("[^a-z\\s]", " ");
     }
 
     private void tokenise(Set<String> triggers) {
