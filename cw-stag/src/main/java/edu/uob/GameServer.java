@@ -40,6 +40,8 @@ public final class GameServer {
 
     private GameAction actionToPerform;
 
+    private ArrayList<String> allEntityNames;
+
     public static void main(String[] args) {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
@@ -77,6 +79,7 @@ public final class GameServer {
         this.returnString = "";
         this.parseEntitiesFile();
         this.parseActionsFile();
+        this.getAllEntityNames();
     }
 
     public void parseEntitiesFile() throws FileNotFoundException, ParseException {
@@ -160,6 +163,7 @@ public final class GameServer {
                 this.performAction();
             }
         }
+        this.checkExtraneousEntities(trigger);
     }
 
     public void inventory() {
@@ -274,6 +278,37 @@ public final class GameServer {
         this.players.forEach((key, entry) -> artefacts.addAll(entry.getInventory().keySet()));
 
         return artefacts;
+    }
+
+    private void checkExtraneousEntities(String trigger) throws STAGException {
+        switch (trigger) {
+            case "inv", "inventory", "health", "look" -> this.hasExtraneousEntities(trigger, 0);
+            case "goto", "drop", "get" -> this.hasExtraneousEntities(trigger, 1);
+        }
+    }
+
+    private void hasExtraneousEntities(String trigger, int maxEntities) throws STAGException {
+
+        int numEntities = 0;
+        for(String token : this.commandParser.getTokenisedCommand()) {
+            if(!token.equals(trigger)) {
+                if(this.allEntityNames.contains(token)) {
+                    numEntities++;
+                }
+            }
+        }
+
+        if(numEntities > maxEntities) {
+            throw new STAGException.ExtraneousEntities();
+        }
+    }
+
+    private void getAllEntityNames() {
+        this.allEntityNames = new ArrayList<>();
+        this.locations.forEach((key, entry) -> {
+            this.allEntityNames.addAll(entry.getAvailableEntities());
+            this.allEntityNames.add(key);
+        });
     }
 
     /**

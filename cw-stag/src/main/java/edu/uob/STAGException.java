@@ -82,4 +82,11 @@ public class STAGException extends Exception {
             super("There is more than one '" + trigger + "' action possible for the given command. You must be more specific.");
         }
     }
+
+    public static class ExtraneousEntities extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public ExtraneousEntities() {
+            super("Your command contains extraneous entities");
+        }
+    }
 }
