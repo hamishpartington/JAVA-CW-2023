@@ -133,9 +133,26 @@ public class BasicSTAGTests {
     }
 
     @Test
+    void testGoto5() {
+        String response = sendCommandToServer("hamish: goto forest forest");
+        assertTrue(response.contains("forest"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("dark forest"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("brass key"), "Did not see a description of artefacts in response to look");
+        assertTrue(response.contains("big tree"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("cabin"), "Did not see available paths in response to look");
+    }
+
+
+    @Test
     void testGotoExtraneous() {
         String response = sendCommandToServer("simon: goto forest tree");
         assertEquals("Your command contains extraneous entities", response, "Extraneous entities not detected");
+        response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
     }
 
     @Test
@@ -161,9 +178,19 @@ public class BasicSTAGTests {
     }
 
     @Test
+    void testGet4() {
+        String response = sendCommandToServer("hamish: get axe axe");
+        assertEquals("You picked up a axe", response, "Get response not as expected");
+        assertTrue(sendCommandToServer("hamish: inv").contains("axe"));
+        assertFalse(sendCommandToServer("hamish: look").contains("axe"), "Axe not removed from room");
+    }
+
+    @Test
     void testGetExtraneous() {
         String response = sendCommandToServer("simon: get axe forest.");
         assertEquals("Your command contains extraneous entities", response, "Extraneous entities not detected");
+        assertFalse(sendCommandToServer("simon: inv").contains("axe"), "Should not have picked up axe");
+        assertTrue(sendCommandToServer("simon: look").contains("axe"), "Should not have picked up axe");
     }
 
     @Test
@@ -193,12 +220,27 @@ public class BasicSTAGTests {
     }
 
     @Test
+    void testDrop4() {
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        assertEquals("You dropped a key", sendCommandToServer("hamish: drop key brass key"), "Drop response not as expected");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("brass key"), "Did not see a description of dropped artefact in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+    }
+
+    @Test
     void testDropExtraneous() {
         sendCommandToServer("hamish: goto forest");
         sendCommandToServer("hamish: get key");
         sendCommandToServer("hamish: goto cabin");
         String response = sendCommandToServer("hamish: drop key in forest.");
         assertEquals("Your command contains extraneous entities", response, "Extraneous entities not detected");
+        assertTrue(sendCommandToServer("hamish: inv").contains("key"), "key should not have been dropped");
     }
 
     @Test
@@ -251,6 +293,29 @@ public class BasicSTAGTests {
     }
 
     @Test
+    void testGameAction5(){
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        assertEquals("You unlock the trapdoor and see steps leading down into a cellar", sendCommandToServer("hamish: open trapdoor trapdoor"),
+                "Action response not as expected");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("cellar"), "Path to cellar not produced");
+        assertFalse(sendCommandToServer("hamish: inv").contains("key"), "Key not consumed");
+    }
+
+    @Test
+    void testActionExtraneous() {
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        String response = sendCommandToServer("hamish: open trapdoor with axe");
+        assertEquals("Your command contains extraneous entities", response, "Extraneous entities not detected");
+        assertTrue(sendCommandToServer("hamish: inv").contains("key"), "key not in inv");
+        assertFalse(sendCommandToServer("hamish: look").contains("cellar"), "Trapdoor should not have been opened");
+    }
+
+    @Test
     void testHealth1() {
         sendCommandToServer("hamish: get axe");
         sendCommandToServer("hamish: get potion");
@@ -295,6 +360,14 @@ public class BasicSTAGTests {
         sendCommandToServer("hamish: drink potion");
         String response = sendCommandToServer("hamish: health");
         assertEquals("You have 2 health point(s) remaining", response, "Health level not as expected");
+    }
+
+    @Test
+    void testHealth4() {
+        sendCommandToServer("hamish: get potion");
+        sendCommandToServer("hamish: drink potion");
+        String response = sendCommandToServer("hamish: health in me");
+        assertEquals("You have 3 health point(s) remaining", response, "Health level not as expected");
     }
 
     @Test

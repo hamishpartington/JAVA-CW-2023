@@ -78,20 +78,22 @@ public class CommandParser {
     }
 
     public void checkLocation(Set<String> locationKeys, HashSet<String> accessibleLocations) throws STAGException {
-        AtomicInteger locationCount = new AtomicInteger();
+        HashSet<String> locations = new HashSet<>();
         tokenisedCommand.forEach(token -> {
             if(isDefined(token, locationKeys)) {
                 this.destination = token;
-                locationCount.getAndIncrement();
+                locations.add(token);
             }
         });
-        if(locationCount.get() > 1) {
+        if(locations.size() > 1) {
             throw new STAGException.MultipleLocations();
         }
 
-        if(locationCount.get() == 0) {
+        if(locations.isEmpty()) {
             throw new STAGException.NoLocation();
         }
+
+        this.destination = (String) locations.toArray()[0];
 
         if(!accessibleLocations.contains(this.destination)){
             throw new STAGException.Inaccessible(this.destination);
@@ -99,21 +101,21 @@ public class CommandParser {
     }
 
     public void checkArtefacts(Set<String> allGameArtefacts, Set<String> availableItems) throws STAGException {
-        AtomicInteger artefactCount = new AtomicInteger();
+        HashSet<String> artefactsToGet = new HashSet<>();
         tokenisedCommand.forEach(token -> {
             if(isDefined(token, allGameArtefacts)) {
                 this.artefact = token;
-                artefactCount.getAndIncrement();
+                artefactsToGet.add(token);
             }
         });
-        if(artefactCount.get() > 1) {
+        if(artefactsToGet.size() > 1) {
             throw new STAGException.MultipleArtefacts(this.triggerWord);
         }
 
-        if(artefactCount.get() == 0) {
+        if(artefactsToGet.isEmpty()) {
             throw new STAGException.NoArtefact(this.triggerWord);
         }
-
+        this.artefact = (String)artefactsToGet.toArray()[0];
         if(!availableItems.contains(this.artefact)){
             if(this.triggerWord.equals("get")) {
                 throw new STAGException.NotAvailable(this.artefact);

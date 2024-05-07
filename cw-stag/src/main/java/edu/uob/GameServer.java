@@ -155,18 +155,22 @@ public final class GameServer {
             case "goto" -> this.goTo();
             case "get" -> this.get();
             case "drop" -> this.drop();
-            case "health" -> this.returnString = "You have " + this.players.get(currPlayer).getHealth() + " health point(s) remaining";
+            case "health" -> {
+                this.checkExtraneousEntities("health");
+                this.returnString = "You have " + this.players.get(currPlayer).getHealth() + " health point(s) remaining";
+            }
             default -> {
                 this.actionInterpreter = new ActionInterpreter(gameActions.get(trigger), commandParser.getTokenisedCommand(), trigger);
                 String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
                 this.actionToPerform = this.actionInterpreter.determinePerformableActions(this.locations.get(playerLocationKey), this.players.get(currPlayer).getInventory());
+                this.checkExtraneousEntities(trigger);
                 this.performAction();
             }
         }
-        this.checkExtraneousEntities(trigger);
     }
 
-    public void inventory() {
+    public void inventory() throws STAGException {
+        this.checkExtraneousEntities("inv");
         if(!this.players.get(this.currPlayer).getInventory().isEmpty()) {
             StringBuilder builder = new StringBuilder("You have:\n");
             this.players.get(this.currPlayer).getInventory().forEach((key, entry) -> builder.append(entry.toString()));
@@ -176,7 +180,8 @@ public final class GameServer {
         }
     }
 
-    public void look() {
+    public void look() throws STAGException {
+        this.checkExtraneousEntities("look");
         String playerLocation = this.players.get(this.currPlayer).getCurrentLocation();
 
         this.returnString = this.locations.get(playerLocation).toString(currPlayer);
@@ -185,6 +190,7 @@ public final class GameServer {
     public void goTo() throws STAGException {
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
         this.commandParser.checkLocation(this.locations.keySet(), this.locations.get(playerLocationKey).getAccessibleLocations());
+        this.checkExtraneousEntities("goto");
         this.locations.get(playerLocationKey).getPlayers().remove(currPlayer);
         String destination = commandParser.getDestination();
         this.players.get(currPlayer).setCurrentLocation(destination);
@@ -197,6 +203,7 @@ public final class GameServer {
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
         Set<String> availableArtefacts = this.locations.get(playerLocationKey).getArtefacts().keySet();
         commandParser.checkArtefacts(allGameArtefacts, availableArtefacts);
+        this.checkExtraneousEntities("get");
         Artefact artefact = this.locations.get(playerLocationKey).getArtefacts().get(commandParser.getArtefact());
         this.locations.get(playerLocationKey).getArtefacts().remove(commandParser.getArtefact());
         this.players.get(currPlayer).addToInventory(artefact);
@@ -207,6 +214,7 @@ public final class GameServer {
         Set<String> artefactsInInv = this.players.get(currPlayer).getInventory().keySet();
         Set<String> allGameArtefacts = this.getAllGameArtefacts();
         commandParser.checkArtefacts(allGameArtefacts, artefactsInInv);
+        this.checkExtraneousEntities("drop");
         Artefact artefact = this.players.get(currPlayer).getInventory().get(commandParser.getArtefact());
         this.players.get(currPlayer).getInventory().remove(commandParser.getArtefact());
         String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
@@ -284,22 +292,32 @@ public final class GameServer {
         switch (trigger) {
             case "inv", "inventory", "health", "look" -> this.hasExtraneousEntities(trigger, 0);
             case "goto", "drop", "get" -> this.hasExtraneousEntities(trigger, 1);
+            default -> this.hasExtraneousEntities(this.actionToPerform);
         }
     }
 
     private void hasExtraneousEntities(String trigger, int maxEntities) throws STAGException {
 
-        int numEntities = 0;
+        HashSet<String> entities = new HashSet<>();
         for(String token : this.commandParser.getTokenisedCommand()) {
-            if(!token.equals(trigger)) {
-                if(this.allEntityNames.contains(token)) {
-                    numEntities++;
-                }
+            if(this.allEntityNames.contains(token)) {
+                entities.add(token);
             }
         }
-
-        if(numEntities > maxEntities) {
+        if(entities.size() > maxEntities) {
             throw new STAGException.ExtraneousEntities();
+        }
+    }
+
+    private void hasExtraneousEntities(GameAction action) throws STAGException {
+        for(String token : this.commandParser.getTokenisedCommand()) {
+            HashSet<String> nonExtraneous = new HashSet<>();
+            nonExtraneous.addAll(action.getSubjects());
+            nonExtraneous.addAll(action.getConsumed());
+            nonExtraneous.addAll(action.getProduced());
+            if(!nonExtraneous.contains(token) && this.allEntityNames.contains(token)) {
+                throw new STAGException.ExtraneousEntities();
+            }
         }
     }
 
