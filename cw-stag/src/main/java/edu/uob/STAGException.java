@@ -89,4 +89,11 @@ public class STAGException extends Exception {
             super("Your command contains extraneous entities");
         }
     }
+
+    public static class InvalidName extends STAGException {
+        @Serial private static final long serialVersionUID = 1;
+        public InvalidName() {
+            super("Player name contains invalid characters");
+        }
+    }
 }

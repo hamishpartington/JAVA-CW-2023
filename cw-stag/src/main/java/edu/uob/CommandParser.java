@@ -14,15 +14,18 @@ public class CommandParser {
     private String destination;
     private String artefact;
 
-    public CommandParser(String originalCommand, Set<String> triggers) {
+    public CommandParser(String originalCommand, Set<String> triggers) throws STAGException.InvalidName {
         this.originalCommand = originalCommand;
         this.extractPlayerName();
         this.processCommand();
         this.tokenise(triggers);
     }
 
-    private void extractPlayerName() {
+    private void extractPlayerName() throws STAGException.InvalidName {
         this.playerName = this.originalCommand.split(":")[0].toLowerCase();
+        if(this.playerName.matches(".*[^a-z\\s-'].*")) {
+            throw new STAGException.InvalidName();
+        }
     }
 
     private void processCommand(){

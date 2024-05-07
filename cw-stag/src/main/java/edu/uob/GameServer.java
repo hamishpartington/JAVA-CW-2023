@@ -131,13 +131,13 @@ public final class GameServer {
     * @param command The incoming command to be processed
     */
     public String handleCommand(String command) {
-        this.commandParser = new CommandParser(command, this.gameActions.keySet());
-        this.currPlayer = commandParser.getPlayerName();
-        if(!this.players.containsKey(currPlayer)) {
-            this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
-            this.locations.get(startLocationKey).getPlayers().add(currPlayer);
-        }
         try {
+            this.commandParser = new CommandParser(command, this.gameActions.keySet());
+            this.currPlayer = commandParser.getPlayerName();
+            if(!this.players.containsKey(currPlayer)) {
+                this.players.put(currPlayer, new Player(currPlayer, this.startLocationKey));
+                this.locations.get(startLocationKey).getPlayers().add(currPlayer);
+            }
             commandParser.checkTokensForMultipleTriggers(gameActions.keySet());
             this.interpretCommand();
         } catch (STAGException e) {
