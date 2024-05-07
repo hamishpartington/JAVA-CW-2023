@@ -155,7 +155,8 @@ public final class GameServer {
             case "health" -> this.returnString = "You have " + this.players.get(currPlayer).getHealth() + " health point(s) remaining";
             default -> {
                 this.actionInterpreter = new ActionInterpreter(gameActions.get(trigger), commandParser.getTokenisedCommand(), trigger);
-                this.actionToPerform = this.actionInterpreter.determineViableAction();
+                String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
+                this.actionToPerform = this.actionInterpreter.determinePerformableActions(this.locations.get(playerLocationKey), this.players.get(currPlayer).getInventory());
                 this.performAction();
             }
         }
@@ -209,16 +210,9 @@ public final class GameServer {
         this.returnString = "You dropped a " + artefact.getName();
     }
 
-    public void performAction() throws STAGException {
-        HashSet<String> subjects = this.actionToPerform.getSubjects();
+    public void performAction() {
         HashSet<String> consumed = this.actionToPerform.getConsumed();
         HashSet<String> produced = this.actionToPerform.getProduced();
-        String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
-        for(String subject : subjects){
-            if(!(this.locations.get(playerLocationKey).getAvailableEntities().contains(subject) || this.players.get(currPlayer).getInventory().containsKey(subject))){
-                throw new STAGException.NotAvailable();
-            }
-        }
         this.consumerProducer(true, consumed);
         this.consumerProducer(false, produced);
         returnString = this.actionToPerform.getNarration();

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandParser {
     private String playerName;
-    private String originalCommand;
+    private final String originalCommand;
     private String processedCommand;
     private ArrayList<String> tokenisedCommand;
     private String triggerWord;
@@ -37,7 +37,8 @@ public class CommandParser {
         for(i = 0; i < initialPass.length - 1; i++) {
             String token = initialPass[i];
             String nextToken = initialPass[i+1];
-            if(triggers.contains(token + " " + nextToken)){
+
+            if(triggers.stream().anyMatch(trigger -> trigger.matches(token + " " + nextToken))){
                 tokenisedCommand.add(token + " " + nextToken);
                 i++;
             } else {
@@ -72,7 +73,7 @@ public class CommandParser {
             throw new STAGException.MultipleTriggers();
         }
         if(triggerCount.get() == 0) {
-            throw  new STAGException.NoTrigger();
+            throw new STAGException.NoTrigger();
         }
     }
 
