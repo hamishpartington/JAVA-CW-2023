@@ -65,19 +65,21 @@ public class CommandParser {
     }
 
     public void checkTokensForMultipleTriggers(Set<String> definedTriggers) throws STAGException {
-        AtomicInteger triggerCount = new AtomicInteger();
+
+        HashSet<String> triggers = new HashSet<>();
         tokenisedCommand.forEach(token -> {
             if(isBasicTrigger(token) | isDefined(token, definedTriggers)) {
                 this.triggerWord = token;
-                triggerCount.getAndIncrement();
+                triggers.add(token);
             }
         });
-        if(triggerCount.get() > 1) {
+        if(triggers.size() > 1) {
             throw new STAGException.MultipleTriggers();
         }
-        if(triggerCount.get() == 0) {
+        if(triggers.isEmpty()) {
             throw new STAGException.NoTrigger();
         }
+        this.triggerWord = (String) triggers.toArray()[0];
     }
 
     public void checkLocation(Set<String> locationKeys, HashSet<String> accessibleLocations) throws STAGException {
