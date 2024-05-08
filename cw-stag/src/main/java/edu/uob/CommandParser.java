@@ -20,8 +20,8 @@ public class CommandParser {
     }
 
     private void extractPlayerName() throws STAGException.InvalidName {
-        this.playerName = this.originalCommand.split(":")[0].toLowerCase();
-        if(this.playerName.matches(".*[^a-z\\s-'].*")) {
+        this.playerName = this.originalCommand.split(":")[0];
+        if(this.playerName.matches(".*[^a-zA-Z\\s-'].*")) {
             throw new STAGException.InvalidName();
         }
     }
