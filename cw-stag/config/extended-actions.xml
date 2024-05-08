@@ -23,6 +23,7 @@
             <keyphrase>chop</keyphrase>
             <keyphrase>cut</keyphrase>
             <keyphrase>cut down</keyphrase>
+            <keyphrase>vigorously chop down</keyphrase>
         </triggers>
         <subjects>
             <entity>tree</entity>

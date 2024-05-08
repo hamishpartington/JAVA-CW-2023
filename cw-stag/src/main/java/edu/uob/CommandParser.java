@@ -1,9 +1,6 @@
 package edu.uob;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 public class CommandParser {
     private String playerName;
@@ -35,22 +32,18 @@ public class CommandParser {
     }
 
     private void tokenise(Set<String> triggers) {
-        String[] initialPass = this.processedCommand.trim().split("\\s+");
-        this.tokenisedCommand = new ArrayList<>();
-        int i;
-        for(i = 0; i < initialPass.length - 1; i++) {
-            String token = initialPass[i];
-            String nextToken = initialPass[i+1];
+        this.tokenisedCommand = new ArrayList<>(Arrays.asList(this.processedCommand.trim().split("\\s+")));
 
-            if(triggers.stream().anyMatch(trigger -> trigger.matches(token + " " + nextToken))){
-                tokenisedCommand.add(token + " " + nextToken);
-                i++;
-            } else {
-                tokenisedCommand.add(token);
+        for(int i = 0; i < tokenisedCommand.size() - 1; i++) {
+            String token = tokenisedCommand.get(i);
+            String nextToken = tokenisedCommand.get(i+1);
+
+            if(triggers.stream().anyMatch(trigger -> trigger.contains(token + " " + nextToken))){
+                tokenisedCommand.set(i, token + " " + nextToken);
+                tokenisedCommand.remove(i+1);
+                i--;
             }
         }
-        // add final token
-        tokenisedCommand.add(initialPass[i]);
     }
 
     public String getPlayerName() {
@@ -61,7 +54,7 @@ public class CommandParser {
         return processedCommand;
     }
 
-    public ArrayList<String> getTokenisedCommand() {
+    public List<String> getTokenisedCommand() {
         return tokenisedCommand;
     }
 

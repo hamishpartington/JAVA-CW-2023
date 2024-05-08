@@ -1,19 +1,19 @@
 package edu.uob;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class ActionInterpreter {
-    private HashSet<GameAction> potentialActions;
-    private ArrayList<String> tokens;
-    private HashSet<GameAction> viableActions;
+    private final HashSet<GameAction> potentialActions;
+    private final List<String> tokens;
+    private final HashSet<GameAction> viableActions;
 
-    private HashSet<GameAction> performableActions;
+    private final HashSet<GameAction> performableActions;
 
-    private String trigger;
+    private final String trigger;
 
-    public ActionInterpreter(HashSet<GameAction> potentialActions, ArrayList<String> tokens, String trigger) {
+    public ActionInterpreter(HashSet<GameAction> potentialActions, List<String> tokens, String trigger) {
         this.potentialActions = potentialActions;
         this.tokens = tokens;
         this.viableActions = new HashSet<>();

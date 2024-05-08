@@ -23,7 +23,6 @@ public class GameAction
         this.produced = new HashSet<>();
         this.buildSet(action, "produced", "entity", this.produced);
         this.narration = action.getElementsByTagName("narration").item(0).getTextContent();
-
     }
 
     private void buildSet(Element action, String firstTag, String secondTag, HashSet<String> set) {

@@ -56,4 +56,12 @@ public class ExtendedSTAGTests {
         String response = sendCommandToServer("hamish: look");
         assertFalse(response.contains("lumberjack"), "Lumberjack should not appear");
     }
+
+    @Test
+    void testThreeWordTrigger() {
+        sendCommandToServer("hamish: get axe");
+        sendCommandToServer("hamish: goto forest");
+        String response = sendCommandToServer("hamish: vigorously chop down tree");
+        assertEquals("You cut down the tree with the axe", response, "Three word trigger not working");
+    }
 }
