@@ -13,6 +13,7 @@ public class CommandParser {
     private String triggerWord;
     private String destination;
     private String artefact;
+    private HashSet<String> triggers;
 
     public CommandParser(String originalCommand, Set<String> triggers) throws STAGException.InvalidName {
         this.originalCommand = originalCommand;
@@ -66,15 +67,14 @@ public class CommandParser {
 
     public void checkTokensForMultipleTriggers(Set<String> definedTriggers) throws STAGException {
 
-        HashSet<String> triggers = new HashSet<>();
+        this.triggers = new HashSet<>();
         tokenisedCommand.forEach(token -> {
             if(isBasicTrigger(token) | isDefined(token, definedTriggers)) {
-                this.triggerWord = token;
                 triggers.add(token);
             }
         });
         if(triggers.size() > 1) {
-            throw new STAGException.MultipleTriggers();
+            this.whenMultipleTriggers(triggers, definedTriggers);
         }
         if(triggers.isEmpty()) {
             throw new STAGException.NoTrigger();
@@ -102,6 +102,22 @@ public class CommandParser {
 
         if(!accessibleLocations.contains(this.destination)){
             throw new STAGException.Inaccessible(this.destination);
+        }
+    }
+
+    public void whenMultipleTriggers(HashSet<String> triggers, Set<String> definedTriggers) throws STAGException {
+        int nBasicTriggers = 0;
+        int nDefinedTriggers = 0;
+        for(String trigger: triggers) {
+            if(isBasicTrigger(trigger)) {
+                nBasicTriggers++;
+            }
+            if(isDefined(trigger, definedTriggers)) {
+                nDefinedTriggers++;
+            }
+        }
+        if(nBasicTriggers > 1 || (nBasicTriggers == 1 && nDefinedTriggers > 0)) {
+            throw new STAGException.MultipleTriggers();
         }
     }
 
@@ -155,5 +171,9 @@ public class CommandParser {
 
     public String getArtefact() {
         return artefact;
+    }
+
+    public HashSet<String> getTriggers() {
+        return triggers;
     }
 }

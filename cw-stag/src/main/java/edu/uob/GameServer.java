@@ -161,7 +161,12 @@ public final class GameServer {
                 this.returnString = "You have " + this.players.get(currPlayer).getHealth() + " health point(s) remaining";
             }
             default -> {
-                this.actionInterpreter = new ActionInterpreter(gameActions.get(trigger), commandParser.getTokenisedCommand(), trigger);
+                HashSet<GameAction> potentialActions = new HashSet<>();
+                // add actions for all triggers
+                for(String trig : commandParser.getTriggers()) {
+                    potentialActions.addAll(gameActions.get(trig));
+                }
+                this.actionInterpreter = new ActionInterpreter(potentialActions, commandParser.getTokenisedCommand(), trigger);
                 String playerLocationKey = this.players.get(currPlayer).getCurrentLocation();
                 this.actionToPerform = this.actionInterpreter.determinePerformableActions(this.locations.get(playerLocationKey), this.players.get(currPlayer).getInventory());
                 this.checkExtraneousEntities(trigger);

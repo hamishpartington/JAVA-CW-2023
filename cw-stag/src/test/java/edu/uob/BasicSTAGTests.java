@@ -74,9 +74,12 @@ public class BasicSTAGTests {
 
     @Test
     void testTooManyTriggers2() {
-        String response = sendCommandToServer("hamish: unlock open door with key");
-        assertEquals("There are too many trigger words in this command", response,
-                "No error message for too many triggers");
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: get key");
+        sendCommandToServer("hamish: goto cabin");
+        String response = sendCommandToServer("hamish: unlock and open door with key");
+        assertEquals("You unlock the trapdoor and see steps leading down into a cellar", response,
+                "Multiple triggers which point to the same action should be allowed");
     }
 
     @Test
