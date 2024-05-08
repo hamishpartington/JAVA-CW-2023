@@ -54,6 +54,10 @@ public class Location extends GameEntity{
         this.accessibleLocations.add(location);
     }
 
+    public void removeAccessibleLocation(String location) {
+        this.accessibleLocations.remove(location);
+    }
+
     public String toString(String currPlayer) {
         StringBuilder builder = new StringBuilder();
         builder.append("You are in a " + super.toString() + "You can see:\n");

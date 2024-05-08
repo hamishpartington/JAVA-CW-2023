@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -235,18 +236,16 @@ public final class GameServer {
         }
     }
 
-    public void addEntityToLocation(String locationKey, GameEntity consumedEntity, String consumedPath) {
+    public void addEntityToLocation(String locationKey, GameEntity consumedEntity) {
         Location location = this.locations.get(locationKey);
         if(consumedEntity != null) {
-            if(consumedEntity instanceof Artefact) {
-                location.getArtefacts().put(consumedEntity.getName(), (Artefact)consumedEntity);
+            if (consumedEntity instanceof Artefact) {
+                location.getArtefacts().put(consumedEntity.getName(), (Artefact) consumedEntity);
             } else if (consumedEntity instanceof Furniture) {
-                location.getFurniture().put(consumedEntity.getName(), (Furniture)consumedEntity);
-            } else if(consumedEntity instanceof Character) {
-                location.getCharacters().put(consumedEntity.getName(), (Character)consumedEntity);
+                location.getFurniture().put(consumedEntity.getName(), (Furniture) consumedEntity);
+            } else if (consumedEntity instanceof Character) {
+                location.getCharacters().put(consumedEntity.getName(), (Character) consumedEntity);
             }
-        } else if (consumedPath != null) {
-            location.addAccessibleLocation(consumedPath);
         }
     }
 
@@ -263,19 +262,37 @@ public final class GameServer {
         for(String entity: entities) {
             if(this.players.get(currPlayer).getInventory().containsKey(entity) && isConsumption) {
                 Artefact removedArtefact = this.players.get(currPlayer).getInventory().remove(entity);
-                this.addEntityToLocation(locationKey, removedArtefact, null);
+                this.addEntityToLocation(locationKey, removedArtefact);
             } else if (entity.equals("health")) {
                 this.players.get(currPlayer).adjustHealth(isConsumption);
             } else {
-                this.locations.forEach((key, entry) -> {
-                    GameEntity consumedEntity = entry.consumeEntity(entity);
-                    String consumedPath = null;
-                    if (consumedEntity == null && (entry.getAccessibleLocations().remove(entity) || !isConsumption)) {
-                        consumedPath = entity;
-                    }
-                    this.addEntityToLocation(locationKey, consumedEntity, consumedPath);
-                });
+                this.consumeOrProduceEntity(entity, isConsumption, locationKey);
             }
+        }
+    }
+
+    public void consumeOrProduceEntity(String entityKey, boolean isConsumption, String locationKey) {
+        GameEntity consumedEntity = null;
+        for (Map.Entry<String, Location> entry : this.locations.entrySet()) {
+            String key = entry.getKey();
+            Location value = entry.getValue();
+            ArrayList<String> locationEntities = value.getAvailableEntities();
+            locationEntities.remove(key);
+            if (locationEntities.contains(entityKey)) {
+                consumedEntity = value.consumeEntity(entityKey);
+            }
+        }
+        // now if location then remove/create path
+        String currLocation = this.players.get(currPlayer).getCurrentLocation();
+        // cannot consume or produce current location
+        if(this.locations.containsKey(entityKey) && !entityKey.equalsIgnoreCase(currLocation)) {
+            if(!isConsumption) {
+                this.locations.get(currLocation).addAccessibleLocation(entityKey);
+            } else {
+                this.locations.get(currLocation).removeAccessibleLocation(entityKey);
+            }
+        } else {
+            this.addEntityToLocation(locationKey, consumedEntity);
         }
     }
 
