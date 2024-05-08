@@ -87,7 +87,7 @@ public class Location extends GameEntity{
 
     public ArrayList<String> getAvailableEntities(){
         ArrayList<String> availableEntities = new ArrayList<>();
-        availableEntities.addAll(this.accessibleLocations);
+        availableEntities.add(this.getName());
         availableEntities.addAll(this.artefacts.keySet());
         availableEntities.addAll(this.characters.keySet());
         availableEntities.addAll(this.furniture.keySet());

@@ -36,4 +36,24 @@ public class ExtendedSTAGTests {
         String response = sendCommandToServer("hamish: cut down tree");
         assertEquals("You cut down the tree with the axe", response, "Spaced trigger not working");
     }
+
+    @Test
+    void testLocationSpecificAction1() {
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: goto riverbank");
+        sendCommandToServer("hamish: blow horn");
+        String response = sendCommandToServer("hamish: look");
+        assertTrue(response.contains("lumberjack"), "Lumberjack did not appear");
+    }
+
+    @Test
+    void testLocationSpecificAction2() {
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: goto riverbank");
+        sendCommandToServer("hamish: get horn");
+        sendCommandToServer("hamish: goto forest");
+        sendCommandToServer("hamish: blow horn");
+        String response = sendCommandToServer("hamish: look");
+        assertFalse(response.contains("lumberjack"), "Lumberjack should not appear");
+    }
 }
