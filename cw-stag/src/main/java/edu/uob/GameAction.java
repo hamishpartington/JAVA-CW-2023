@@ -6,12 +6,12 @@ import org.w3c.dom.NodeList;
 
 public class GameAction
 {
-    private HashSet<String> triggers;
-    private HashSet<String> subjects;
-    private HashSet<String> consumed;
-    private HashSet<String> produced;
+    private final HashSet<String> triggers;
+    private final HashSet<String> subjects;
+    private final HashSet<String> consumed;
+    private final HashSet<String> produced;
 
-    private String narration;
+    private final String narration;
 
     public GameAction(Element action) {
         this.triggers = new HashSet<>();

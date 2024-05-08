@@ -1,9 +1,7 @@
 package edu.uob;
-import com.alexmerz.graphviz.Parser;
-import com.alexmerz.graphviz.ParseException;
+
 import com.alexmerz.graphviz.objects.Graph;
 import com.alexmerz.graphviz.objects.Node;
-import com.alexmerz.graphviz.objects.Edge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,19 +58,19 @@ public class Location extends GameEntity{
 
     public String toString(String currPlayer) {
         StringBuilder builder = new StringBuilder();
-        builder.append("You are in a " + super.toString() + "You can see:\n");
+        builder.append("You are in a ").append(super.toString()).append("You can see:\n");
         this.furniture.forEach((key, entry) -> builder.append(entry.toString()));
         this.artefacts.forEach((key, entry) -> builder.append(entry.toString()));
         this.characters.forEach((key, entry) -> builder.append(entry.toString()));
         builder.append("Other players at this location:\n");
         this.players.forEach(player -> {
                     if (!player.equals(currPlayer)) {
-                        builder.append(player + "\n");
+                        builder.append(player).append("\n");
                     }
                 }
         );
         builder.append("You can access from here:\n");
-        this.accessibleLocations.forEach(loc -> builder.append(loc + "\n"));
+        this.accessibleLocations.forEach(loc -> builder.append(loc).append("\n"));
 
         return builder.toString();
     }

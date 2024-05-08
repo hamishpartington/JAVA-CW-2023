@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -24,12 +23,12 @@ import javax.xml.parsers.ParserConfigurationException;
 public final class GameServer {
 
     private static final char END_OF_TRANSMISSION = 4;
-    private File entitiesFile, actionsFile;
-    private HashMap<String, Location> locations;
+    private final File entitiesFile, actionsFile;
+    private final HashMap<String, Location> locations;
 
     private HashMap<String, Player> players;
 
-    private HashMap<String, HashSet<GameAction>> gameActions;
+    private final HashMap<String, HashSet<GameAction>> gameActions;
     private String startLocationKey;
     private String currPlayer;
 
@@ -312,13 +311,13 @@ public final class GameServer {
 
     private void checkExtraneousEntities(String trigger) throws STAGException {
         switch (trigger) {
-            case "inv", "inventory", "health", "look" -> this.hasExtraneousEntities(trigger, 0);
-            case "goto", "drop", "get" -> this.hasExtraneousEntities(trigger, 1);
+            case "inv", "inventory", "health", "look" -> this.hasExtraneousEntities(0);
+            case "goto", "drop", "get" -> this.hasExtraneousEntities(1);
             default -> this.hasExtraneousEntities(this.actionToPerform);
         }
     }
 
-    private void hasExtraneousEntities(String trigger, int maxEntities) throws STAGException {
+    private void hasExtraneousEntities(int maxEntities) throws STAGException {
 
         HashSet<String> entities = new HashSet<>();
         for(String token : this.commandParser.getTokenisedCommand()) {

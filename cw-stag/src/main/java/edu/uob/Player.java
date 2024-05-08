@@ -1,10 +1,9 @@
 package edu.uob;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Player {
-    private String name;
+    private final String name;
     private String currentLocation;
     private HashMap<String, Artefact> inventory;
     private int health;
