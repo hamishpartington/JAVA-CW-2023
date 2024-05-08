@@ -9,13 +9,13 @@ import java.util.HashSet;
 
 public class Location extends GameEntity{
 
-    private HashMap<String, Furniture> furniture;
-    private HashMap<String, Character> characters;
-    private HashMap<String, Artefact> artefacts;
+    private final HashMap<String, Furniture> furniture;
+    private final HashMap<String, Character> characters;
+    private final HashMap<String, Artefact> artefacts;
 
-    private HashSet<String> players;
+    private final HashSet<String> players;
 
-    private HashSet<String> accessibleLocations;
+    private final HashSet<String> accessibleLocations;
 
     public Location(Node details, Graph location){
         super(details.getId().getId(), details.getAttribute("description"));

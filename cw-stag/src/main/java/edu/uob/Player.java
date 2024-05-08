@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Player {
     private final String name;
     private String currentLocation;
-    private HashMap<String, Artefact> inventory;
+    private final HashMap<String, Artefact> inventory;
     private int health;
 
     public Player(String name, String startLocation) {

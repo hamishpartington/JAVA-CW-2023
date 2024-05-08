@@ -26,7 +26,7 @@ public final class GameServer {
     private final File entitiesFile, actionsFile;
     private final HashMap<String, Location> locations;
 
-    private HashMap<String, Player> players;
+    private final HashMap<String, Player> players;
 
     private final HashMap<String, HashSet<GameAction>> gameActions;
     private String startLocationKey;
