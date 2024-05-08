@@ -76,22 +76,7 @@ public class CommandParser {
     }
 
     public void checkLocation(Set<String> locationKeys, HashSet<String> accessibleLocations) throws STAGException {
-        HashSet<String> locations = new HashSet<>();
-        tokenisedCommand.forEach(token -> {
-            if(isDefined(token, locationKeys)) {
-                this.destination = token;
-                locations.add(token);
-            }
-        });
-        if(locations.size() > 1) {
-            throw new STAGException.MultipleLocations();
-        }
-
-        if(locations.isEmpty()) {
-            throw new STAGException.NoLocation();
-        }
-
-        this.destination = (String) locations.toArray()[0];
+        this.checkEntity(locationKeys, "location");
 
         if(!accessibleLocations.contains(this.destination)){
             throw new STAGException.Inaccessible(this.destination);
@@ -115,27 +100,43 @@ public class CommandParser {
     }
 
     public void checkArtefacts(Set<String> allGameArtefacts, Set<String> availableItems) throws STAGException {
-        HashSet<String> artefactsToGet = new HashSet<>();
-        tokenisedCommand.forEach(token -> {
-            if(isDefined(token, allGameArtefacts)) {
-                this.artefact = token;
-                artefactsToGet.add(token);
-            }
-        });
-        if(artefactsToGet.size() > 1) {
-            throw new STAGException.MultipleArtefacts(this.triggerWord);
-        }
-
-        if(artefactsToGet.isEmpty()) {
-            throw new STAGException.NoArtefact(this.triggerWord);
-        }
-        this.artefact = (String)artefactsToGet.toArray()[0];
+        this.checkEntity(allGameArtefacts, "artefact");
         if(!availableItems.contains(this.artefact)){
             if(this.triggerWord.equals("get")) {
                 throw new STAGException.NotAvailable(this.artefact);
             } else if (this.triggerWord.equals("drop")) {
                 throw new STAGException.NotAvailable(this.artefact, true);
             }
+        }
+    }
+
+    public void checkEntity(Set<String> keys, String entityType) throws STAGException {
+        HashSet<String> entities = new HashSet<>();
+        tokenisedCommand.forEach(token -> {
+            if(isDefined(token, keys)) {
+                entities.add(token);
+            }
+        });
+        if(entities.size() > 1) {
+            if(entityType.equals("location")) {
+                throw new STAGException.MultipleLocations();
+            } else {
+                throw new STAGException.MultipleArtefacts(this.triggerWord);
+            }
+        }
+
+        if(entities.isEmpty()) {
+            if(entityType.equals("location")) {
+                throw new STAGException.NoLocation();
+            } else {
+                throw new STAGException.NoArtefact(this.triggerWord);
+            }
+        }
+
+        if(entityType.equals("location")) {
+            this.destination = (String) entities.toArray()[0];
+        } else {
+            this.artefact = (String) entities.toArray()[0];
         }
     }
 
