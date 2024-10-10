@@ -6,6 +6,7 @@ To play:
 * Make sure you have a Java SDK installed ([instructions](https://www.golinuxcloud.com/install-java-linux-windows-mac/))
 * Clone the repo
 * Open your terminal and navigate to the `cw-stag` directory
+* Compile by running `./mvnw clean compile`
 * Run the client with `./mvnw exec:java@client -D exec.args="Your name"`
 * Open a new terminal window and run the server with `./mvnw exec:java@server`
 * Play the game entering instructions in the client window. The server will interpret your commands and return the outcomes (narrations or prompts if error have been made) to the client.
